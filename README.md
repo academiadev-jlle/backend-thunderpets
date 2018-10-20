@@ -1,4 +1,4 @@
-# ThunderPets™ -  Back-End 
+# ThunderPets™ -  Back-End
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-joinville/projeto-backend-thunderpets.svg?columns=all)](https://waffle.io/academiadev-joinville/projeto-backend-thunderpets)
 
 Projeto da AcademiaDev - Sistema de Pets
@@ -11,10 +11,13 @@ Os tópicos a seguir irão ajudá-lo a fazer uma cópia do projeto em sua máqui
 
 ### Pré-Requisitos
 
-Java 8+
+Java 8
 Gradle
 
 ### Instalação
+```bash
+gradle bootrun
+```
 
 ## Execução
 
@@ -23,6 +26,9 @@ Gradle
 ### Estilo da codificação
 
 ## Deployment
+```bash
+gradle build
+```
 
 ## Projetado com
 
