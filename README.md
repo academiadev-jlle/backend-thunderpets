@@ -1,4 +1,6 @@
-﻿# ThunderPets™ -  Back-End
+﻿# ThunderPets™ -  Back-End 
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-joinville/projeto-backend-thunderpets.svg?columns=all)](https://waffle.io/academiadev-joinville/projeto-backend-thunderpets)
+
 Projeto da AcademiaDev - Sistema de Pets
 
 Documentação Back-End
