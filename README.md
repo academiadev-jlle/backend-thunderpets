@@ -1,43 +1,41 @@
-# Thunderpets - Frontend
+﻿# ThunderPets™ -  Back-End
+Projeto da AcademiaDev - Sistema de Pets
 
-Frontend de uma plataforma web para publicação e busca de animais perdidos, achados ou disponíveis para adoção.
+Documentação Back-End
 
-## Inicialização
+## Introdução
 
-### Pré-requisitos
-```
-> node.js ^8.12
-> npm ^6.4.1
-```
+Os tópicos a seguir irão ajudá-lo a fazer uma cópia do projeto em sua máquina local para o desenvolvimento e o teste do mesmo.
+
+### Pré-Requisitos
+
+Java 8+
+Gradle
 
 ### Instalação
-```bash
-npm install
-```
 
-### Execução
-```bash
-npm run serve
-```
+## Execução
 
-## Testes
+### Execução de Testes
 
-```bash
-npm run test
-```
+### Estilo da codificação
 
-## Build
-```bash
-npm run build
-```
+## Deployment
 
-## Feito com
-* [Vue.JS](https://vuejs.org/) - Framework para o desenvolvimento da aplicação
+## Projetado com
+
+* [Java]
+* [Spring]
+* [Gradle]
+
+## Versionamento
 
 ## Autores
 
-* [Adam Mews](https://github.com/liserline)
-* [Diogo Antelo](https://github.com/DiogoAntelo)
-* [Helena Dalmazo](https://github.com/nefasta)
-* [Luiz Gustavo Eburneo](https://github.com/Botuca)
-* [Ramon Artner](https://github.com/rartner)
+* **Adam Mews**
+* **Helena Dalmazo**
+* **Ramon Artner**
+
+## Licença
+
+Este projeto está sob a a licença Apache License v2.0
