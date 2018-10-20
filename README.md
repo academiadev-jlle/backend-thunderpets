@@ -1,4 +1,4 @@
-﻿# ThunderPets™ -  Back-End 
+# ThunderPets™ -  Back-End 
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-joinville/projeto-backend-thunderpets.svg?columns=all)](https://waffle.io/academiadev-joinville/projeto-backend-thunderpets)
 
 Projeto da AcademiaDev - Sistema de Pets
@@ -34,11 +34,11 @@ Gradle
 
 ## Autores
 
-* **Adam Mews* (https://github.com/liserline) *
-* **Diogo Antelo**
-* **Helena Dalmazo**
-* **Luis Gustavo**
-* **Ramon Artner**
+* [Adam Mews](https://github.com/liserline)
+* [Diogo Antelo](https://github.com/DiogoAntelo)
+* [Helena Dalmazo](https://github.com/nefasta)
+* [Luiz Gustavo Eburneo](https://github.com/Botuca)
+* [Ramon Artner](https://github.com/rartner)
 
 ## Licença
 
