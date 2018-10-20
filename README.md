@@ -33,7 +33,9 @@ Gradle
 ## Autores
 
 * **Adam Mews**
+* **Diogo Antelo**
 * **Helena Dalmazo**
+* **Luis Gustavo**
 * **Ramon Artner**
 
 ## Licença
