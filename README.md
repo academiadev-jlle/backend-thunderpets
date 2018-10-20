@@ -32,7 +32,7 @@ Gradle
 
 ## Autores
 
-* **Adam Mews**
+* **Adam Mews* (https://github.com/liserline) *
 * **Diogo Antelo**
 * **Helena Dalmazo**
 * **Luis Gustavo**
