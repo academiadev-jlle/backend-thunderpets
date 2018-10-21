@@ -18,9 +18,6 @@ public class Foto {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Pet pet;
-
     @Lob
     private byte[] image;
 }

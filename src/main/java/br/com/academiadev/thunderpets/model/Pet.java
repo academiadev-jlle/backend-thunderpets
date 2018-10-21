@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -33,6 +34,9 @@ public class Pet {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @ElementCollection(targetClass=Foto.class)
+    private Set<Foto> fotos;
 
     @ManyToOne
     private Usuario usuario;
