@@ -8,15 +8,14 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-
+        environment:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/thunderpets
+          DATABASE_USERNAME: postgres_ci
+          DATABASE_PASSWORD: postgres_ci
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/postgres:9.6.5-alpine-ram
-       environment:
-        DATABASE_URL: jdbc:postgresql://localhost:5432/thunderpets
-        DATABASE_USERNAME: postgres_ci
-        DATABASE_PASSWORD: postgres_ci
 
     working_directory: ~/repo
 
