@@ -41,7 +41,7 @@ public class Pet {
     @ManyToOne
     private Usuario usuario;
 
-    @Embedded
+    @OneToOne
     private Endereco localizacao;
 
     private String nome;

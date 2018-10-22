@@ -18,11 +18,11 @@ public class Usuario {
     @GeneratedValue
     private Long id;
 
-    @Embedded
-    private Endereco localizacao;
-
     @OneToOne
     private Foto foto;
+
+    @OneToOne
+    private Endereco localizacao;
 
     private String nome;
     private String email;
