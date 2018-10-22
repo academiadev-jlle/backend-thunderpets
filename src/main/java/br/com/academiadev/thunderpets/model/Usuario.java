@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -20,8 +18,13 @@ public class Usuario {
     @GeneratedValue
     private Long id;
 
+    @Embedded
+    private Endereco localizacao;
+
+    @OneToOne
+    private Foto foto;
+
     private String nome;
     private String email;
     private String senha;
-    private String localizacao;
 }

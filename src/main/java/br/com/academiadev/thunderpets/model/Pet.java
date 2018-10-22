@@ -30,9 +30,6 @@ public class Pet {
     private Sexo sexo;
 
     @Enumerated(EnumType.STRING)
-    private Categoria categoria;
-
-    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Enumerated(EnumType.STRING)
@@ -44,8 +41,10 @@ public class Pet {
     @ManyToOne
     private Usuario usuario;
 
+    @Embedded
+    private Endereco localizacao;
+
     private String nome;
-    private String localizacao;
     private String descricao;
     private String contato;
 }
