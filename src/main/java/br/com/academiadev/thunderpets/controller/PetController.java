@@ -23,19 +23,16 @@ public class PetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pet> buscarPorId(@PathVariable("id") Long id){
-
         return ResponseEntity.ok(petRepository.findById(id).get());
     }
 
     @GetMapping("/categoria/{id}")
     public List<Pet> buscarPorCategoria(@PathVariable("id") String id){
-
         return petRepository.findByStatus(id);
     }
 
     @PostMapping("/")
     public Pet salvar(@RequestBody Pet pet){
-
         return petRepository.saveAndFlush(pet);
     }
 
@@ -44,9 +41,9 @@ public class PetController {
         try {
             petRepository.deleteById(id);
         } catch (Exception e) {
-
             return ResponseEntity.status(500).body(e);
         }
+
         return ResponseEntity.ok(true);
     }
 
