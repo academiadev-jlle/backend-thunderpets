@@ -1,9 +1,9 @@
 # ThunderPets™ -  Back-End
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-joinville/projeto-backend-thunderpets.svg?columns=all)](https://waffle.io/academiadev-joinville/projeto-backend-thunderpets)
 
-Projeto da AcademiaDev - Sistema de Pets
+Projeto da AcademiaDev - Petcodes - Thunderpets
 
-Documentação Back-End
+Este projeto consiste na construção de uma plataforma para divulgação de animais perdidos, encontrados ou para adoção.
 
 ## Introdução
 
@@ -11,8 +11,8 @@ Os tópicos a seguir irão ajudá-lo a fazer uma cópia do projeto em sua máqui
 
 ### Pré-Requisitos
 
-Java 8
-Gradle
+* Java 8
+* Gradle
 
 ### Instalação
 ```bash
@@ -20,10 +20,17 @@ gradle bootrun
 ```
 
 ## Execução
+```bash
+gradle bootrun
+```
+
+Após iniciado, a documentação do projeto pode ser encontrada em:
+`http://localhost:8080/swagger-ui.html`
 
 ### Execução de Testes
-
-### Estilo da codificação
+```bash
+gradle test
+```
 
 ## Deployment
 ```bash
