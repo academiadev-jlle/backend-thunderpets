@@ -1,6 +1,5 @@
 package br.com.academiadev.thunderpets.controller;
 
-
 import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +45,4 @@ public class PetController {
 
         return ResponseEntity.ok(true);
     }
-
 }
