@@ -17,27 +17,27 @@ public class PetController {
     private PetRepository petRepository;
 
     @GetMapping("/")
-    private List<Pet> getAll(){
+    private List<Pet> buscarTodos() {
         return petRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pet> buscarPorId(@PathVariable("id") Long id){
+    public ResponseEntity<Pet> buscar(@PathVariable("id") Long id) {
         return ResponseEntity.ok(petRepository.findById(id).get());
     }
 
     @GetMapping("/categoria/{id}")
-    public List<Pet> buscarPorCategoria(@PathVariable("id") String id){
+    public List<Pet> buscarPorCategoria(@PathVariable("id") String id) {
         return petRepository.findByStatus(id);
     }
 
     @PostMapping("/")
-    public Pet salvar(@RequestBody Pet pet){
+    public Pet salvar(@RequestBody Pet pet) {
         return petRepository.saveAndFlush(pet);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> excluirPeloId(@PathVariable("id") Long id){
+    public ResponseEntity<Object> excluir(@PathVariable("id") Long id) {
         try {
             petRepository.deleteById(id);
         } catch (Exception e) {
