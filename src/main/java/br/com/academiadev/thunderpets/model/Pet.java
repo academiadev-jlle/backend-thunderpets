@@ -35,7 +35,7 @@ public class Pet {
     @Enumerated(EnumType.STRING)
     private Idade idade;
 
-    @ElementCollection(targetClass=Foto.class)
+    @ElementCollection(targetClass = Foto.class)
     private Set<Foto> fotos;
 
     @ManyToOne

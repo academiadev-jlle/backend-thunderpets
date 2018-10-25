@@ -27,9 +27,27 @@ gradle bootrun
 Após iniciado, a documentação do projeto pode ser encontrada em:
 `http://localhost:8080/swagger-ui.html`
 
-### Execução de Testes
+## Testes
 ```bash
 gradle test
+```
+
+## Checkstyle
+Para manter a padronização nos códigos do projeto, foi feita a definição de um checkstyle.
+A instalação do plugin no IntelliJ pode ser feita com os seguintes passos:
+
+1) File -> Settings -> Plugins
+2) Digite `checkstyle`. Se informar que não foram encontrados plugins, clique em `Search in repositories`.
+3) Seleciona o plugin `CheckStyle-IDEA` e clica em `Install`.
+4) Reinicia o IntelliJ
+5) File -> Settings -> Other settings -> Checkstyle
+6) Clica no botão `+` e seleciona o arquivo `checkstyle.xml` que está na raíz do projeto. 
+7) Após selecionar, clica em `Next`, seleciona o plugin na lista de checkstyles e clica em `Apply`.
+8) Para evitar problemas com versões diferentes, nessa mesma página de configurações selecione a versão `8.12` do plugin. 
+
+O comando do Gradle para verificar se os arquivos estão de acordo com o padrão é:
+```bash
+gradle checkstyleMain
 ```
 
 ## Deployment
