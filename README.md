@@ -43,7 +43,7 @@ A instalação do plugin no IntelliJ pode ser feita com os seguintes passos:
 5) File -> Settings -> Other settings -> Checkstyle
 6) Clica no botão `+` e seleciona o arquivo `checkstyle.xml` que está na raíz do projeto. 
 7) Após selecionar, clica em `Next`, seleciona o plugin na lista de checkstyles e clica em `Apply`.
-8) Para evitar problemas com versões diferentes, nessa mesma página de configurações selecione a versão `8.12` do plugin. 
+8) Por fim, na mesma tela, trocar o valor de Scan Scope para `Only Java sources (including tests)` 
 
 O comando do Gradle para verificar se os arquivos estão de acordo com o padrão é:
 ```bash

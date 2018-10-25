@@ -53,3 +53,4 @@ jobs:
       # run tests!
       - run: gradle test
       - run: gradle checkstyleMain
+      - run: gradle checkstyleTest
