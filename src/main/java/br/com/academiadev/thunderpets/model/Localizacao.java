@@ -30,6 +30,5 @@ public class Localizacao {
     private String cidade;
 
     @NotNull
-    @Size(min = 2, max = 2)
     private String estado;
 }
