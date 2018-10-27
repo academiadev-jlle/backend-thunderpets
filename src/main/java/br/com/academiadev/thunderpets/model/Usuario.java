@@ -8,16 +8,16 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 public class Usuario {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     @OneToOne
     private Foto foto;

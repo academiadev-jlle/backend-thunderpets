@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,18 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
-@Entity
 @Builder
+@Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Pet {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     @NotNull
     @Size(max = 20)

@@ -1,22 +1,21 @@
 package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.TipoContato;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Entity
-@Builder
 @Data
 @NoArgsConstructor
 public class Contato {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     @Enumerated(value = EnumType.STRING)
     @NotNull
