@@ -16,7 +16,7 @@ public class PetController {
     private PetRepository petRepository;
 
     @GetMapping("/")
-    private List<Pet> buscarTodos() {
+    private List<Pet> buscar() {
         return petRepository.findAll();
     }
 
