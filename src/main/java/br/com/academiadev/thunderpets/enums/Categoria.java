@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public enum Categoria {
-    ACHADOS, PERDIDOS, ADOCAO;
+    ACHADO, PERDIDO, ADOCAO;
 }

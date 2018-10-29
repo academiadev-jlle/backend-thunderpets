@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.model;
 
+import br.com.academiadev.thunderpets.enums.TipoContato;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,19 +8,23 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
-public class Foto {
+public class Contato {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Lob
+    @Enumerated(value = EnumType.STRING)
     @NotNull
-    private byte[] image;
+    private TipoContato tipo;
 
-    @ManyToOne(optional = false)
-    private Pet pet;
+    @NotNull
+    @ManyToOne
+    private Usuario usuario;
+
+    @NotNull
+    private String descricao;
 }
