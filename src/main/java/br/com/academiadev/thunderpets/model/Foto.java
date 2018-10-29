@@ -20,6 +20,6 @@ public class Foto {
     @NotNull
     private byte[] image;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Pet pet;
 }

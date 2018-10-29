@@ -18,9 +18,6 @@ public class Usuario {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne
-    private Foto foto;
-
     @NotNull
     @Size(min = 3)
     private String nome;
@@ -32,6 +29,9 @@ public class Usuario {
     @NotNull
     @Size(min = 8)
     private String senha;
+
+    @Lob
+    private byte[] foto;
 
     @Column(columnDefinition = "bool default true")
     private boolean ativo;
