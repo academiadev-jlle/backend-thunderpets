@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,6 +9,8 @@ import java.util.UUID;
 @Data
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 public class Foto {
 
     @Id

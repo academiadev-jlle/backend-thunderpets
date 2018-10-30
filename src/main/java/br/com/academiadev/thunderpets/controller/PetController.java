@@ -44,18 +44,23 @@ public class PetController {
 
     @PostMapping("/")
     public Pet salvar(@RequestBody PetDTO petDTO) {
-        //Salvar localização do pet dto com saveandFlush
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
 
-//        Pet pet = new pet(petDTO.getId(),
-//                            nome, ...)
-        //Colocar result do save no save do pet. SavandFlush pet.
+        Pet pet = new Pet(petDTO.getId(), petDTO.getNome(),
+                petDTO.getDescricao(), petDTO.getDataAchado(),
+                petDTO.getDataRegistro(), petDTO.getEspecie(),
+                petDTO.getPorte(), petDTO.getSexo(), petDTO.getStatus(),
+                petDTO.getIdade(), petDTO.getUsuario(),
+                localizacao, petDTO.isAtivo());
 
-        for (Foto f: petDTO.getFotos()) {
-            fotoRepository.save(f);
+        petRepository.saveAndFlush(pet);
+
+        for (Foto foto : petDTO.getFotos()) {
+            foto.setPet(pet);
+            fotoRepository.saveAndFlush(foto);
         }
-        //Result do save e busca nas fotos e insere com o pet
-        return petRepository.saveAndFlush(pet);
+
+        return pet;
     }
 
     @DeleteMapping("/{id}")
