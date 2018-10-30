@@ -1,6 +1,11 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.model.Foto;
+import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
+import br.com.academiadev.thunderpets.repository.FotoRepository;
+import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +21,19 @@ public class PetController {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private LocalizacaoRepository localizacaoRepository;
+
+    @Autowired
+    private FotoRepository fotoRepository;
+
     @GetMapping("/")
     private List<Pet> buscar() {
         return petRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pet> buscar(@PathVariable("id") UUID id) {
+    public ResponseEntity<Pet> buscarPorId(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(petRepository.findById(id).get());
     }
 
@@ -32,7 +43,18 @@ public class PetController {
     }
 
     @PostMapping("/")
-    public Pet salvar(@RequestBody Pet pet) {
+    public Pet salvar(@RequestBody PetDTO petDTO) {
+        //Salvar localização do pet dto com saveandFlush
+        Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
+
+//        Pet pet = new pet(petDTO.getId(),
+//                            nome, ...)
+        //Colocar result do save no save do pet. SavandFlush pet.
+
+        for (Foto f: petDTO.getFotos()) {
+            fotoRepository.save(f);
+        }
+        //Result do save e busca nas fotos e insere com o pet
         return petRepository.saveAndFlush(pet);
     }
 
