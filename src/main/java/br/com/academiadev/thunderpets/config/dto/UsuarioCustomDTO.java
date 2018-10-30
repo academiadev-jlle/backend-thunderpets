@@ -1,4 +1,4 @@
-package br.com.academiadev.thunderpets.service;
+package br.com.academiadev.thunderpets.config.dto;
 
 import br.com.academiadev.thunderpets.model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
@@ -6,12 +6,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class DetalhesUsuario implements UserDetails {
+public class UsuarioCustomDTO implements UserDetails {
 
     private String email;
     private String senha;
 
-    public DetalhesUsuario(Usuario byEmail) {
+    public UsuarioCustomDTO(Usuario byEmail) {
         this.email = byEmail.getEmail();
         this.senha = byEmail.getSenha();
     }

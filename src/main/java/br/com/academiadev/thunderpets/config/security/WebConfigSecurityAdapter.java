@@ -1,7 +1,7 @@
 package br.com.academiadev.thunderpets.config.security;
 
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-import br.com.academiadev.thunderpets.service.DetalhesUsuario;
+import br.com.academiadev.thunderpets.config.dto.UsuarioCustomDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Configuration
@@ -23,11 +24,12 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder builder, UsuarioRepository usuarioRepository)
             throws Exception {
-        builder.userDetailsService(email -> new DetalhesUsuario(usuarioRepository.findOneByEmail(email)));
+        builder.userDetailsService(email -> new UsuarioCustomDTO(usuarioRepository.findOneByEmail(email)))
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
