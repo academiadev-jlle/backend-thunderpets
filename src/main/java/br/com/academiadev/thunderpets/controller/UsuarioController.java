@@ -73,7 +73,6 @@ public class UsuarioController {
             }
 
             usuarioPersistido = converterUsuarioParaUsuarioDTO(usuario);
-
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
@@ -120,8 +119,8 @@ public class UsuarioController {
             temp.setDescricao(c.getDescricao());
             contatos.add(temp);
         }
-
         usuarioDTO.setContatos(contatos);
+
         return usuarioDTO;
     }
 }
