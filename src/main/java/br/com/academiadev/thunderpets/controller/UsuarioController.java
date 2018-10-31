@@ -55,7 +55,8 @@ public class UsuarioController {
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioPersistido = new UsuarioDTO();
         try {
-            Usuario usuario = usuarioDTO.getUsuario();
+
+            Usuario usuario = usuarioRepository.findById(usuarioDTO.getId()).get();
             usuario = usuarioRepository.saveAndFlush(usuario);
 
             List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
@@ -68,7 +69,7 @@ public class UsuarioController {
                 contato.setId(contatoDTO.getId());
                 contato.setTipo(contatoDTO.getTipo());
                 contato.setDescricao(contatoDTO.getDescricao());
-                contato.setUsuario(usuarioDTO.getUsuario());
+                contato.setUsuario(usuario);
                 contatoRepository.saveAndFlush(contato);
             }
 
@@ -107,19 +108,26 @@ public class UsuarioController {
     }
 
     public UsuarioDTO converterUsuarioParaUsuarioDTO(Usuario usuario) {
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nome(usuario.getNome())
+                .email(usuario.getEmail())
+                .senha(usuario.getSenha())
+                .foto(usuario.getFoto())
+                .ativo(usuario.isAtivo())
+                .build();
 
         Set<ContatoDTO> contatos = new HashSet<>();
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
         for (Contato c : contatosDoUsuario) {
-            ContatoDTO temp = new ContatoDTO();
-            temp.setId(c.getId());
-            temp.setTipo(c.getTipo());
-            temp.setDescricao(c.getDescricao());
-            contatos.add(temp);
+            ContatoDTO contatoDTO = ContatoDTO.builder()
+                    .id(c.getId())
+                    .tipo(c.getTipo())
+                    .descricao(c.getDescricao())
+                    .build();
+            contatos.add(contatoDTO);
         }
 
-        usuarioDTO.setUsuario(usuario);
         usuarioDTO.setContatos(contatos);
 
         return usuarioDTO;
