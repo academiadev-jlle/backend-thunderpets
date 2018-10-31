@@ -40,9 +40,8 @@ public class UsuarioController {
         Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
         int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
-        return new PageImpl<UsuarioDTO>(
-                paginaUsuarios.stream().map(
-                        usuario -> converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
+        return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
+                .map(usuario -> converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
                 paginacao,
                 totalDeElementos);
     }
@@ -108,13 +107,13 @@ public class UsuarioController {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
     }
 
-    public UsuarioDTO converterUsuarioParaUsuarioDTO (Usuario usuario) {
+    public UsuarioDTO converterUsuarioParaUsuarioDTO(Usuario usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setUsuario(usuario);
 
         Set<ContatoDTO> contatos = new HashSet<>();
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        for(Contato c : contatosDoUsuario) {
+        for (Contato c : contatosDoUsuario) {
             ContatoDTO temp = new ContatoDTO();
             temp.setId(c.getId());
             temp.setTipo(c.getTipo());

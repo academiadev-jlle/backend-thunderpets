@@ -1,6 +1,5 @@
 package br.com.academiadev.thunderpets.dto;
 
-import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +14,5 @@ import java.util.Set;
 public class UsuarioDTO {
 
     private Usuario usuario;
-    private Set<ContatoDTO> contatos = new HashSet<>();;
+    private Set<ContatoDTO> contatos = new HashSet<>();
 }
