@@ -108,7 +108,6 @@ public class UsuarioController {
 
     public UsuarioDTO converterUsuarioParaUsuarioDTO(Usuario usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setUsuario(usuario);
 
         Set<ContatoDTO> contatos = new HashSet<>();
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
@@ -119,6 +118,8 @@ public class UsuarioController {
             temp.setDescricao(c.getDescricao());
             contatos.add(temp);
         }
+
+        usuarioDTO.setUsuario(usuario);
         usuarioDTO.setContatos(contatos);
 
         return usuarioDTO;
