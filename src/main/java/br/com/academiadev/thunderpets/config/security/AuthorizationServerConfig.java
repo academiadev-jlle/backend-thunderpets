@@ -15,7 +15,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private static final Integer ACCESS_TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24;
+//    private static final Integer ACCESS_TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24;
+    private static final Integer ACCESS_TOKEN_VALIDITY_IN_SECONDS = 25;
     private static final Integer REFRESH_TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24;
     private static final String CLIENT = "thunderpets-client";
     private static final String SECRET = "thunderpets-secret";

@@ -10,10 +10,12 @@ public class UsuarioCustomDTO implements UserDetails {
 
     private String email;
     private String senha;
+    private boolean ativo;
 
     public UsuarioCustomDTO(Usuario byEmail) {
         this.email = byEmail.getEmail();
         this.senha = byEmail.getSenha();
+        this.ativo = byEmail.isAtivo();
     }
 
     @Override
@@ -33,21 +35,21 @@ public class UsuarioCustomDTO implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return ativo;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return ativo;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return ativo;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return ativo;
     }
 }

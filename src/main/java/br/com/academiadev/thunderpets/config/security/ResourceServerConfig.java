@@ -13,6 +13,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/swagger-ui**/**", "/swagger-resources/**", "/v2/api-docs/**").permitAll()
-                .antMatchers("/pet/").authenticated();
+                .antMatchers("/pet/").authenticated()
+        .antMatchers("/pet/tok").permitAll();
     }
 }

@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,5 +46,10 @@ public class PetController {
         }
 
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("tok")
+    public Object token() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
