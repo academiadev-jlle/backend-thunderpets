@@ -59,8 +59,6 @@ public class UsuarioController {
             Usuario usuario = usuarioDTO.getUsuario();
             usuario = usuarioRepository.saveAndFlush(usuario);
 
-            usuarioPersistido.setUsuario(usuario);
-
             List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
             for (Contato contatoDelete : contatosDoUsuario) {
                 contatoRepository.delete(contatoDelete);
@@ -73,9 +71,9 @@ public class UsuarioController {
                 contato.setDescricao(contatoDTO.getDescricao());
                 contato.setUsuario(usuarioDTO.getUsuario());
                 contatoRepository.saveAndFlush(contato);
-
-                usuarioPersistido.getContatos().add(contatoDTO);
             }
+
+            usuarioPersistido = converterUsuarioParaUsuarioDTO(usuario);
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
@@ -88,9 +86,10 @@ public class UsuarioController {
     public ResponseEntity<Object> deletar(@PathVariable("id") UUID id) {
         try {
             Usuario usuario = usuarioRepository.findById(id).get();
-            usuarioRepository.deleteById(usuario.getId());
+            usuario.setAtivo(false);
+            usuarioRepository.saveAndFlush(usuario);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
+            return ResponseEntity.status(500).body(e.getMessage());
         }
 
         return ResponseEntity.ok(true);
