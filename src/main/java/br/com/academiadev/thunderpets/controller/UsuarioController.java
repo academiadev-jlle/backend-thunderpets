@@ -1,17 +1,26 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.ContatoDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
+import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuario")
@@ -19,30 +28,57 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ContatoRepository contatoRepository;
 
     @GetMapping("/")
-    public Page<Usuario> listar(@RequestParam(defaultValue = "0") int paginaAtual,
-                                @RequestParam(defaultValue = "10") int tamanho,
-                                @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                @RequestParam(defaultValue = "nome") String campoOrdenacao) {
-        PageRequest pagina = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Usuario> page = usuarioRepository.findAll(pagina);
+    public PageImpl<UsuarioDTO> listar(@RequestParam(defaultValue = "0") int paginaAtual,
+                                       @RequestParam(defaultValue = "10") int tamanho,
+                                       @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                       @RequestParam(defaultValue = "nome") String campoOrdenacao) {
+        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
+        Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
+        int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
-        return page;
+        return new PageImpl<UsuarioDTO>(
+                paginaUsuarios.stream().map(
+                        usuario -> converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
+                paginacao,
+                totalDeElementos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscar(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(usuarioRepository.findById(id).get());
+    public ResponseEntity<UsuarioDTO> buscar(@PathVariable("id") UUID id) {
+        return ResponseEntity.ok(converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> salvar(@RequestBody Usuario usuario) {
-        Usuario usuarioPersistido;
+    public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
+        UsuarioDTO usuarioPersistido = new UsuarioDTO();
         try {
-            usuarioPersistido = usuarioRepository.saveAndFlush(usuario);
+            Usuario usuario = usuarioDTO.getUsuario();
+            usuario = usuarioRepository.saveAndFlush(usuario);
+
+            usuarioPersistido.setUsuario(usuario);
+
+            List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
+            for (Contato contatoDelete : contatosDoUsuario) {
+                contatoRepository.delete(contatoDelete);
+            }
+
+            for (ContatoDTO contatoDTO : usuarioDTO.getContatos()) {
+                Contato contato = new Contato();
+                contato.setId(contatoDTO.getId());
+                contato.setTipo(contatoDTO.getTipo());
+                contato.setDescricao(contatoDTO.getDescricao());
+                contato.setUsuario(usuarioDTO.getUsuario());
+                contatoRepository.saveAndFlush(contato);
+
+                usuarioPersistido.getContatos().add(contatoDTO);
+            }
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
+            return ResponseEntity.status(500).body(e.getMessage());
         }
 
         return ResponseEntity.ok(usuarioPersistido);
@@ -71,5 +107,23 @@ public class UsuarioController {
         }
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+
+    public UsuarioDTO converterUsuarioParaUsuarioDTO (Usuario usuario) {
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setUsuario(usuario);
+
+        Set<ContatoDTO> contatos = new HashSet<>();
+        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
+        for(Contato c : contatosDoUsuario) {
+            ContatoDTO temp = new ContatoDTO();
+            temp.setId(c.getId());
+            temp.setTipo(c.getTipo());
+            temp.setDescricao(c.getDescricao());
+            contatos.add(temp);
+        }
+
+        usuarioDTO.setContatos(contatos);
+        return usuarioDTO;
     }
 }
