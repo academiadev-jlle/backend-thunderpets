@@ -9,8 +9,6 @@ import java.util.UUID;
 @Data
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
 public class Foto {
 
     @Id

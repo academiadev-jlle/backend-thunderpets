@@ -27,7 +27,7 @@ public class PetController {
     @Autowired
     private FotoRepository fotoRepository;
 
-    @GetMapping("/")
+    @GetMapping
     private List<Pet> buscar() {
         return petRepository.findAll();
     }
@@ -42,7 +42,7 @@ public class PetController {
         return petRepository.findByStatus(id);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
 
