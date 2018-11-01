@@ -72,23 +72,7 @@ public class PetController {
     @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
-
-        Pet petBuilt = Pet.builder()
-                .id(petDTO.getId())
-                .nome(petDTO.getNome())
-                .descricao(petDTO.getDescricao())
-                .dataAchado(petDTO.getDataAchado())
-                .dataRegistro(petDTO.getDataRegistro())
-                .especie(petDTO.getEspecie())
-                .porte(petDTO.getPorte())
-                .sexo(petDTO.getSexo())
-                .status(petDTO.getStatus())
-                .idade(petDTO.getIdade())
-                .usuario(petDTO.getUsuario())
-                .localizacao(localizacao)
-                .ativo(petDTO.isAtivo())
-                .build();
-
+        Pet petBuilt = petMapper.convertPetDTOparaPet(petDTO, localizacao);
         Pet pet = petRepository.saveAndFlush(petBuilt);
 
         for (Foto foto : petDTO.getFotos()) {
