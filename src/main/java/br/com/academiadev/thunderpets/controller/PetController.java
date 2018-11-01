@@ -8,10 +8,12 @@ import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -66,9 +68,11 @@ public class PetController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluir(@PathVariable("id") UUID id) {
         try {
-            petRepository.deleteById(id);
+            Pet pet = petRepository.findById(id).get();
+            pet.setAtivo(false);
+            petRepository.saveAndFlush(pet);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
+            return ResponseEntity.status(500).body(e.getMessage());
         }
 
         return ResponseEntity.ok(true);
