@@ -1,6 +1,8 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
+import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
@@ -33,6 +35,9 @@ public class PetController {
     @Autowired
     private FotoRepository fotoRepository;
 
+    @Autowired
+    private PetMapper petMapper;
+
     @GetMapping
     private PageImpl<PetDTO> buscar(@RequestParam(defaultValue = "0") int paginaAtual,
                              @RequestParam(defaultValue = "10") int tamanho,
@@ -43,7 +48,7 @@ public class PetController {
         int totalDeElementos = (int) paginaPets.getTotalElements();
 
         return new PageImpl<PetDTO>(paginaPets.stream()
-                .map(pet -> converterPetParaPetDTO(pet))
+                .map(pet -> petMapper.converterPetParaPetDTO(pet))
                 .collect(Collectors.toList()),
                 paginacao,
                 totalDeElementos);
@@ -51,9 +56,12 @@ public class PetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PetDTO> buscarPorId(@PathVariable("id") UUID id) {
-        return Optional.ofNullable(petRepository.findById(id))
-                .map(pet -> ResponseEntity.ok().body(converterPetParaPetDTO(pet.get())))
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Pet> pet = petRepository.findById(id);
+        if (!pet.isPresent()) {
+            ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
+        }
+
+        return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
     }
 
     @GetMapping("/categoria/{id}")
@@ -102,28 +110,5 @@ public class PetController {
         }
 
         return ResponseEntity.ok(true);
-    }
-
-    public PetDTO converterPetParaPetDTO(Pet pet) {
-        List<Foto> fotos = fotoRepository.findByPetId(pet.getId());
-
-        PetDTO petDTO = PetDTO.builder()
-                .id(pet.getId())
-                .nome(pet.getNome())
-                .descricao(pet.getDescricao())
-                .dataAchado(pet.getDataAchado())
-                .dataRegistro(pet.getDataRegistro())
-                .especie(pet.getEspecie())
-                .porte(pet.getPorte())
-                .sexo(pet.getSexo())
-                .status(pet.getStatus())
-                .idade(pet.getIdade())
-                .usuario(pet.getUsuario())
-                .localizacao(pet.getLocalizacao())
-                .fotos(fotos)
-                .ativo(pet.isAtivo())
-                .build();
-
-        return petDTO;
     }
 }
