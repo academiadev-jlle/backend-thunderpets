@@ -8,12 +8,17 @@ import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
@@ -29,8 +34,19 @@ public class PetController {
     private FotoRepository fotoRepository;
 
     @GetMapping
-    private List<Pet> buscar() {
-        return petRepository.findAll();
+    private PageImpl<PetDTO> buscar(@RequestParam(defaultValue = "0") int paginaAtual,
+                             @RequestParam(defaultValue = "10") int tamanho,
+                             @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                             @RequestParam(defaultValue = "nome") String campoOrdenação) {
+        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenação);
+        Page<Pet> paginaPets = petRepository.findAll(paginacao);
+        int totalDeElementos = (int) paginaPets.getTotalElements();
+
+        return new PageImpl<PetDTO>(paginaPets.stream()
+                .map(pet -> converterPetParaPetDTO(pet))
+                .collect(Collectors.toList())
+                ,paginacao
+                ,totalDeElementos);
     }
 
     @GetMapping("/{id}")
