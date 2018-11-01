@@ -8,7 +8,6 @@ import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +34,10 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pet> buscarPorId(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(petRepository.findById(id).get());
+    public ResponseEntity<PetDTO> buscarPorId(@PathVariable("id") UUID id) {
+        return Optional.ofNullable(petRepository.findById(id))
+                .map(pet -> ResponseEntity.ok().body(converterPetParaPetDTO(pet.get())))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/categoria/{id}")
@@ -85,5 +86,28 @@ public class PetController {
         }
 
         return ResponseEntity.ok(true);
+    }
+
+    public PetDTO converterPetParaPetDTO(Pet pet) {
+        List<Foto> fotos = fotoRepository.findByPetId(pet.getId());
+
+        PetDTO petDTO = PetDTO.builder()
+                .id(pet.getId())
+                .nome(pet.getNome())
+                .descricao(pet.getDescricao())
+                .dataAchado(pet.getDataAchado())
+                .dataRegistro(pet.getDataRegistro())
+                .especie(pet.getEspecie())
+                .porte(pet.getPorte())
+                .sexo(pet.getSexo())
+                .status(pet.getStatus())
+                .idade(pet.getIdade())
+                .usuario(pet.getUsuario())
+                .localizacao(pet.getLocalizacao())
+                .fotos(fotos)
+                .ativo(pet.isAtivo())
+                .build();
+
+        return petDTO;
     }
 }
