@@ -48,14 +48,23 @@ public class PetController {
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
 
-        Pet pet = new Pet(petDTO.getId(), petDTO.getNome(),
-                petDTO.getDescricao(), petDTO.getDataAchado(),
-                petDTO.getDataRegistro(), petDTO.getEspecie(),
-                petDTO.getPorte(), petDTO.getSexo(), petDTO.getStatus(),
-                petDTO.getIdade(), petDTO.getUsuario(),
-                localizacao, petDTO.isAtivo());
+        Pet petBuilt = Pet.builder()
+                .id(petDTO.getId())
+                .nome(petDTO.getNome())
+                .descricao(petDTO.getDescricao())
+                .dataAchado(petDTO.getDataAchado())
+                .dataRegistro(petDTO.getDataRegistro())
+                .especie(petDTO.getEspecie())
+                .porte(petDTO.getPorte())
+                .sexo(petDTO.getSexo())
+                .status(petDTO.getStatus())
+                .idade(petDTO.getIdade())
+                .usuario(petDTO.getUsuario())
+                .localizacao(localizacao)
+                .ativo(petDTO.isAtivo())
+                .build();
 
-        petRepository.saveAndFlush(pet);
+        Pet pet = petRepository.saveAndFlush(petBuilt);
 
         for (Foto foto : petDTO.getFotos()) {
             foto.setPet(pet);
