@@ -37,16 +37,16 @@ public class PetController {
     private PageImpl<PetDTO> buscar(@RequestParam(defaultValue = "0") int paginaAtual,
                              @RequestParam(defaultValue = "10") int tamanho,
                              @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                             @RequestParam(defaultValue = "nome") String campoOrdenação) {
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenação);
+                             @RequestParam(defaultValue = "nome") String campoOrdenacao) {
+        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPets = petRepository.findAll(paginacao);
         int totalDeElementos = (int) paginaPets.getTotalElements();
 
         return new PageImpl<PetDTO>(paginaPets.stream()
                 .map(pet -> converterPetParaPetDTO(pet))
-                .collect(Collectors.toList())
-                ,paginacao
-                ,totalDeElementos);
+                .collect(Collectors.toList()),
+                paginacao,
+                totalDeElementos);
     }
 
     @GetMapping("/{id}")
