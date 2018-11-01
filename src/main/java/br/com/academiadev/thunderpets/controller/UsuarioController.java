@@ -2,6 +2,8 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
+import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
@@ -47,7 +49,12 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> buscar(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> buscar(@PathVariable("id") UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.status(500)
+                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+        }
+
         return ResponseEntity.ok(converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
     }
 
@@ -55,7 +62,6 @@ public class UsuarioController {
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioPersistido = new UsuarioDTO();
         try {
-
             Usuario usuario = usuarioRepository.findById(usuarioDTO.getId()).get();
             usuario = usuarioRepository.saveAndFlush(usuario);
 
@@ -83,6 +89,11 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletar(@PathVariable("id") UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.status(500)
+                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+        }
+
         try {
             Usuario usuario = usuarioRepository.findById(id).get();
             usuario.setAtivo(false);
@@ -96,12 +107,17 @@ public class UsuarioController {
 
     @GetMapping("{id}/foto")
     public ResponseEntity<Object> getFoto(@PathVariable("id") UUID id) {
-        byte[] bytes = null;
-        try {
-            Usuario usuario = usuarioRepository.findById(id).get();
-            bytes = usuario.getFoto();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.status(500)
+                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+        }
+
+        Usuario usuario = usuarioRepository.findById(id).get();
+        byte[] bytes = usuario.getFoto();
+
+        if (bytes == null) {
+            return ResponseEntity.status(500)
+                    .body(new FotoNaoEncontradaException("O usuário " + id + " não possui foto."));
         }
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
