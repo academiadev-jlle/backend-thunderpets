@@ -4,6 +4,8 @@ import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.mapper.ContatoMapper;
+import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
@@ -32,6 +34,8 @@ public class UsuarioController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ContatoRepository contatoRepository;
+    @Autowired
+    private UsuarioMapper usuarioMapper;
 
     @GetMapping("/")
     public PageImpl<UsuarioDTO> listar(@RequestParam(defaultValue = "0") int paginaAtual,
@@ -43,7 +47,7 @@ public class UsuarioController {
         int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
         return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
+                .map(usuario -> usuarioMapper.converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
                 paginacao,
                 totalDeElementos);
     }
@@ -55,14 +59,14 @@ public class UsuarioController {
                     .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
         }
 
-        return ResponseEntity.ok(converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
+        return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
     }
 
     @PostMapping("/")
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioPersistido = new UsuarioDTO();
         try {
-            Usuario usuario = usuarioRepository.findById(usuarioDTO.getId()).get();
+            Usuario usuario = usuarioMapper.converterUsuarioDTOparaUsuario(usuarioDTO);
             usuario = usuarioRepository.saveAndFlush(usuario);
 
             List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
@@ -79,7 +83,7 @@ public class UsuarioController {
                 contatoRepository.saveAndFlush(contato);
             }
 
-            usuarioPersistido = converterUsuarioParaUsuarioDTO(usuario);
+            usuarioPersistido = usuarioMapper.converterUsuarioParaUsuarioDTO(usuario);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
@@ -121,31 +125,5 @@ public class UsuarioController {
         }
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
-    }
-
-    public UsuarioDTO converterUsuarioParaUsuarioDTO(Usuario usuario) {
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .id(usuario.getId())
-                .nome(usuario.getNome())
-                .email(usuario.getEmail())
-                .senha(usuario.getSenha())
-                .foto(usuario.getFoto())
-                .ativo(usuario.isAtivo())
-                .build();
-
-        Set<ContatoDTO> contatos = new HashSet<>();
-        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        for (Contato c : contatosDoUsuario) {
-            ContatoDTO contatoDTO = ContatoDTO.builder()
-                    .id(c.getId())
-                    .tipo(c.getTipo())
-                    .descricao(c.getDescricao())
-                    .build();
-            contatos.add(contatoDTO);
-        }
-
-        usuarioDTO.setContatos(contatos);
-
-        return usuarioDTO;
     }
 }
