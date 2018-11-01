@@ -4,7 +4,6 @@ import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
-import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
@@ -20,9 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,7 +34,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioMapper usuarioMapper;
 
-    @GetMapping("/")
+    @GetMapping("")
     public PageImpl<UsuarioDTO> listar(@RequestParam(defaultValue = "0") int paginaAtual,
                                        @RequestParam(defaultValue = "10") int tamanho,
                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
@@ -62,7 +59,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioPersistido = new UsuarioDTO();
         try {
