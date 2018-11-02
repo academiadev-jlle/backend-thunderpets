@@ -12,5 +12,4 @@ import java.util.UUID;
 public interface PetRepository extends JpaRepository<Pet, UUID> {
 
     Page<Pet> findByAtivo(boolean ativo, Pageable pageable);
-
 }

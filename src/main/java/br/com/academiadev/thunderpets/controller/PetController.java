@@ -91,7 +91,6 @@ public class PetController {
             Pet petSalvar = pet.get();
             petSalvar.setAtivo(false);
             petRepository.saveAndFlush(petSalvar);
-
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
