@@ -14,5 +14,4 @@ public class ThunderpetsApplicationTests {
     @Test
     public void contextLoads() {
     }
-
 }
