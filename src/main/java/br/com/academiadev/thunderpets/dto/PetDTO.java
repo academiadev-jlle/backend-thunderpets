@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Usuario;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Builder
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class PetDTO {
 
     private UUID id;

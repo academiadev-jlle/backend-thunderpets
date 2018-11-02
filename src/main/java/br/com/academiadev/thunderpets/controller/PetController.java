@@ -61,7 +61,7 @@ public class PetController {
         if (!pet.isPresent()) {
             return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
         }
-        
+
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
     }
 
