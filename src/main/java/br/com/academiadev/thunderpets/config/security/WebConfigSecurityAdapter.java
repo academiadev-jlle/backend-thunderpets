@@ -1,8 +1,8 @@
 package br.com.academiadev.thunderpets.config.security;
 
+import br.com.academiadev.thunderpets.dto.UsuarioCustomDTO;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-import br.com.academiadev.thunderpets.config.dto.UsuarioCustomDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +11,15 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {
@@ -27,9 +31,9 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
             throws Exception {
         if (usuarioRepository.count() == 0) {
             Usuario usuario = new Usuario();
-            usuario.setEmail("ramon@mail.com");
+            usuario.setEmail("admin@mail.com");
             usuario.setSenha(passwordEncoder().encode("admin"));
-            usuario.setNome("Ramon");
+            usuario.setNome("admin");
             usuario.setAtivo(true);
 
             usuarioRepository.save(usuario);
@@ -37,10 +41,5 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
 
         builder.userDetailsService(email -> new UsuarioCustomDTO(usuarioRepository.findOneByEmail(email)))
                 .passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public static BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

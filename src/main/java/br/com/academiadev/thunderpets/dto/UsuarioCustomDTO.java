@@ -1,4 +1,4 @@
-package br.com.academiadev.thunderpets.config.dto;
+package br.com.academiadev.thunderpets.dto;
 
 import br.com.academiadev.thunderpets.model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
