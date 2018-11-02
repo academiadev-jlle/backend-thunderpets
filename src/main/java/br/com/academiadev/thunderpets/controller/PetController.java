@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,11 +39,12 @@ public class PetController {
 
     @GetMapping
     private PageImpl<PetDTO> buscar(@RequestParam(defaultValue = "0") int paginaAtual,
-                             @RequestParam(defaultValue = "10") int tamanho,
-                             @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                             @RequestParam(defaultValue = "nome") String campoOrdenacao) {
+                                    @RequestParam(defaultValue = "10") int tamanho,
+                                    @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                    @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                    @RequestParam(defaultValue = "true") boolean ativo) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPets = petRepository.findAll(paginacao);
+        Page<Pet> paginaPets = petRepository.findByAtivo(ativo, paginacao);
         int totalDeElementos = (int) paginaPets.getTotalElements();
 
         return new PageImpl<PetDTO>(paginaPets.stream()
@@ -55,25 +55,20 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PetDTO> buscarPorId(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> buscarPorId(@PathVariable("id") UUID id) {
         Optional<Pet> pet = petRepository.findById(id);
         if (!pet.isPresent()) {
-            ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
+            return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
         }
 
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
     }
 
-    @GetMapping("/categoria/{id}")
-    public List<Pet> buscarPorCategoria(@PathVariable("id") String id) {
-        return petRepository.findByStatus(id);
-    }
-
     @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
-        Pet petBuilt = petMapper.convertPetDTOparaPet(petDTO, localizacao);
-        Pet pet = petRepository.saveAndFlush(petBuilt);
+        Pet petConstruido = petMapper.convertPetDTOparaPet(petDTO, localizacao);
+        Pet pet = petRepository.saveAndFlush(petConstruido);
 
         for (Foto foto : petDTO.getFotos()) {
             foto.setPet(pet);
@@ -86,9 +81,16 @@ public class PetController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluir(@PathVariable("id") UUID id) {
         try {
-            Pet pet = petRepository.findById(id).get();
-            pet.setAtivo(false);
-            petRepository.saveAndFlush(pet);
+            Optional<Pet> pet = petRepository.findById(id);
+
+            if (!pet.isPresent()) {
+                return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
+            }
+
+            Pet petSalvar = pet.get();
+            petSalvar.setAtivo(false);
+            petRepository.saveAndFlush(petSalvar);
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }

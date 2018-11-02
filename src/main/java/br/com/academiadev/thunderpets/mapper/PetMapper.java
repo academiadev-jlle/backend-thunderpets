@@ -6,9 +6,11 @@ import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.repository.FotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class PetMapper {
 
     @Autowired
