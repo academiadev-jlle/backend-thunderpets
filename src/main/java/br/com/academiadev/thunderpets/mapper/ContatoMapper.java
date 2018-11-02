@@ -13,12 +13,10 @@ public class ContatoMapper {
     private ContatoRepository contatoRepository;
 
     public ContatoDTO converterContatoParaContatoDTO(Contato contato) {
-        ContatoDTO contatoDTO = ContatoDTO.builder()
+        return ContatoDTO.builder()
                 .id(contato.getId())
                 .tipo(contato.getTipo())
                 .descricao(contato.getDescricao())
                 .build();
-
-        return contatoDTO;
     }
 }

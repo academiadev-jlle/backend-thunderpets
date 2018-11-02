@@ -41,7 +41,7 @@ public class UsuarioMapper {
     }
 
     public Usuario converterUsuarioDTOparaUsuario(UsuarioDTO usuarioDTO) {
-        Usuario usuario = Usuario.builder()
+        return Usuario.builder()
                 .id(usuarioDTO.getId())
                 .nome(usuarioDTO.getNome())
                 .email(usuarioDTO.getEmail())
@@ -49,7 +49,5 @@ public class UsuarioMapper {
                 .foto(usuarioDTO.getFoto())
                 .ativo(usuarioDTO.isAtivo())
                 .build();
-
-        return usuario;
     }
 }
