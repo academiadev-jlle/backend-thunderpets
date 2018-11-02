@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.repository;
 
+import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.model.Pet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +28,9 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
             + " and (:idade is null or p.idade like %:idade%)")
     List<Pet> findFiltro(@Param("dataAchado") LocalDate dataAchado,
                          @Param("dataRegistro") LocalDate dataRegistro,
-                         @Param("especie") String especie,
-                         @Param("porte") String porte,
-                         @Param("sexo") String sexo,
-                         @Param("status") String status,
-                         @Param("idade") String idade);
+                         @Param("especie") Especie especie,
+                         @Param("porte") Porte porte,
+                         @Param("sexo") Sexo sexo,
+                         @Param("status") Status status,
+                         @Param("idade") Idade idade);
 }

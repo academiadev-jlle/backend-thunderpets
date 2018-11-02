@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.model.Foto;
@@ -67,11 +68,11 @@ public class PetController {
     @GetMapping("/filtro")
     public List<PetDTO> filtrar(@RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
-                                @RequestParam(value = "especie", required = false) String especie,
-                                @RequestParam(value = "porte", required = false) String porte,
-                                @RequestParam(value = "sexo", required = false) String sexo,
-                                @RequestParam(value = "status", required = false) String status,
-                                @RequestParam(value = "idade", required = false) String idade) {
+                                @RequestParam(value = "especie", required = false) Especie especie,
+                                @RequestParam(value = "porte", required = false) Porte porte,
+                                @RequestParam(value = "sexo", required = false) Sexo sexo,
+                                @RequestParam(value = "status", required = false) Status status,
+                                @RequestParam(value = "idade", required = false) Idade idade) {
         List<Pet> resultadoFiltro = petRepository.findFiltro(dataAchado, dataRegistro,
                 especie, porte, sexo, status, idade);
 
