@@ -10,13 +10,12 @@ import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -63,6 +62,22 @@ public class PetController {
         }
 
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
+    }
+
+    @GetMapping("/filtro")
+    public List<PetDTO> filtrar(@RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
+                                @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
+                                @RequestParam(value = "especie", required = false) String especie,
+                                @RequestParam(value = "porte", required = false) String porte,
+                                @RequestParam(value = "sexo", required = false) String sexo,
+                                @RequestParam(value = "status", required = false) String status,
+                                @RequestParam(value = "idade", required = false) String idade) {
+        List<Pet> resultadoFiltro = petRepository.findFiltro(dataAchado, dataRegistro,
+                especie, porte, sexo, status, idade);
+
+        return resultadoFiltro.stream()
+                .map(pet -> petMapper.converterPetParaPetDTO(pet))
+                .collect(Collectors.toList());
     }
 
     @PostMapping
