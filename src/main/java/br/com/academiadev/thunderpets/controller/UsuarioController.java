@@ -76,8 +76,10 @@ public class UsuarioController {
     }
 
     @ApiOperation(value = "Salva um usuário na plataforma",
-            notes = "Caso não exista nenhum usuário com o id fornecido, um novo usuário será criado. " +
-                    "Do contrário, caso já exista um usuário com o id fornecido, os dados do usuário existente serão atualizados.")
+            notes = "Caso não exista nenhum usuário com o id fornecido, "
+                    + "um novo usuário será criado. "
+                    + "Do contrário, caso já exista um usuário com o id fornecido, "
+                    + "os dados do usuário existente serão atualizados.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Usuário criado e/ou atualizado com sucesso"),
             @ApiResponse(code = 500, message = "Erro ao criar e/ou atualizar o usuário")
@@ -137,7 +139,9 @@ public class UsuarioController {
     @ApiOperation(value = "Busca a foto do usuário com base no id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
-            @ApiResponse(code = 500, message = "Usuário não encontrado. Foto não encontrada. Erro ao buscar a foto do usuário")
+            @ApiResponse(code = 500, message = "Usuário não encontrado. "
+                    + "Foto não encontrada. "
+                    + "Erro ao buscar a foto do usuário")
     })
     @GetMapping("{id}/foto")
     public ResponseEntity<Object> getFoto(@PathVariable("id") UUID id) {
