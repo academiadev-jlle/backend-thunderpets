@@ -73,11 +73,20 @@ public class PetController {
                                 @RequestParam(value = "sexo", required = false) Sexo sexo,
                                 @RequestParam(value = "status", required = false) Status status,
                                 @RequestParam(value = "idade", required = false) Idade idade) {
-        List<Pet> resultadoFiltro = petRepository.findFiltro(dataAchado, dataRegistro,
-                especie, porte, sexo, status, idade);
+        Pet pet = Pet.builder()
+                .dataAchado(dataAchado)
+                .dataRegistro(dataRegistro)
+                .especie(especie)
+                .porte(porte)
+                .sexo(sexo)
+                .status(status)
+                .idade(idade)
+                .build();
+
+        List<Pet> resultadoFiltro = petRepository.findAll(Example.of(pet));
 
         return resultadoFiltro.stream()
-                .map(pet -> petMapper.converterPetParaPetDTO(pet))
+                .map(p -> petMapper.converterPetParaPetDTO(p))
                 .collect(Collectors.toList());
     }
 
