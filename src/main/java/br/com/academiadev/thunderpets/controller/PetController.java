@@ -9,6 +9,7 @@ import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
+@Api(description = "Controller de Pets")
 public class PetController {
 
     @Autowired
@@ -37,12 +39,23 @@ public class PetController {
     @Autowired
     private PetMapper petMapper;
 
+    @ApiOperation(value = "Lista os pets da plataforma",
+            notes = "Retorna uma lista com os detalhes do pet."
+                    + " A lista é paginada com base nos parâmetros.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pets listados com sucesso")
+    })
     @GetMapping
-    private PageImpl<PetDTO> buscar(@RequestParam(defaultValue = "0") int paginaAtual,
-                                    @RequestParam(defaultValue = "10") int tamanho,
-                                    @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                    @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                    @RequestParam(defaultValue = "true") boolean ativo) {
+    private PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual")
+                                        @RequestParam(defaultValue = "0") int paginaAtual,
+                                    @ApiParam(value = "Número do tamanho da página")
+                                        @RequestParam(defaultValue = "10") int tamanho,
+                                    @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                    @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                        @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                    @ApiParam(value = "Escolha para buscar os pets ativos")
+                                        @RequestParam(defaultValue = "true") boolean ativo) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPets = petRepository.findByAtivo(ativo, paginacao);
         int totalDeElementos = (int) paginaPets.getTotalElements();
@@ -54,8 +67,15 @@ public class PetController {
                 totalDeElementos);
     }
 
+    @ApiOperation(value = "Busca um pet com base no id.",
+                    notes = " O objeto é do tipo PetDTO.",
+                    response = PetDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
+            @ApiResponse(code = 500, message = "Pet não encontrado.")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<Object> buscarPorId(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
         Optional<Pet> pet = petRepository.findById(id);
 
         if (!pet.isPresent()) {
@@ -65,6 +85,10 @@ public class PetController {
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
     }
 
+    @ApiOperation(value = "Salva um pet na plataforma.",
+            notes = " Caso não exista nenhum pet com o id fornecido, um novo pet será criado."
+                    + " Caso contrário, os dados do pet existente serão atualizados."
+    )
     @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
@@ -79,6 +103,11 @@ public class PetController {
         return pet;
     }
 
+    @ApiOperation(value = "Inativa um pet com base no id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pet inativado com sucesso"),
+            @ApiResponse(code = 500, message = "Pet não encontrado.")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluir(@PathVariable("id") UUID id) {
         try {
