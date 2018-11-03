@@ -53,7 +53,7 @@ public class UsuarioController {
     public ResponseEntity<Object> buscar(@PathVariable("id") UUID id) {
         if (!usuarioRepository.existsById(id)) {
             return ResponseEntity.status(500)
-                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+                    .body(new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
         }
 
         return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
@@ -92,7 +92,7 @@ public class UsuarioController {
     public ResponseEntity<Object> deletar(@PathVariable("id") UUID id) {
         if (!usuarioRepository.existsById(id)) {
             return ResponseEntity.status(500)
-                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+                    .body(new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
         }
 
         try {
@@ -110,7 +110,7 @@ public class UsuarioController {
     public ResponseEntity<Object> getFoto(@PathVariable("id") UUID id) {
         if (!usuarioRepository.existsById(id)) {
             return ResponseEntity.status(500)
-                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+                    .body(new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
         }
 
         Usuario usuario = usuarioRepository.findById(id).get();
