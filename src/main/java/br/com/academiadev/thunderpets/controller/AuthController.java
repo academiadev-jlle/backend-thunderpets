@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    ConsumerTokenServices tokenServices;
+    private ConsumerTokenServices tokenServices;
 
     @GetMapping("whoAmI")
     public Object whoAmI() {
@@ -26,8 +26,8 @@ public class AuthController {
         Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
 
         if (details instanceof OAuth2AuthenticationDetails) {
-            return ResponseEntity.ok(
-                    tokenServices.revokeToken(((OAuth2AuthenticationDetails) details).getTokenValue()));
+            return ResponseEntity.status(200)
+                    .body(tokenServices.revokeToken(((OAuth2AuthenticationDetails) details).getTokenValue()));
         }
 
         return ResponseEntity.status(501).body("Não existe usuário logado no sistema");
