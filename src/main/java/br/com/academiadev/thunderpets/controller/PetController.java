@@ -9,6 +9,8 @@ import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -66,6 +68,9 @@ public class PetController {
     }
 
     @PostMapping
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, paramType = "header")
+    })
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
         Pet petConstruido = petMapper.convertPetDTOparaPet(petDTO, localizacao);
