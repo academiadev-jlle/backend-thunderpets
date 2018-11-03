@@ -86,7 +86,7 @@ public class PetController {
     }
 
     @ApiOperation(value = "Salva um pet na plataforma.",
-            notes = " Caso não exista nenhum usuário com o id fornecido, um novo usuário será criado."
+            notes = " Caso não exista nenhum pet com o id fornecido, um novo pet será criado."
                     + " Caso contrário, os dados do pet existente serão atualizados."
     )
     @PostMapping
