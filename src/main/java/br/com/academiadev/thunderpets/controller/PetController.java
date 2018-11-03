@@ -13,6 +13,7 @@ import br.com.academiadev.thunderpets.repository.PetRepository;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,7 +86,13 @@ public class PetController {
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
     }
 
-<<<<<<< HEAD
+    @ApiOperation(value = "Busca os pet com os parâmetros passados.",
+            notes = " O objeto é do tipo PetDTO.",
+            response = PetDTO.class,
+            responseContainer = "Lists")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pets listados com sucesso.")
+    })
     @GetMapping("/filtro")
     public List<PetDTO> filtrar(@RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
@@ -111,12 +118,10 @@ public class PetController {
                 .collect(Collectors.toList());
     }
 
-=======
     @ApiOperation(value = "Salva um pet na plataforma.",
             notes = " Caso não exista nenhum pet com o id fornecido, um novo pet será criado."
                     + " Caso contrário, os dados do pet existente serão atualizados."
     )
->>>>>>> release/2
     @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
