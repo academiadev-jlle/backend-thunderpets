@@ -41,16 +41,21 @@ public class PetController {
 
     @ApiOperation(value = "Lista os pets da plataforma",
             notes = "Retorna uma lista com os detalhes do pet."
-                    + " A lista é paginada com base nos parâmetros.",)
+                    + " A lista é paginada com base nos parâmetros.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping
-    private PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual") @RequestParam(defaultValue = "0") int paginaAtual,
-                                    @ApiParam(value = "Número do tamanho da página") @RequestParam(defaultValue = "10") int tamanho,
-                                    @ApiParam(value = "Direção da ordenação: ascendente ou descendente") @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                    @ApiParam(value = "Nome da coluna que será usada para a ordenação") @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                    @ApiParam(value = "Escolha para buscar os pets ativos") @RequestParam(defaultValue = "true") boolean ativo) {
+    private PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual")
+                                        @RequestParam(defaultValue = "0") int paginaAtual,
+                                    @ApiParam(value = "Número do tamanho da página")
+                                        @RequestParam(defaultValue = "10") int tamanho,
+                                    @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                    @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                        @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                    @ApiParam(value = "Escolha para buscar os pets ativos")
+                                        @RequestParam(defaultValue = "true") boolean ativo) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPets = petRepository.findByAtivo(ativo, paginacao);
         int totalDeElementos = (int) paginaPets.getTotalElements();
