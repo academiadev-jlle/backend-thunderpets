@@ -140,28 +140,6 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void dadoUsuarioNaoCadastrado_quandoRequisicaoPrivada_entaoSemAutorizacao() throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "password");
-        params.add("username", "fake@mail.com");
-        params.add("senha", "senhafake");
-
-        ResultActions result = mock.perform(
-                post("/oauth/token")
-                        .params(params)
-                        .accept("application/json;charset=UTF-8")
-                        .with(httpBasic(client, secret)))
-                .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
-
-        String error = parser.parseMap(result
-                .andReturn()
-                .getResponse()
-                .getContentAsString()).get("error").toString();
-
-        Assert.assertEquals("unauthorized", error);
-    }
-
-    @Test
     public void dadoUsuarioLogado_quandoFazLogout_entaoSucesso() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
