@@ -13,10 +13,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Builder
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class PetDTO {
 
     private UUID id;
