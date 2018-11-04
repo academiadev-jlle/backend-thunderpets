@@ -1,15 +1,14 @@
 package br.com.academiadev.thunderpets.controller;
 
-import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,10 +31,15 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     @Autowired
     private ContatoRepository contatoRepository;
+
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private ContatoMapper contatoMapper;
 
     @ApiOperation(value = "Lista os usuários da plataforma",
             notes = "Retorna uma lista com os detalhes do usuário. A lista é paginada com base nos parâmetros.")
@@ -84,33 +89,27 @@ public class UsuarioController {
             @ApiResponse(code = 200, message = "Usuário criado e/ou atualizado com sucesso"),
             @ApiResponse(code = 500, message = "Erro ao criar e/ou atualizar o usuário")
     })
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO usuarioPersistido = new UsuarioDTO();
-        try {
-            Usuario usuario = usuarioMapper.converterUsuarioDTOparaUsuario(usuarioDTO);
-            usuario = usuarioRepository.saveAndFlush(usuario);
+        usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
+        usuarioDTO.setAtivo(true);
 
-            List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-            for (Contato contatoDelete : contatosDoUsuario) {
-                contatoRepository.delete(contatoDelete);
-            }
-
-            for (ContatoDTO contatoDTO : usuarioDTO.getContatos()) {
-                Contato contato = new Contato();
-                contato.setId(contatoDTO.getId());
-                contato.setTipo(contatoDTO.getTipo());
-                contato.setDescricao(contatoDTO.getDescricao());
-                contato.setUsuario(usuario);
-                contatoRepository.saveAndFlush(contato);
-            }
-
-            usuarioPersistido = usuarioMapper.converterUsuarioParaUsuarioDTO(usuario);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
+            return ResponseEntity
+                    .status(502)
+                    .body(new Exception("O usuário precisa ter pelo menos um contato cadastrado."));
         }
 
-        return ResponseEntity.ok(usuarioPersistido);
+        final Usuario usuario = usuarioRepository
+                .saveAndFlush(usuarioMapper.converterUsuarioDTOparaUsuario(usuarioDTO));
+
+        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
+        contatosDoUsuario.forEach(contatoRepository::delete);
+
+        usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
+                contatoMapper.converterContatoDTOParaContato(contatoDTO, usuario)));
+
+        return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuario));
     }
 
     @ApiOperation(value = "Inativa um usuário com base no id")
