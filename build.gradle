@@ -14,7 +14,6 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'checkstyle'
 
 group = 'br.com.academiadev'
 version = '0.0.1-SNAPSHOT'
@@ -23,12 +22,6 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
 }
-
-checkstyle {
-    configFile = rootProject.file("checkstyle.xml")
-    toolVersion "8.12"
-}
-
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator')
@@ -43,7 +36,7 @@ dependencies {
 
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.security:spring-security-test')
-    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.4.RELEASE'
+    compile('org.springframework.security.oauth:spring-security-oauth2:2.3.4.RELEASE')
     compile('org.postgresql:postgresql:42.2.2')
     compile('io.springfox:springfox-swagger2:2.8.0')
     compile('io.springfox:springfox-swagger-ui:2.8.0')
