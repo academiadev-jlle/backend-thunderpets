@@ -94,13 +94,25 @@ public class PetController {
             @ApiResponse(code = 200, message = "Pets listados com sucesso.")
     })
     @GetMapping("/filtro")
-    public List<PetDTO> filtrar(@RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
+    public PageImpl<PetDTO> filtrar(
+                                @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
                                 @RequestParam(value = "especie", required = false) Especie especie,
                                 @RequestParam(value = "porte", required = false) Porte porte,
                                 @RequestParam(value = "sexo", required = false) Sexo sexo,
                                 @RequestParam(value = "status", required = false) Status status,
-                                @RequestParam(value = "idade", required = false) Idade idade) {
+                                @RequestParam(value = "idade", required = false) Idade idade,
+                                @ApiParam(value = "Número da página atual")
+                                    @RequestParam(defaultValue = "0") int paginaAtual,
+                                @ApiParam(value = "Número do tamanho da página")
+                                    @RequestParam(defaultValue = "10") int tamanho,
+                                @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                    @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                    @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                @ApiParam(value = "Escolha para buscar os pets ativos")
+                                    @RequestParam(defaultValue = "true") boolean ativo) {
+
         Pet pet = Pet.builder()
                 .dataAchado(dataAchado)
                 .dataRegistro(dataRegistro)
@@ -111,11 +123,15 @@ public class PetController {
                 .idade(idade)
                 .build();
 
-        List<Pet> resultadoFiltro = petRepository.findAll(Example.of(pet));
+        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
+        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
+        int totalDeElementos = (int) paginaPetsFiltrados.getTotalElements();
 
-        return resultadoFiltro.stream()
-                .map(p -> petMapper.converterPetParaPetDTO(p))
-                .collect(Collectors.toList());
+        return new PageImpl<PetDTO>(paginaPetsFiltrados.stream()
+            .map(p -> petMapper.converterPetParaPetDTO(p))
+            .collect(Collectors.toList()),
+            paginacao,
+            totalDeElementos);
     }
 
     @ApiOperation(value = "Salva um pet na plataforma.",
