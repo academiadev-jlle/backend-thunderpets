@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.model.Foto;
@@ -11,13 +12,12 @@ import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -83,6 +83,54 @@ public class PetController {
         }
 
         return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
+    }
+
+    @ApiOperation(value = "Busca os pet com os parâmetros passados.",
+            notes = " O objeto é do tipo PetDTO.",
+            response = PetDTO.class,
+            responseContainer = "Lists")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Pets listados com sucesso.")
+    })
+    @GetMapping("/filtro")
+    public PageImpl<PetDTO> filtrar(
+                                @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
+                                @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
+                                @RequestParam(value = "especie", required = false) Especie especie,
+                                @RequestParam(value = "porte", required = false) Porte porte,
+                                @RequestParam(value = "sexo", required = false) Sexo sexo,
+                                @RequestParam(value = "status", required = false) Status status,
+                                @RequestParam(value = "idade", required = false) Idade idade,
+                                @ApiParam(value = "Número da página atual")
+                                    @RequestParam(defaultValue = "0") int paginaAtual,
+                                @ApiParam(value = "Número do tamanho da página")
+                                    @RequestParam(defaultValue = "10") int tamanho,
+                                @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                    @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                    @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                @ApiParam(value = "Escolha para buscar os pets ativos")
+                                    @RequestParam(defaultValue = "true") boolean ativo) {
+        Pet pet = Pet.builder()
+                .dataAchado(dataAchado)
+                .dataRegistro(dataRegistro)
+                .especie(especie)
+                .porte(porte)
+                .sexo(sexo)
+                .status(status)
+                .idade(idade)
+                .ativo(ativo)
+                .build();
+
+        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
+        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
+        int totalDeElementos = (int) paginaPetsFiltrados.getTotalElements();
+
+        return new PageImpl<PetDTO>(paginaPetsFiltrados.stream()
+            .map(p -> petMapper.converterPetParaPetDTO(p))
+            .collect(Collectors.toList()),
+            paginacao,
+            totalDeElementos);
     }
 
     @ApiOperation(value = "Salva um pet na plataforma.",
