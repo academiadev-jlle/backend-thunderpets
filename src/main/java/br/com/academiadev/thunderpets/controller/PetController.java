@@ -69,7 +69,8 @@ public class PetController {
 
     @PostMapping
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, paramType = "header")
+            @ApiImplicitParam(
+                    name = "Authorization", value = "Authorization token", required = true, paramType = "header")
     })
     public Pet salvar(@RequestBody PetDTO petDTO) {
         Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());

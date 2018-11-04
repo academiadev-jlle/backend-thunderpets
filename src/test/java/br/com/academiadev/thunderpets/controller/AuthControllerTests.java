@@ -36,36 +36,89 @@ public class AuthControllerTests {
     @Value("${security.oauth2.client.client-secret}")
     private String secret;
 
+    private JacksonJsonParser parser = new JacksonJsonParser();
+
     @Test
-    public void dadoUsuarioExistenteQuandoSolicitoTokenEntaoSucesso() throws Exception {
+    public void dadoUsuarioExistente_quandoSolicitoToken_entaoSucesso() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", "admin@mail.com");
         params.add("password", "admin");
 
-        ResultActions result = mock.perform(
+        ResultActions login = mock.perform(
                 post("/oauth/token")
                         .params(params)
                         .accept("application/json;charset=UTF-8")
                         .with(httpBasic(client, secret)))
                 .andExpect(status().isOk());
 
-        JacksonJsonParser parser = new JacksonJsonParser();
-        String token = parser.parseMap(result
+        String token = parser.parseMap(login
                 .andReturn()
                 .getResponse()
                 .getContentAsString()).get("access_token").toString();
 
-        ResultActions principal = mock.perform(
+        ResultActions usuario = mock.perform(
                 get("/oauth/whoAmI")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        principal.andExpect(jsonPath("$.username", is("admin@mail.com")));
+        usuario.andExpect(jsonPath("$.username", is("admin@mail.com")));
     }
 
     @Test
-    public void dadoUsuarioCadastradoQuandoSenhaIncorretaEntaoBadCredentials() throws Exception {
+    public void dadoUsuarioLogado_quandoAtualizoToken_entaoRetornaNovoToken() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", "admin@mail.com");
+        params.add("password", "admin");
+
+        ResultActions login = mock.perform(
+                post("/oauth/token")
+                        .params(params)
+                        .accept("application/json;charset=UTF-8")
+                        .with(httpBasic(client, secret)))
+                .andExpect(status().isOk());
+
+        String refreshToken = parser.parseMap(login
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).get("refresh_token").toString();
+
+        params.clear();
+        params.add("grant_type", "refresh_token");
+        params.add("refresh_token", refreshToken);
+
+        ResultActions refresh = mock.perform(
+                post("/oauth/token")
+                        .params(params)
+                        .accept("application/json;charset=UTF-8")
+                        .with(httpBasic(client, secret)))
+                .andExpect(status().isOk());
+
+        String token = parser.parseMap(refresh
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).get("access_token").toString();
+
+        ResultActions usuario = mock.perform(
+                get("/oauth/whoAmI")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        usuario.andExpect(jsonPath("$.username", is("admin@mail.com")));
+    }
+
+    @Test
+    public void dadoNenhumaSecao_quandoWhoAmI_entaoUsuarioAnonimo() throws Exception {
+        String usuario = mock.perform(get("/oauth/whoAmI"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        Assert.assertEquals("anonymousUser", usuario);
+    }
+
+    @Test
+    public void dadoUsuarioCadastrado_quandoSenhaIncorreta_entaoBadCredentials() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", "admin@mail.com");
@@ -78,7 +131,6 @@ public class AuthControllerTests {
                         .with(httpBasic(client, secret)))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 
-        JacksonJsonParser parser = new JacksonJsonParser();
         String error = parser.parseMap(result
                 .andReturn()
                 .getResponse()
@@ -88,7 +140,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void dadoUsuarioNaoCadastradoEntaoSemAutorizacao() throws Exception {
+    public void dadoUsuarioNaoCadastrado_quandoRequisicaoPrivada_entaoSemAutorizacao() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", "fake@mail.com");
@@ -101,12 +153,44 @@ public class AuthControllerTests {
                         .with(httpBasic(client, secret)))
                 .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
 
-        JacksonJsonParser parser = new JacksonJsonParser();
         String error = parser.parseMap(result
                 .andReturn()
                 .getResponse()
                 .getContentAsString()).get("error").toString();
 
         Assert.assertEquals("unauthorized", error);
+    }
+
+    @Test
+    public void dadoUsuarioLogado_quandoFazLogout_entaoSucesso() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", "admin@mail.com");
+        params.add("password", "admin");
+
+        ResultActions login = mock.perform(
+                post("/oauth/token")
+                        .params(params)
+                        .accept("application/json;charset=UTF-8")
+                        .with(httpBasic(client, secret)))
+                .andExpect(status().isOk());
+
+        String token = parser.parseMap(login
+                .andReturn()
+                .getResponse()
+                .getContentAsString()).get("access_token").toString();
+
+        ResultActions logout = mock.perform(
+                get("/oauth/logout")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+
+        Assert.assertEquals("true", logout.andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    public void dadoSemUsuario_quandoFazLogout_entaoErro() throws Exception {
+        mock.perform(get("/oauth/logout")).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
     }
 }
