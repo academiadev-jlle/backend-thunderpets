@@ -111,7 +111,6 @@ public class PetController {
                                     @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
                                 @ApiParam(value = "Escolha para buscar os pets ativos")
                                     @RequestParam(defaultValue = "true") boolean ativo) {
-
         Pet pet = Pet.builder()
                 .dataAchado(dataAchado)
                 .dataRegistro(dataRegistro)
