@@ -1,6 +1,8 @@
 package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.TipoContato;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,9 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Contato {
 
     @Id

@@ -1,5 +1,5 @@
 # ThunderPets™ -  Back-End
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-joinville/projeto-backend-thunderpets.svg?columns=all)](https://waffle.io/academiadev-joinville/projeto-backend-thunderpets)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-jlle/wiki-thunderpets.svg?columns=all)](https://waffle.io/academiadev-jlle/wiki-thunderpets)
 
 Projeto da AcademiaDev - Petcodes - Thunderpets
 
