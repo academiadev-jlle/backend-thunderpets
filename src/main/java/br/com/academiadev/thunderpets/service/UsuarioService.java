@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +34,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private ContatoMapper contatoMapper;
 
     public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
@@ -52,28 +58,23 @@ public class UsuarioService {
     }
 
     public Object salvar(UsuarioDTO usuarioDTO) throws Exception {
-        UsuarioDTO usuarioPersistido = new UsuarioDTO();
+        usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
+        usuarioDTO.setAtivo(true);
 
-        Usuario usuario = usuarioMapper.converterUsuarioDTOParaUsuario(usuarioDTO);
-        usuario = usuarioRepository.saveAndFlush(usuario);
+        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
+            throw new Exception("O usuário precisa ter pelo menos um contato cadastrado.");
+        }
+
+        final Usuario usuario = usuarioRepository
+                .saveAndFlush(usuarioMapper.converterUsuarioDTOParaUsuario(usuarioDTO));
 
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        for (Contato contatoDelete : contatosDoUsuario) {
-            contatoRepository.delete(contatoDelete);
-        }
+        contatosDoUsuario.forEach(contatoRepository::delete);
 
-        for (ContatoDTO contatoDTO : usuarioDTO.getContatos()) {
-            Contato contato = new Contato();
-            contato.setId(contatoDTO.getId());
-            contato.setTipo(contatoDTO.getTipo());
-            contato.setDescricao(contatoDTO.getDescricao());
-            contato.setUsuario(usuario);
-            contatoRepository.saveAndFlush(contato);
-        }
+        usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
+                contatoMapper.converterContatoDTOParaContato(contatoDTO, usuario)));
 
-        usuarioPersistido = usuarioMapper.converterUsuarioParaUsuarioDTO(usuario);
-
-        return usuarioPersistido;
+        return usuarioMapper.converterUsuarioParaUsuarioDTO(usuario);
     }
 
     public Object deletar(UUID id) throws Exception {

@@ -88,25 +88,13 @@ public class UsuarioController {
     })
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
-        usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
-        usuarioDTO.setAtivo(true);
-
-        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
-            return ResponseEntity
-                    .status(502)
-                    .body(new Exception("O usuário precisa ter pelo menos um contato cadastrado."));
+        try {
+            usuarioDTO = (UsuarioDTO) usuarioService.salvar(usuarioDTO);
+        } catch (Exception e) {
+            ResponseEntity.status(500).body(e);
         }
 
-        final Usuario usuario = usuarioRepository
-                .saveAndFlush(usuarioMapper.converterUsuarioDTOParaUsuario(usuarioDTO));
-
-        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        contatosDoUsuario.forEach(contatoRepository::delete);
-
-        usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
-                contatoMapper.converterContatoDTOParaContato(contatoDTO, usuario)));
-
-        return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuario));
+        return ResponseEntity.ok(usuarioDTO);
     }
 
     @ApiOperation(value = "Inativa um usuário com base no id")
