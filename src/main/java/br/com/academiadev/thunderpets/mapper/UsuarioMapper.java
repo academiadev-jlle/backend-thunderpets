@@ -40,7 +40,7 @@ public class UsuarioMapper {
         return usuarioDTO;
     }
 
-    public Usuario converterUsuarioDTOparaUsuario(UsuarioDTO usuarioDTO) {
+    public Usuario converterUsuarioDTOParaUsuario(UsuarioDTO usuarioDTO) {
         return Usuario.builder()
                 .id(usuarioDTO.getId())
                 .nome(usuarioDTO.getNome())

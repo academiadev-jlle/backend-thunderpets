@@ -1,19 +1,14 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
-import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-<<<<<<< HEAD
-
 import br.com.academiadev.thunderpets.service.UsuarioService;
-=======
->>>>>>> master
+
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,10 +30,8 @@ import java.util.stream.Collectors;
 public class UsuarioController {
 
     @Autowired
-<<<<<<< HEAD
     private UsuarioService usuarioService;
 
-=======
     private UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -50,7 +43,6 @@ public class UsuarioController {
     @Autowired
     private ContatoMapper contatoMapper;
 
->>>>>>> master
     @ApiOperation(value = "Lista os usuários da plataforma",
             notes = "Retorna uma lista com os detalhes do usuário. A lista é paginada com base nos parâmetros.")
     @ApiResponses(value = {
@@ -65,19 +57,7 @@ public class UsuarioController {
                                            @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
                                        @ApiParam(value = "Nome da coluna que será usada para a ordenação")
                                            @RequestParam(defaultValue = "nome") String campoOrdenacao) {
-<<<<<<< HEAD
-
         return usuarioService.listar(paginaAtual, tamanho, direcao, campoOrdenacao);
-=======
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
-        int totalDeElementos = (int) paginaUsuarios.getTotalElements();
-
-        return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> usuarioMapper.converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
-                paginacao,
-                totalDeElementos);
->>>>>>> master
     }
 
     @ApiOperation(value = "Busca um usuário com base no id")
@@ -106,15 +86,6 @@ public class UsuarioController {
             @ApiResponse(code = 200, message = "Usuário criado e/ou atualizado com sucesso"),
             @ApiResponse(code = 500, message = "Erro ao criar e/ou atualizar o usuário")
     })
-<<<<<<< HEAD
-    @PostMapping("")
-    public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO usuarioPersistido = new UsuarioDTO();
-        try {
-            usuarioPersistido = (UsuarioDTO) usuarioService.salvar(usuarioDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-=======
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
         usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
@@ -124,11 +95,10 @@ public class UsuarioController {
             return ResponseEntity
                     .status(502)
                     .body(new Exception("O usuário precisa ter pelo menos um contato cadastrado."));
->>>>>>> master
         }
 
         final Usuario usuario = usuarioRepository
-                .saveAndFlush(usuarioMapper.converterUsuarioDTOparaUsuario(usuarioDTO));
+                .saveAndFlush(usuarioMapper.converterUsuarioDTOParaUsuario(usuarioDTO));
 
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
         contatosDoUsuario.forEach(contatoRepository::delete);
