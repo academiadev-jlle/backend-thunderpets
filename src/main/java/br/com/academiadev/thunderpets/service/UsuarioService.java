@@ -1,6 +1,5 @@
 package br.com.academiadev.thunderpets.service;
 
-import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +42,7 @@ public class UsuarioService {
         int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
         return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> usuarioMapper.converterUsuarioParaUsuarioDTO(usuario)).collect(Collectors.toList()),
+                .map(usuario -> usuarioMapper.toDTO(usuario)).collect(Collectors.toList()),
                 paginacao,
                 totalDeElementos);
     }
@@ -54,7 +52,7 @@ public class UsuarioService {
            throw new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado.");
         }
 
-        return usuarioMapper.converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get());
+        return usuarioMapper.toDTO(usuarioRepository.findById(id).get());
     }
 
     public Object salvar(UsuarioDTO usuarioDTO) throws Exception {
@@ -66,15 +64,15 @@ public class UsuarioService {
         }
 
         final Usuario usuario = usuarioRepository
-                .saveAndFlush(usuarioMapper.converterUsuarioDTOParaUsuario(usuarioDTO));
+                .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
 
         List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
         contatosDoUsuario.forEach(contatoRepository::delete);
 
         usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
-                contatoMapper.converterContatoDTOParaContato(contatoDTO, usuario)));
+                contatoMapper.toEntity(contatoDTO, usuario)));
 
-        return usuarioMapper.converterUsuarioParaUsuarioDTO(usuario);
+        return usuarioMapper.toDTO(usuario);
     }
 
     public Object deletar(UUID id) throws Exception {

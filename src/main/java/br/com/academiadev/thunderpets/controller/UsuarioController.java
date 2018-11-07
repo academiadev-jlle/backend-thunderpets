@@ -1,28 +1,17 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.mapper.ContatoMapper;
-import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
-import br.com.academiadev.thunderpets.model.Contato;
-import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.ContatoRepository;
-import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuario")
@@ -31,17 +20,6 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private ContatoRepository contatoRepository;
-
-    @Autowired
-    private UsuarioMapper usuarioMapper;
-
-    @Autowired
-    private ContatoMapper contatoMapper;
 
     @ApiOperation(value = "Lista os usuários da plataforma",
             notes = "Retorna uma lista com os detalhes do usuário. A lista é paginada com base nos parâmetros.")

@@ -2,52 +2,37 @@ package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class UsuarioMapper {
+@Mapper(componentModel = "spring")
+public abstract class UsuarioMapper {
 
     @Autowired
-    private ContatoRepository contatoRepository;
+    ContatoRepository contatoRepository;
+
     @Autowired
-    private ContatoMapper contatoMapper;
+    ContatoMapper contatoMapper;
 
-    public UsuarioDTO converterUsuarioParaUsuarioDTO(Usuario usuario) {
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .id(usuario.getId())
-                .nome(usuario.getNome())
-                .email(usuario.getEmail())
-                .senha(usuario.getSenha())
-                .foto(usuario.getFoto())
-                .ativo(usuario.isAtivo())
-                .build();
+    public abstract UsuarioDTO toDTO(Usuario usuario);
 
-        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        Set<ContatoDTO> contatos = contatosDoUsuario.stream()
-                .map(contato -> contatoMapper.converterContatoParaContatoDTO(contato))
+    public abstract Usuario toEntity(UsuarioDTO usuarioDTO);
+
+    @AfterMapping
+    void setContato(Usuario usuario, @MappingTarget UsuarioDTO usuarioDTO) {
+        Set<ContatoDTO> contatos = contatoRepository.findByUsuario(usuario)
+                .stream()
+                .map(contato -> contatoMapper.toDTO(contato))
                 .collect(Collectors.toSet());
 
         usuarioDTO.setContatos(contatos);
-
-        return usuarioDTO;
     }
 
-    public Usuario converterUsuarioDTOParaUsuario(UsuarioDTO usuarioDTO) {
-        return Usuario.builder()
-                .id(usuarioDTO.getId())
-                .nome(usuarioDTO.getNome())
-                .email(usuarioDTO.getEmail())
-                .senha(usuarioDTO.getSenha())
-                .foto(usuarioDTO.getFoto())
-                .ativo(usuarioDTO.isAtivo())
-                .build();
-    }
 }
