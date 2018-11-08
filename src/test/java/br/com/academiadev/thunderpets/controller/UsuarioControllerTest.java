@@ -1,12 +1,11 @@
 package br.com.academiadev.thunderpets.controller;
 
-import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.enums.TipoContato;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
+import br.com.academiadev.thunderpets.util.Util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,15 +23,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,12 +41,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
+@Transactional
 public class UsuarioControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private Util util;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -60,28 +63,21 @@ public class UsuarioControllerTest {
 
     private Map<String, UUID> mapaUsuarios = new HashMap<String, UUID>();
 
-    @Before
-    public void antes() {
-        // Apagar todos os registros do db para não interferir nos testes
-        contatoRepository.deleteAll();
-        usuarioRepository.deleteAll();
-    }
-
     @Test
     public void listar() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOJekaterina())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOKamuela())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         PageRequest paginacao = PageRequest.of(0, 10, Sort.Direction.ASC, "nome");
@@ -102,12 +98,12 @@ public class UsuarioControllerTest {
     public void buscar() throws Exception {
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         String epaminondas = (String) new JSONObject(conteudoRetorno).get("id");
 
-        JSONObject jsonObj = new JSONObject(new Gson().toJson(criarUsuarioDTOEpaminondas()));
+        JSONObject jsonObj = new JSONObject(new Gson().toJson(util.criarUsuarioDTOEpaminondas()));
 
         ResultActions performGET = mvc.perform(get("/usuario/" + epaminondas))
                 .andExpect(status().isOk())
@@ -118,7 +114,7 @@ public class UsuarioControllerTest {
     public void buscarUsuarioNaoEncontrado() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -132,7 +128,7 @@ public class UsuarioControllerTest {
     public void salvar() throws Exception {
         ResultActions performGET = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andExpect(status().isOk());
     }
 
@@ -140,12 +136,12 @@ public class UsuarioControllerTest {
     public void deletar() throws Exception {
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         String epaminondas = (String) new JSONObject(conteudoRetorno).get("id");
 
-        JSONObject jsonObj = new JSONObject(new Gson().toJson(criarUsuarioDTOEpaminondas()));
+        JSONObject jsonObj = new JSONObject(new Gson().toJson(util.criarUsuarioDTOEpaminondas()));
 
         ResultActions performGET = mvc.perform(delete("/usuario/" + epaminondas))
                 .andExpect(status().isOk())
@@ -157,7 +153,7 @@ public class UsuarioControllerTest {
     public void deletarUsuarioNaoEncontrado() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(criarUsuarioDTOEpaminondas())))
+                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -180,83 +176,5 @@ public class UsuarioControllerTest {
         mapper.registerModule(module);
 
         return mapper.writeValueAsBytes(object);
-    }
-
-    public UsuarioDTO criarUsuarioDTOEpaminondas() {
-        ContatoDTO contatoDTO = ContatoDTO.builder()
-                .tipo(TipoContato.TELEFONE)
-                .descricao("(47) 3434-3232")
-                .build();
-        ContatoDTO contatoDTO1 = ContatoDTO.builder()
-                .tipo(TipoContato.CELULAR)
-                .descricao("(47) 98739-6879")
-                .build();
-
-        Set<ContatoDTO> contatos = new HashSet<>();
-        contatos.add(contatoDTO);
-        contatos.add(contatoDTO1);
-
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .nome("Epaminondas Silva")
-                .email("epaminondas@gmail.com")
-                .senha("epaminondas123")
-                .foto(null)
-                .ativo(true)
-                .contatos(contatos)
-                .build();
-
-        return usuarioDTO;
-    }
-
-    public UsuarioDTO criarUsuarioDTOJekaterina() {
-        ContatoDTO contatoDTO = ContatoDTO.builder()
-                .tipo(TipoContato.EMAIL)
-                .descricao("jekaterina.contato@gmail.com")
-                .build();
-        ContatoDTO contatoDTO1 = ContatoDTO.builder()
-                .tipo(TipoContato.CELULAR)
-                .descricao("(47) 98739-6879")
-                .build();
-
-        Set<ContatoDTO> contatos = new HashSet<>();
-        contatos.add(contatoDTO);
-        contatos.add(contatoDTO1);
-
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .nome("Jekaterina Souza")
-                .email("jekaterina@gmail.com")
-                .senha("jekaterina123")
-                .foto(null)
-                .ativo(true)
-                .contatos(contatos)
-                .build();
-
-        return usuarioDTO;
-    }
-
-    public UsuarioDTO criarUsuarioDTOKamuela() {
-        ContatoDTO contatoDTO = ContatoDTO.builder()
-                .tipo(TipoContato.REDE_SOCIAL)
-                .descricao("https://www.facebook.com/kamuela.pereira")
-                .build();
-        ContatoDTO contatoDTO1 = ContatoDTO.builder()
-                .tipo(TipoContato.CELULAR)
-                .descricao("(47) 98739-6879")
-                .build();
-
-        Set<ContatoDTO> contatos = new HashSet<>();
-        contatos.add(contatoDTO);
-        contatos.add(contatoDTO1);
-
-        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
-                .nome("Kamuela Pereira")
-                .email("kamuela@gmail.com")
-                .senha("kamuela123")
-                .foto(null)
-                .ativo(true)
-                .contatos(contatos)
-                .build();
-
-        return usuarioDTO;
     }
 }
