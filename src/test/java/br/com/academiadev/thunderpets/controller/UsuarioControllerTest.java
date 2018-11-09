@@ -6,13 +6,8 @@ import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.util.Util;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,17 +61,17 @@ public class UsuarioControllerTest {
     public void listar() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         PageRequest paginacao = PageRequest.of(0, 10, Sort.Direction.ASC, "nome");
@@ -90,31 +84,32 @@ public class UsuarioControllerTest {
         ResultActions performGET = mvc.perform(get("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk());
-        
+
     }
 
-    @Ignore
     @Test
     public void buscar() throws Exception {
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString();
 
-        String epaminondas = (String) new JSONObject(conteudoRetorno).get("id");
+        String jekaterina = (String) new JSONObject(conteudoRetorno).get("id");
 
-        JSONObject jsonObj = new JSONObject(new Gson().toJson(util.criarUsuarioDTOEpaminondas()));
-
-        ResultActions performGET = mvc.perform(get("/usuario/" + epaminondas))
+        ResultActions performGET = mvc.perform(get("/usuario/" + jekaterina))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonObj.toString()));
+                .andExpect(jsonPath("$.nome", is("Jekaterina Souza")))
+                .andExpect(jsonPath("$.email", is("jekaterina@gmail.com")))
+                .andExpect(jsonPath("$.contatos[0].tipo", is("TELEFONE")))
+                .andExpect(jsonPath("$.contatos[0].descricao", is("(47) 3434-3232")))
+                .andExpect(jsonPath("$.contatos[1].descricao", is("(47) 98739-6879")));
     }
 
     @Test
     public void buscarUsuarioNaoEncontrado() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -128,7 +123,7 @@ public class UsuarioControllerTest {
     public void salvar() throws Exception {
         ResultActions performGET = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andExpect(status().isOk());
     }
 
@@ -136,7 +131,7 @@ public class UsuarioControllerTest {
     public void deletar() throws Exception {
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         String epaminondas = (String) new JSONObject(conteudoRetorno).get("id");
@@ -148,12 +143,11 @@ public class UsuarioControllerTest {
                 .andExpect(content().string("true"));
     }
 
-    @Ignore
     @Test
     public void deletarUsuarioNaoEncontrado() throws Exception {
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -166,15 +160,5 @@ public class UsuarioControllerTest {
     @Test
     public void getFoto() {
 
-    }
-
-    public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        JavaTimeModule module = new JavaTimeModule();
-        mapper.registerModule(module);
-
-        return mapper.writeValueAsBytes(object);
     }
 }

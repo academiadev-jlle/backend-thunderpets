@@ -85,7 +85,7 @@ public class UsuarioController {
         try {
             usuarioService.deletar(id);
         } catch (Exception e) {
-            ResponseEntity.status(500).body(e);
+            return ResponseEntity.status(500).body(e);
         }
 
         return ResponseEntity.ok(true);

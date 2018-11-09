@@ -5,8 +5,12 @@ import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.enums.TipoContato;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -94,5 +98,15 @@ public class Util {
                 .usuario(criarUsuarioKamuela())
                 .descricao("https://www.facebook.com/thunderpets")
                 .build();
+    }
+
+    public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        JavaTimeModule module = new JavaTimeModule();
+        mapper.registerModule(module);
+
+        return mapper.writeValueAsBytes(object);
     }
 }
