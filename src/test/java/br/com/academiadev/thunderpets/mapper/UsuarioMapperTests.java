@@ -22,7 +22,7 @@ import java.util.Set;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @Transactional
-public class UsuarioMapperTest {
+public class UsuarioMapperTests {
 
     @Autowired
     private Util util;

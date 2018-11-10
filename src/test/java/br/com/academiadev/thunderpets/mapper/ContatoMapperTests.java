@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class ContatoMapperTest {
+public class ContatoMapperTests {
     
     @Autowired
     private Util util;
