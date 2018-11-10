@@ -61,14 +61,13 @@ public class UsuarioControllerTests {
 
         //Entao
         listaDeUsuarios.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome", is("admin")))
                 .andExpect(jsonPath("$.content[1].nome", is("Epaminondas Silva")))
                 .andExpect(jsonPath("$.content[2].nome", is("Jekaterina Souza")))
                 .andExpect(jsonPath("$.content[3].nome", is("Kamuela Pereira")));
     }
 
     @Test
-    public void dadoUsuarios_quandoListo3PorEmailDESC_entaoListar3PorEmailDESC() throws Exception {
+    public void dadoUsuarios_quandoListo2PorEmailDESC_entaoListar3PorEmailDESC() throws Exception {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -95,8 +94,7 @@ public class UsuarioControllerTests {
         //Entao
         listaDeUsuarios.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].email", is("kamuela@gmail.com")))
-                .andExpect(jsonPath("$.content[1].email", is("jekaterina@gmail.com")))
-                .andExpect(jsonPath("$.content[2].email", is("epaminondas@gmail.com")));
+                .andExpect(jsonPath("$.content[1].email", is("jekaterina@gmail.com")));
     }
 
     @Test
@@ -104,7 +102,7 @@ public class UsuarioControllerTests {
         //Dado
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         String idJekaterina = (String) new JSONObject(conteudoRetorno).get("id");
@@ -114,11 +112,10 @@ public class UsuarioControllerTests {
 
         //Entao
         usuario.andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome", is("Jekaterina Souza")))
-                .andExpect(jsonPath("$.email", is("jekaterina@gmail.com")))
-                .andExpect(jsonPath("$.contatos[0].tipo", is("TELEFONE")))
-                .andExpect(jsonPath("$.contatos[0].descricao", is("(47) 3434-3232")))
-                .andExpect(jsonPath("$.contatos[1].descricao", is("(47) 98739-6879")));
+                .andExpect(jsonPath("$.nome", is("Kamuela Pereira")))
+                .andExpect(jsonPath("$.email", is("kamuela@gmail.com")))
+                .andExpect(jsonPath("$.contatos[0].tipo", is("CELULAR")))
+                .andExpect(jsonPath("$.contatos[0].descricao", is("(47) 98739-6879")));
     }
 
     @Test
