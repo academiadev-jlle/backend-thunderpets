@@ -3,24 +3,20 @@ package br.com.academiadev.thunderpets.controller;
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
-import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
-import br.com.academiadev.thunderpets.repository.FotoRepository;
-import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
-import br.com.academiadev.thunderpets.repository.PetRepository;
+import br.com.academiadev.thunderpets.service.PetService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
@@ -28,16 +24,7 @@ import java.util.stream.Collectors;
 public class PetController {
 
     @Autowired
-    private PetRepository petRepository;
-
-    @Autowired
-    private LocalizacaoRepository localizacaoRepository;
-
-    @Autowired
-    private FotoRepository fotoRepository;
-
-    @Autowired
-    private PetMapper petMapper;
+    private PetService petService;
 
     @ApiOperation(value = "Lista os pets da plataforma",
             notes = "Retorna uma lista com os detalhes do pet."
@@ -46,25 +33,13 @@ public class PetController {
             @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping
-    private PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual")
-                                        @RequestParam(defaultValue = "0") int paginaAtual,
-                                    @ApiParam(value = "Número do tamanho da página")
-                                        @RequestParam(defaultValue = "10") int tamanho,
-                                    @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
-                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                    @ApiParam(value = "Nome da coluna que será usada para a ordenação")
-                                        @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                    @ApiParam(value = "Escolha para buscar os pets ativos")
+    public PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual")
+                                        @RequestParam(defaultValue = "0") int paginaAtual, @ApiParam(value = "Número do tamanho da página")
+                                        @RequestParam(defaultValue = "10") int tamanho, @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao, @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                        @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao, @ApiParam(value = "Escolha para buscar os pets ativos")
                                         @RequestParam(defaultValue = "true") boolean ativo) {
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPets = petRepository.findByAtivo(ativo, paginacao);
-        int totalDeElementos = (int) paginaPets.getTotalElements();
-
-        return new PageImpl<PetDTO>(paginaPets.stream()
-                .map(pet -> petMapper.converterPetParaPetDTO(pet))
-                .collect(Collectors.toList()),
-                paginacao,
-                totalDeElementos);
+        return petService.buscar(paginaAtual, tamanho, direcao, campoOrdenacao, ativo);
     }
 
     @ApiOperation(value = "Busca um pet com base no id.",
@@ -76,13 +51,15 @@ public class PetController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
-        Optional<Pet> pet = petRepository.findById(id);
+        PetDTO petDTO;
 
-        if (!pet.isPresent()) {
-            return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
+        try {
+            petDTO = petService.buscarPorId(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e);
         }
 
-        return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
+        return ResponseEntity.ok(petDTO);
     }
 
     @ApiOperation(value = "Busca os pet com os parâmetros passados.",
@@ -111,26 +88,11 @@ public class PetController {
                                     @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
                                 @ApiParam(value = "Escolha para buscar os pets ativos")
                                     @RequestParam(defaultValue = "true") boolean ativo) {
-        Pet pet = Pet.builder()
-                .dataAchado(dataAchado)
-                .dataRegistro(dataRegistro)
-                .especie(especie)
-                .porte(porte)
-                .sexo(sexo)
-                .status(status)
-                .idade(idade)
-                .ativo(ativo)
-                .build();
 
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
-        int totalDeElementos = (int) paginaPetsFiltrados.getTotalElements();
-
-        return new PageImpl<PetDTO>(paginaPetsFiltrados.stream()
-            .map(p -> petMapper.converterPetParaPetDTO(p))
-            .collect(Collectors.toList()),
-            paginacao,
-            totalDeElementos);
+        return petService.filtrar(dataAchado, dataRegistro, especie,
+            porte, sexo, status,
+            idade, paginaAtual, tamanho,
+            direcao, campoOrdenacao, ativo);
     }
 
     @ApiOperation(value = "Salva um pet na plataforma.",
@@ -143,16 +105,7 @@ public class PetController {
                     name = "Authorization", value = "Authorization token", required = true, paramType = "header")
     })
     public Pet salvar(@RequestBody PetDTO petDTO) {
-        Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
-        Pet petConstruido = petMapper.convertPetDTOparaPet(petDTO, localizacao);
-        Pet pet = petRepository.saveAndFlush(petConstruido);
-
-        for (Foto foto : petDTO.getFotos()) {
-            foto.setPet(pet);
-            fotoRepository.saveAndFlush(foto);
-        }
-
-        return pet;
+        return petService.salvar(petDTO);
     }
 
     @ApiOperation(value = "Inativa um pet com base no id")
@@ -162,20 +115,6 @@ public class PetController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> excluir(@PathVariable("id") UUID id) {
-        try {
-            Optional<Pet> pet = petRepository.findById(id);
-
-            if (!pet.isPresent()) {
-                return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
-            }
-
-            Pet petSalvar = pet.get();
-            petSalvar.setAtivo(false);
-            petRepository.saveAndFlush(petSalvar);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
-
-        return ResponseEntity.ok(true);
+        return petService.excluir(id);
     }
 }
