@@ -61,10 +61,9 @@ public class UsuarioControllerTests {
 
         //Entao
         listaDeUsuarios.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome", is("admin")))
-                .andExpect(jsonPath("$.content[1].nome", is("Epaminondas Silva")))
-                .andExpect(jsonPath("$.content[2].nome", is("Jekaterina Souza")))
-                .andExpect(jsonPath("$.content[3].nome", is("Kamuela Pereira")));
+                .andExpect(jsonPath("$.content[0].nome", is("Epaminondas Silva")))
+                .andExpect(jsonPath("$.content[1].nome", is("Jekaterina Souza")))
+                .andExpect(jsonPath("$.content[2].nome", is("Kamuela Pereira")));
     }
 
     @Test
