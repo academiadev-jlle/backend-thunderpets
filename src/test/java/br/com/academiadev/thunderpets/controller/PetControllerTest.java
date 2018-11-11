@@ -33,10 +33,7 @@ public class PetControllerTest {
     @Autowired
     private FotoRepository fotoRepository;
 
-    @Test
-    public void listar() throws Exception {
-        mvc.perform(post(/pet))
-    }
+
 
 
 }
