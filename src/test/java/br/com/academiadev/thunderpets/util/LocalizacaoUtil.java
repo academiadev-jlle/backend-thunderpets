@@ -1,9 +1,11 @@
 package br.com.academiadev.thunderpets.util;
 
 import br.com.academiadev.thunderpets.model.Localizacao;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class LocalizacaoUtil {
 
     public Localizacao criaLocalizacaoGaruva() {

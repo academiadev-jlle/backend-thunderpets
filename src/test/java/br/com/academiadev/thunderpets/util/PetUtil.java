@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.util;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
+import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
@@ -12,13 +13,16 @@ import java.time.LocalDate;
 @Component
 public class PetUtil {
 
-    @Autowired
-    LocalizacaoUtil localizacaoUtil;
-
-    @Autowired
-    Util util;
+//    @Autowired
+//    LocalizacaoUtil localizacaoUtil;
+//
+//    @Autowired
+//    Util util;
 
     public Pet criaPetBrabo(){
+        LocalizacaoUtil localizacaoUtil = new LocalizacaoUtil();
+        Util util = new Util();
+
         Pet pet = Pet.builder()
                 .nome("Brabo")
                 .descricao("Bixo e brabo")

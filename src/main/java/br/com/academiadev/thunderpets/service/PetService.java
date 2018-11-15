@@ -79,7 +79,7 @@ public class PetService {
         return new PageImpl<PetDTO>(paginaPetsFiltrados.stream().map(p -> petMapper.toDTO(p)).collect(Collectors.toList()), paginacao, totalDeElementos);
     }
 
-    public Pet salvar(@RequestBody PetDTO petDTO) {
+    public Object salvar(@RequestBody PetDTO petDTO) {
 
         Localizacao local = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
         Pet petConstruido = petMapper.toEntity(petDTO, local);

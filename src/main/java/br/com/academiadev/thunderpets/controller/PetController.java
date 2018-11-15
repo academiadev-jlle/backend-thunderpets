@@ -2,10 +2,6 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
-import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
-import br.com.academiadev.thunderpets.model.Foto;
-import br.com.academiadev.thunderpets.model.Localizacao;
-import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.service.PetService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -104,8 +99,9 @@ public class PetController {
             @ApiImplicitParam(
                     name = "Authorization", value = "Authorization token", required = true, paramType = "header")
     })
-    public Pet salvar(@RequestBody PetDTO petDTO) {
-        return petService.salvar(petDTO);
+    public ResponseEntity<Object> salvar(@RequestBody PetDTO petDTO) {
+
+        return ResponseEntity.ok(petService.salvar(petDTO));
     }
 
     @ApiOperation(value = "Inativa um pet com base no id")

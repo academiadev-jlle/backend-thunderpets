@@ -3,10 +3,14 @@ package br.com.academiadev.thunderpets.util;
 import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ActiveProfiles("test")
+@Component
 public class FotoUtil {
 
     @Autowired

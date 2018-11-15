@@ -44,19 +44,18 @@ public class PetMapperTest {
     @Autowired
     public PetMapper petMapper;
 
-    @Autowired
-    public PetRepository petRepository;
-
     @Test
-    public void MapearPetParaPetDTO(){
+    public void dadoPet_QuandoMapeioParaPetDTO_entaoRetornaPetDTO(){
+
+        //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
-
         Usuario usuario = util.criarUsuarioKamuela();
-
         Pet pet = petUtil.criaPetBrabo();
 
+        //Quando
         PetDTO petDTO = petMapper.toDTO(pet);
 
+        //Então
         Assert.assertEquals(petDTO.getNome(), "Brabo");
         Assert.assertEquals(petDTO.getDescricao(), "Bixo e brabo");
         Assert.assertEquals(petDTO.getDataAchado(), LocalDate.now());
@@ -68,22 +67,21 @@ public class PetMapperTest {
         Assert.assertEquals(petDTO.getIdade(), Idade.ADULTO);
         Assert.assertEquals(petDTO.getUsuario(), usuario);
         Assert.assertEquals(petDTO.getLocalizacao(), localizacao);
-        Assert.assertEquals(petDTO.isAtivo(), true);
-
-
+        Assert.assertTrue(petDTO.isAtivo());
     }
 
     @Test
-    public void MapearPetDTOParaPet(){
+    public void dadoPetDTO_QuandoMapeioParaPet_entaoRetornaPet(){
 
+        //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
-
         Usuario usuario = util.criarUsuarioKamuela();
-
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
 
+        //Quando
         Pet pet = petMapper.toEntity(petDTO, localizacao);
 
+        //Então
         Assert.assertEquals(pet.getNome(), "Brabo");
         Assert.assertEquals(pet.getDescricao(), "Bixo e brabo");
         Assert.assertEquals(pet.getDataAchado(), LocalDate.now());
@@ -95,9 +93,7 @@ public class PetMapperTest {
         Assert.assertEquals(pet.getIdade(), Idade.ADULTO);
         Assert.assertEquals(pet.getUsuario(), usuario);
         Assert.assertEquals(pet.getLocalizacao(), localizacao);
-        Assert.assertEquals(pet.isAtivo(), true);
-
-
+        Assert.assertTrue(pet.isAtivo());
     }
 
 }

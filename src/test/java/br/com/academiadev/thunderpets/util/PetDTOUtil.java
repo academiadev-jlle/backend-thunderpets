@@ -4,10 +4,14 @@ import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.model.Foto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Component
+@ActiveProfiles("test")
 public class PetDTOUtil {
 
     @Autowired
@@ -20,6 +24,7 @@ public class PetDTOUtil {
     public FotoUtil fotoUtil;
 
     public PetDTO criaPetDTOBrabo() {
+
         List<Foto> fotos = fotoUtil.criaTresFotos();
 
         PetDTO petDTO = PetDTO.builder()
