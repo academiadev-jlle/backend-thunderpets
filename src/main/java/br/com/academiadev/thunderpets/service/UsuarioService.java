@@ -42,7 +42,7 @@ public class UsuarioService {
         int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
         return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> usuarioMapper.toDTO(usuario)).collect(Collectors.toList()),
+                .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario))).collect(Collectors.toList()),
                 paginacao,
                 totalDeElementos);
     }
@@ -52,7 +52,8 @@ public class UsuarioService {
            throw new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado.");
         }
 
-        return usuarioMapper.toDTO(usuarioRepository.findById(id).get());
+        Usuario usuario = usuarioRepository.findById(id).get();
+        return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
     public Object salvar(UsuarioDTO usuarioDTO) throws Exception {
@@ -72,7 +73,7 @@ public class UsuarioService {
         usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
                 contatoMapper.toEntity(contatoDTO, usuario)));
 
-        return usuarioMapper.toDTO(usuario);
+        return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
     public Object deletar(UUID id) throws Exception {
