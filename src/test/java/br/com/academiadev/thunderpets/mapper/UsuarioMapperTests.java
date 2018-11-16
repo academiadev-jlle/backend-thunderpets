@@ -69,7 +69,7 @@ public class UsuarioMapperTests {
         contatosEsperados.add(new ContatoDTO(contato2.getId(), contato2.getTipo(), contato2.getDescricao()));
 
         //Quando
-        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario);
+        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
 
         //Entao
         Assert.assertEquals(usuarioDTO.getNome(), "Kamuela Pereira");
