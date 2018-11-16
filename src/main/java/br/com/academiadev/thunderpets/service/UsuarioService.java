@@ -17,7 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -66,7 +66,7 @@ public class UsuarioService {
         final Usuario usuario = usuarioRepository
                 .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
 
-        List<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
+        Set<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
         contatosDoUsuario.forEach(contatoRepository::delete);
 
         usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
