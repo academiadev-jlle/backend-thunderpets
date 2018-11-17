@@ -1,5 +1,5 @@
 CREATE TABLE pet (
-  id           CHARACTER VARYING NOT NULL,
+  id           UUID NOT NULL,
   nome         CHARACTER VARYING NOT NULL,
   descricao    CHARACTER VARYING NOT NULL,
   dataAchado   DATE NOT NULL,
