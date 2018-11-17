@@ -1,21 +1,21 @@
 package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.ContatoDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
-public abstract class ContatoMapper {
+public interface ContatoMapper {
 
-    public abstract ContatoDTO toDTO(Contato contato);
+    ContatoDTO toDTO(Contato contato);
 
-    public Contato toEntity(ContatoDTO contatoDTO, Usuario usuario) {
-        return Contato.builder()
-                .id(contatoDTO.getId())
-                .descricao(contatoDTO.getDescricao())
-                .tipo(contatoDTO.getTipo())
-                .usuario(usuario)
-                .build();
-    }
+    @Mappings({
+            @Mapping(source = "contatoDTO.id", target = "id"),
+            @Mapping(source = "usuario.id", target = "usuario.id")
+    })
+    Contato toEntity(ContatoDTO contatoDTO, Usuario usuario);
 }

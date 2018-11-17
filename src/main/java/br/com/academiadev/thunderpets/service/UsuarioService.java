@@ -48,11 +48,8 @@ public class UsuarioService {
     }
 
     public Object buscar(UUID id) throws Exception {
-        if (!usuarioRepository.existsById(id)) {
-           throw new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado.");
-        }
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
 
-        Usuario usuario = usuarioRepository.findById(id).get();
         return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
@@ -77,11 +74,7 @@ public class UsuarioService {
     }
 
     public Object deletar(UUID id) throws Exception {
-        if (!usuarioRepository.existsById(id)) {
-            throw new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado.");
-        }
-
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
         usuario.setAtivo(false);
         usuarioRepository.saveAndFlush(usuario);
 
@@ -89,11 +82,7 @@ public class UsuarioService {
     }
 
     public byte[] getFoto(UUID id) throws Exception {
-        if (!usuarioRepository.existsById(id)) {
-            throw new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado.");
-        }
-
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
         byte[] bytes = usuario.getFoto();
 
         if (bytes == null) {
