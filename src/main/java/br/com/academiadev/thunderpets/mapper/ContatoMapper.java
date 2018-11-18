@@ -15,7 +15,7 @@ public interface ContatoMapper {
 
     @Mappings({
             @Mapping(source = "contatoDTO.id", target = "id"),
-            @Mapping(source = "usuario.id", target = "usuario.id")
+            @Mapping(source = "usuario", target = "usuario")
     })
     Contato toEntity(ContatoDTO contatoDTO, Usuario usuario);
 }
