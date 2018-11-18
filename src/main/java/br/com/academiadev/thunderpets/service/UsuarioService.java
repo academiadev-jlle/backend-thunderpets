@@ -21,74 +21,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
-public class UsuarioService {
+public interface UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
 
-    @Autowired
-    private ContatoRepository contatoRepository;
+    public Object buscar(UUID id) throws Exception;
 
-    @Autowired
-    private UsuarioMapper usuarioMapper;
+    public Object salvar(UsuarioDTO usuarioDTO) throws Exception;
 
-    @Autowired
-    private ContatoMapper contatoMapper;
+    public Object deletar(UUID id) throws Exception;
 
-    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
-        int totalDeElementos = (int) paginaUsuarios.getTotalElements();
-
-        return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario))).collect(Collectors.toList()),
-                paginacao,
-                totalDeElementos);
-    }
-
-    public Object buscar(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
-
-        return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
-    }
-
-    public Object salvar(UsuarioDTO usuarioDTO) throws Exception {
-        usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
-        usuarioDTO.setAtivo(true);
-
-        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
-            throw new Exception("O usuário precisa ter pelo menos um contato cadastrado.");
-        }
-
-        final Usuario usuario = usuarioRepository
-                .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
-
-        Set<Contato> contatosDoUsuario = contatoRepository.findByUsuario(usuario);
-        contatosDoUsuario.forEach(contatoRepository::delete);
-
-        usuarioDTO.getContatos().forEach(contatoDTO -> contatoRepository.save(
-                contatoMapper.toEntity(contatoDTO, usuario)));
-
-        return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
-    }
-
-    public Object deletar(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
-        usuario.setAtivo(false);
-        usuarioRepository.saveAndFlush(usuario);
-
-        return true;
-    }
-
-    public byte[] getFoto(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
-        byte[] bytes = usuario.getFoto();
-
-        if (bytes == null) {
-            throw new FotoNaoEncontradaException("O usuário " + id + " não possui foto.");
-        }
-
-        return bytes;
-    }
+    public byte[] getFoto(UUID id) throws Exception;
 }
