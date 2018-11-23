@@ -1,32 +1,21 @@
 package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.ContatoDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.ContatoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
-@Component
-public class ContatoMapper {
+@Mapper(componentModel = "spring")
+public interface ContatoMapper {
 
-    @Autowired
-    private ContatoRepository contatoRepository;
+    ContatoDTO toDTO(Contato contato);
 
-    public ContatoDTO converterContatoParaContatoDTO(Contato contato) {
-        return ContatoDTO.builder()
-                .id(contato.getId())
-                .tipo(contato.getTipo())
-                .descricao(contato.getDescricao())
-                .build();
-    }
-
-    public Contato converterContatoDTOParaContato(ContatoDTO contatoDTO, Usuario usuario) {
-        return Contato.builder()
-                .id(contatoDTO.getId())
-                .descricao(contatoDTO.getDescricao())
-                .tipo(contatoDTO.getTipo())
-                .usuario(usuario)
-                .build();
-    }
+    @Mappings({
+            @Mapping(source = "contatoDTO.id", target = "id"),
+            @Mapping(source = "usuario", target = "usuario")
+    })
+    Contato toEntity(ContatoDTO contatoDTO, Usuario usuario);
 }
