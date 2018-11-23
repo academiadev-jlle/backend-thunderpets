@@ -73,8 +73,7 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscar(@PathVariable("id") UUID id) {
         if (!usuarioRepository.existsById(id)) {
-            return ResponseEntity.status(500)
-                    .body(new UsuarioNaoEncontradoException("Usuario " + id + " não encontrado."));
+            throw new UsuarioNaoEncontradoException(String.format("Usuario %s não encontrado.", id.toString()));
         }
 
         return ResponseEntity.ok(usuarioMapper.converterUsuarioParaUsuarioDTO(usuarioRepository.findById(id).get()));
