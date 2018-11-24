@@ -51,4 +51,4 @@ jobs:
           key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
 
       # run tests!
-      - run: gradle test
+      - run: gradle test --stacktrace
