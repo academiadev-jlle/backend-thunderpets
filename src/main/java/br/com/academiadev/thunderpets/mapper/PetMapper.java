@@ -24,7 +24,7 @@ public class PetMapper {
                 .map(Foto::getImage).collect(Collectors.toList());
 
         if (listagem && fotos.size() > 1) {
-            fotos = new ArrayList<>(fotos.subList(0, 0));
+            fotos = new ArrayList<>(fotos.subList(0, 1));
         }
 
         return PetDTO.builder()

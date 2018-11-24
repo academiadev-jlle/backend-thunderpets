@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/pet")
 @Api(description = "Controller de Pets")
+@Transactional
 public class PetController {
 
     private PetRepository petRepository;
@@ -130,7 +132,11 @@ public class PetController {
         Usuario usuario = usuarioRepository.findById(petDTO.getUsuarioId())
                 .orElseThrow(UsuarioNaoEncontradoException::new);
 
-        Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
+        Localizacao localizacao = null;
+        if (petDTO.getLocalizacao() != null) {
+             localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
+        }
+
         final Pet pet = petRepository.saveAndFlush(
                 petMapper.convertPetDTOparaPet(petDTO, localizacao, usuario));
 
