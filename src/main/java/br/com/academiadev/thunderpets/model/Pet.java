@@ -23,14 +23,11 @@ public class Pet {
     @GeneratedValue
     private UUID id;
 
-    @NotNull
-    @Size(max = 20)
     private String nome;
 
     @NotNull
     private String descricao;
 
-    @NotNull
     private LocalDate dataAchado;
 
     @NotNull
@@ -59,9 +56,9 @@ public class Pet {
     @ManyToOne(optional = false)
     private Usuario usuario;
 
-    @OneToOne(optional = false)
+    @OneToOne
     private Localizacao localizacao;
 
     @Column(columnDefinition = "bool default true")
-    private boolean ativo;
+    private boolean ativo = true;
 }

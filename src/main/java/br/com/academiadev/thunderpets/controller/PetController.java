@@ -3,17 +3,21 @@ package br.com.academiadev.thunderpets.controller;
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
+import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
+import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
+import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,73 +31,53 @@ import java.util.stream.Collectors;
 @Api(description = "Controller de Pets")
 public class PetController {
 
-    @Autowired
     private PetRepository petRepository;
-
-    @Autowired
     private LocalizacaoRepository localizacaoRepository;
-
-    @Autowired
     private FotoRepository fotoRepository;
+    private PetMapper petMapper;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private PetMapper petMapper;
-
-    @ApiOperation(value = "Lista os pets da plataforma",
-            notes = "Retorna uma lista com os detalhes do pet."
-                    + " A lista é paginada com base nos parâmetros.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Pets listados com sucesso")
-    })
-    @GetMapping
-    private PageImpl<PetDTO> buscar(@ApiParam(value = "Número da página atual")
-                                        @RequestParam(defaultValue = "0") int paginaAtual,
-                                    @ApiParam(value = "Número do tamanho da página")
-                                        @RequestParam(defaultValue = "10") int tamanho,
-                                    @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
-                                        @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                    @ApiParam(value = "Nome da coluna que será usada para a ordenação")
-                                        @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                    @ApiParam(value = "Escolha para buscar os pets ativos")
-                                        @RequestParam(defaultValue = "true") boolean ativo) {
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPets = petRepository.findByAtivo(ativo, paginacao);
-        int totalDeElementos = (int) paginaPets.getTotalElements();
-
-        return new PageImpl<PetDTO>(paginaPets.stream()
-                .map(pet -> petMapper.converterPetParaPetDTO(pet))
-                .collect(Collectors.toList()),
-                paginacao,
-                totalDeElementos);
+    public PetController(PetRepository petRepository,
+                         LocalizacaoRepository localizacaoRepository,
+                         FotoRepository fotoRepository,
+                         PetMapper petMapper,
+                         UsuarioRepository usuarioRepository) {
+        this.petRepository = petRepository;
+        this.localizacaoRepository = localizacaoRepository;
+        this.fotoRepository = fotoRepository;
+        this.petMapper = petMapper;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    @ApiOperation(value = "Busca um pet com base no id.",
-                    notes = " O objeto é do tipo PetDTO.",
-                    response = PetDTO.class)
-    @ApiResponses(value = {
+    @ApiOperation(
+            value = "Busca um pet com base no id.",
+            notes = " O objeto é do tipo PetDTO.",
+            response = PetDTO.class
+    )
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
             @ApiResponse(code = 500, message = "Pet não encontrado.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Object> buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
-        Optional<Pet> pet = petRepository.findById(id);
+    public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id.toString())));
 
-        if (!pet.isPresent()) {
-            return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
-        }
-
-        return ResponseEntity.ok().body(petMapper.converterPetParaPetDTO(pet.get()));
+        return petMapper.converterPetParaPetDTO(pet, false);
     }
 
-    @ApiOperation(value = "Busca os pet com os parâmetros passados.",
+    @ApiOperation(
+            value = "Busca os pet com os parâmetros passados.",
             notes = " O objeto é do tipo PetDTO.",
             response = PetDTO.class,
-            responseContainer = "Lists")
-    @ApiResponses(value = {
+            responseContainer = "Lists"
+    )
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Pets listados com sucesso.")
     })
-    @GetMapping("/filtro")
-    public PageImpl<PetDTO> filtrar(
+    @GetMapping
+    public PageImpl<PetDTO> buscar(
                                 @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
                                 @RequestParam(value = "especie", required = false) Especie especie,
@@ -106,7 +90,7 @@ public class PetController {
                                 @ApiParam(value = "Número do tamanho da página")
                                     @RequestParam(defaultValue = "10") int tamanho,
                                 @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
-                                    @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
+                                    @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
                                 @ApiParam(value = "Nome da coluna que será usada para a ordenação")
                                     @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
                                 @ApiParam(value = "Escolha para buscar os pets ativos")
@@ -124,58 +108,55 @@ public class PetController {
 
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
-        int totalDeElementos = (int) paginaPetsFiltrados.getTotalElements();
 
-        return new PageImpl<PetDTO>(paginaPetsFiltrados.stream()
-            .map(p -> petMapper.converterPetParaPetDTO(p))
-            .collect(Collectors.toList()),
-            paginacao,
-            totalDeElementos);
+        return (PageImpl<PetDTO>) paginaPetsFiltrados.map(p -> petMapper.converterPetParaPetDTO(p, true));
     }
 
-    @ApiOperation(value = "Salva um pet na plataforma.",
-            notes = " Caso não exista nenhum pet com o id fornecido, um novo pet será criado."
-                    + " Caso contrário, os dados do pet existente serão atualizados."
+    @ApiOperation(
+            value = "Salva um pet na plataforma.",
+            notes = "Caso não exista nenhum pet com o id fornecido, um novo pet será criado. " +
+                    "Caso contrário, os dados do pet existente serão atualizados."
     )
-    @PostMapping
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name = "Authorization", value = "Authorization token", required = true, paramType = "header")
+                    name = "Authorization",
+                    value = "Authorization token",
+                    required = true,
+                    paramType = "header"
+            )
     })
+    @PostMapping
     public Pet salvar(@RequestBody PetDTO petDTO) {
-        Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
-        Pet petConstruido = petMapper.convertPetDTOparaPet(petDTO, localizacao);
-        Pet pet = petRepository.saveAndFlush(petConstruido);
+        Usuario usuario = usuarioRepository.findById(petDTO.getUsuarioId())
+                .orElseThrow(UsuarioNaoEncontradoException::new);
 
-        for (Foto foto : petDTO.getFotos()) {
+        Localizacao localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
+        final Pet pet = petRepository.saveAndFlush(
+                petMapper.convertPetDTOparaPet(petDTO, localizacao, usuario));
+
+        petDTO.getFotos().forEach(f -> {
+            Foto foto = new Foto();
+            foto.setImage(f);
             foto.setPet(pet);
-            fotoRepository.saveAndFlush(foto);
-        }
+
+            fotoRepository.save(foto);
+        });
 
         return pet;
     }
 
-    @ApiOperation(value = "Inativa um pet com base no id")
-    @ApiResponses(value = {
+    @ApiOperation("Inativa um pet com base no id")
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Pet inativado com sucesso"),
-            @ApiResponse(code = 500, message = "Pet não encontrado.")
+            @ApiResponse(code = 404, message = "Pet não encontrado.")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> excluir(@PathVariable("id") UUID id) {
-        try {
-            Optional<Pet> pet = petRepository.findById(id);
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("{id}")
+    public void excluir(@PathVariable("id") UUID id) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id)));
 
-            if (!pet.isPresent()) {
-                return ResponseEntity.status(500).body(new PetNaoEncontradoException("Pet " + id + "não encontrado."));
-            }
-
-            Pet petSalvar = pet.get();
-            petSalvar.setAtivo(false);
-            petRepository.saveAndFlush(petSalvar);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
-
-        return ResponseEntity.ok(true);
+        pet.setAtivo(false);
+        petRepository.save(pet);
     }
 }
