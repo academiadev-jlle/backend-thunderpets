@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
-public class ExceptionDTO {
+public class ApiResponse {
 
     private Integer status;
     private String message;
 
-    public ExceptionDTO(HttpStatus status, String message) {
+    public ApiResponse(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
     }

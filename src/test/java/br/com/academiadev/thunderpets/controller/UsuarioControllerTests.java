@@ -132,7 +132,7 @@ public class UsuarioControllerTests {
         ResultActions usuarioNaoEncontrado = mvc.perform(get("/usuario/" + uuid));
 
         //Entao
-        usuarioNaoEncontrado.andExpect(status().is(500))
+        usuarioNaoEncontrado.andExpect(status().is(404))
                 .andExpect(jsonPath("$.message", is("Usuário " + uuid + " não encontrado.")));
     }
 
@@ -164,8 +164,7 @@ public class UsuarioControllerTests {
         ResultActions delete = mvc.perform(delete("/usuario/" + idEpaminondas));
 
         //Entao
-        delete.andExpect(status().isOk())
-                .andExpect(content().string("true"));
+        delete.andExpect(status().isOk());
     }
 
     @Test
@@ -182,7 +181,7 @@ public class UsuarioControllerTests {
         ResultActions deleteUsuarioNaoEncontrado = mvc.perform(delete("/usuario/" + uuid));
 
         //Entao
-        deleteUsuarioNaoEncontrado.andExpect(status().is(500))
+        deleteUsuarioNaoEncontrado.andExpect(status().is(404))
                 .andExpect(jsonPath("$.message", is("Usuário " + uuid + " não encontrado.")));
     }
 

@@ -59,7 +59,7 @@ public class PetController {
     )
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
-            @ApiResponse(code = 500, message = "Pet não encontrado.")
+            @ApiResponse(code = 404, message = "Pet não encontrado.")
     })
     @GetMapping("/{id}")
     public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
@@ -128,7 +128,7 @@ public class PetController {
             )
     })
     @PostMapping
-    public Pet salvar(@RequestBody PetDTO petDTO) {
+    public PetDTO salvar(@RequestBody PetDTO petDTO) {
         Usuario usuario = usuarioRepository.findById(petDTO.getUsuarioId())
                 .orElseThrow(UsuarioNaoEncontradoException::new);
 
@@ -148,7 +148,7 @@ public class PetController {
             fotoRepository.save(foto);
         });
 
-        return pet;
+        return petMapper.converterPetParaPetDTO(pet, false);
     }
 
     @ApiOperation("Inativa um pet com base no id")
