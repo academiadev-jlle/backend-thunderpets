@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
     id "net.ltgt.apt" version "0.13"
+    id "org.flywaydb.flyway" version "5.2.2"
 }
 
 apply plugin: 'java'
@@ -51,4 +52,10 @@ dependencies {
 
 sourceSets {
     main.java.srcDirs += "build/generated/source/apt/main"
+}
+
+flyway {
+    url = 'jdbc:postgresql://localhost:5432/thunderpets'
+    user = 'postgres'
+    password = 'postgres'
 }

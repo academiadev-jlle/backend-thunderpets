@@ -50,5 +50,8 @@ jobs:
             - ~/.gradle
           key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
 
+      # run migrations
+      - run: gradle flywayMigrate -i
+
       # run tests!
       - run: gradle test --stacktrace
