@@ -79,9 +79,7 @@ public class UsuarioController {
     @ApiOperation("Busca a foto do usuário com base no id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
-            @ApiResponse(code = 404, message = "Usuário não encontrado."),
-            @ApiResponse(code = 404, message = "Foto não encontrada"),
-            @ApiResponse(code = 404, message = "Usuário não encontrado")
+            @ApiResponse(code = 404, message = "Usuário não encontrado; Foto não encontrada")
     })
     @GetMapping("{id}/foto")
     public ResponseEntity<Object> getFoto(@PathVariable("id") UUID id) {

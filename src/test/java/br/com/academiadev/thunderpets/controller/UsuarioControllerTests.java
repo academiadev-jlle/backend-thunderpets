@@ -119,7 +119,7 @@ public class UsuarioControllerTests {
     }
 
     @Test
-    public void dadoUsuario_quandoBuscoPorIdInexistente_entaoErro500UsuarioNaoEncontrado() throws Exception {
+    public void dadoUsuario_quandoBuscoPorIdInexistente_entaoErro404UsuarioNaoEncontrado() throws Exception {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -168,7 +168,7 @@ public class UsuarioControllerTests {
     }
 
     @Test
-    public void dadoUsuarioInexistente_quandoDeleto_entaoErro500UsuarioNaoEncontrado() throws Exception {
+    public void dadoUsuarioInexistente_quandoDeleto_entaoErro404UsuarioNaoEncontrado() throws Exception {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)

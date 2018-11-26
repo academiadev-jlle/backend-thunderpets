@@ -64,10 +64,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
         usuarioDTO.setAtivo(true);
 
-        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
-            throw new ErroAoProcessarException("O usuário precisa ter pelo menos um contato cadastrado.");
-        }
-
         final Usuario usuario = usuarioRepository
                 .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
 

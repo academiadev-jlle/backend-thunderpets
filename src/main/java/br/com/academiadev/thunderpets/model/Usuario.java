@@ -26,7 +26,7 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     @NotNull
-    @Size(min = 3)
+    @Size(min = 3, max = 99)
     private String nome;
 
     @NotNull
