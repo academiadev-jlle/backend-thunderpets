@@ -39,11 +39,15 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
+          - gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+      - restore_cache:
+          keys:
           - v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
           - v2-dependencies-{{ checksum "build.gradle" }}
           - v2-dependencies-
 
-      - run: gradle dependencies
+      - run: ./gradlew dependencies
 
       - save_cache:
           paths:
@@ -51,7 +55,7 @@ jobs:
           key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
 
       # run migrations
-      - run: gradle flywayMigrate -i
+      - run: ./gradlew flywayMigrate -i
 
       # run tests!
-      - run: gradle test --stacktrace
+      - run: ./gradlew test --stacktrace
