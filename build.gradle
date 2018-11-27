@@ -15,7 +15,10 @@ plugins {
     id "org.flywaydb.flyway" version "5.2.2"
 }
 
-apply plugin: 'java'
+allprojects {
+    apply plugin: 'org.gradle.java'
+}
+
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
