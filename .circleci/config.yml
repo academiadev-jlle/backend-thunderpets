@@ -39,16 +39,12 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
-          - v2-dependencies-{{ checksum "build.gradle" }}
-          - v2-dependencies-
-
-      - run: gradle dependencies
-
+          - gradle-{{ checksum "build.gradle" }}
+      - run: gradle build
       - save_cache:
           paths:
-            - ~/.gradle
-          key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
+          - ~/.gradle
+          key: gradle-{{ checksum "build.gradle" }}
 
       # run migrations
       - run: gradle flywayMigrate -i
