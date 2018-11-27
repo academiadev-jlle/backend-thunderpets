@@ -59,6 +59,5 @@ public class Pet {
     @OneToOne
     private Localizacao localizacao;
 
-    @Column(columnDefinition = "bool default true")
     private boolean ativo = true;
 }

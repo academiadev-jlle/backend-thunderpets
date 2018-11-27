@@ -40,9 +40,7 @@ public class Usuario implements UserDetails {
 
     @Lob
     private byte[] foto;
-
-    @Column(columnDefinition = "bool default true")
-    private boolean ativo;
+    private boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
