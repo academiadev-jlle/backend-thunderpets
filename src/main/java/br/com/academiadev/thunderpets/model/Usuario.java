@@ -38,7 +38,7 @@ public class Usuario implements UserDetails {
     @Size(min = 8)
     private String senha;
 
-    @Lob
+    @Basic(fetch = FetchType.EAGER) @Lob
     private byte[] foto;
 
     @Column(columnDefinition = "bool default true")
