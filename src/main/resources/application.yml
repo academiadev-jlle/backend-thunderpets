@@ -24,3 +24,6 @@ flyway:
   user: ${DATABASE_USERNAME:postgres}
   password: ${DATABASE_PASSWORD:postgres}
   baseline-on-migrate: true
+hibernate:
+  jdbc:
+    use_streams_for_binary: false
