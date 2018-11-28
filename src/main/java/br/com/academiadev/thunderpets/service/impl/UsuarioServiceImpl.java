@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
@@ -25,42 +26,43 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
     private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private ContatoRepository contatoRepository;
-
-    @Autowired
     private UsuarioMapper usuarioMapper;
-
-    @Autowired
     private ContatoMapper contatoMapper;
 
+    @Autowired
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
+                              ContatoRepository contatoRepository,
+                              UsuarioMapper usuarioMapper,
+                              ContatoMapper contatoMapper) {
+        this.usuarioRepository = usuarioRepository;
+        this.contatoRepository = contatoRepository;
+        this.usuarioMapper = usuarioMapper;
+        this.contatoMapper = contatoMapper;
+    }
+
+    @Override
     public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
-        int totalDeElementos = (int) paginaUsuarios.getTotalElements();
 
-        return new PageImpl<UsuarioDTO>(paginaUsuarios.stream()
-                .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario))).collect(Collectors.toList()),
-                paginacao,
-                totalDeElementos);
+        return (PageImpl<UsuarioDTO>) paginaUsuarios
+                .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario)));
     }
 
-    public Object buscar(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
+    @Override
+    public UsuarioDTO buscar(UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
         return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
-    public Object salvar(UsuarioDTO usuarioDTO) throws Exception {
+    @Override
+    public UsuarioDTO salvar(UsuarioDTO usuarioDTO) {
         usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
         usuarioDTO.setAtivo(true);
-
-        if (usuarioDTO.getContatos() == null || usuarioDTO.getContatos().size() == 0) {
-            throw new Exception("O usuário precisa ter pelo menos um contato cadastrado.");
-        }
 
         final Usuario usuario = usuarioRepository
                 .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
@@ -74,20 +76,23 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
-    public Object deletar(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
+    @Override
+    public void deletar(UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
+
         usuario.setAtivo(false);
         usuarioRepository.saveAndFlush(usuario);
-
-        return true;
     }
 
-    public byte[] getFoto(UUID id) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário " + id + " não encontrado."));
+    public byte[] getFoto(UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
+
         byte[] bytes = usuario.getFoto();
 
         if (bytes == null) {
-            throw new FotoNaoEncontradaException("O usuário " + id + " não possui foto.");
+            throw new FotoNaoEncontradaException(String.format("O usuário %s não possui foto.", id));
         }
 
         return bytes;

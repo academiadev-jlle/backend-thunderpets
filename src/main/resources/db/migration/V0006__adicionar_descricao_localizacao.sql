@@ -1,0 +1,2 @@
+ALTER TABLE localizacao
+  ADD COLUMN descricao CHARACTER VARYING(500);

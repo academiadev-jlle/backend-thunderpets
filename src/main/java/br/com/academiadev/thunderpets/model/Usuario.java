@@ -26,7 +26,7 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     @NotNull
-    @Size(min = 3)
+    @Size(min = 3, max = 99)
     private String nome;
 
     @NotNull
@@ -40,9 +40,7 @@ public class Usuario implements UserDetails {
 
     @Basic(fetch = FetchType.EAGER) @Lob
     private byte[] foto;
-
-    @Column(columnDefinition = "bool default true")
-    private boolean ativo;
+    private boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

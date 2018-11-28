@@ -2,9 +2,7 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
-
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -18,15 +16,20 @@ import java.util.UUID;
 @Api(description = "Controller de Usuários")
 public class UsuarioController {
 
-    @Autowired
     private UsuarioService usuarioService;
 
-    @ApiOperation(value = "Lista os usuários da plataforma",
-            notes = "Retorna uma lista com os detalhes do usuário. A lista é paginada com base nos parâmetros.")
-    @ApiResponses(value = {
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @ApiOperation(
+            value = "Lista os usuários da plataforma",
+            notes = "Retorna uma lista com os detalhes do usuário. A lista é paginada com base nos parâmetros."
+    )
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Usuários listados com sucesso")
     })
-    @GetMapping("")
+    @GetMapping
     public PageImpl<UsuarioDTO> listar(@ApiParam(value = "Número da página atual")
                                            @RequestParam(defaultValue = "0") int paginaAtual,
                                        @ApiParam(value = "Número do tamanho da página")
@@ -38,75 +41,49 @@ public class UsuarioController {
         return usuarioService.listar(paginaAtual, tamanho, direcao, campoOrdenacao);
     }
 
-    @ApiOperation(value = "Busca um usuário com base no id")
-    @ApiResponses(value = {
+    @ApiOperation("Busca um usuário com base no id")
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário encontrado com sucesso"),
-            @ApiResponse(code = 500, message = "Usuário não encontrado")
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> buscar(@PathVariable("id") UUID id) {
-        UsuarioDTO usuarioDTO = null;
-        try {
-            usuarioDTO = (UsuarioDTO) usuarioService.buscar(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
-        }
-
-        return ResponseEntity.ok(usuarioDTO);
+    @GetMapping("{id}")
+    public UsuarioDTO buscar(@PathVariable("id") UUID id) {
+        return usuarioService.buscar(id);
     }
 
-    @ApiOperation(value = "Salva um usuário na plataforma",
-            notes = "Caso não exista nenhum usuário com o id fornecido, "
-                    + "um novo usuário será criado. "
-                    + "Do contrário, caso já exista um usuário com o id fornecido, "
-                    + "os dados do usuário existente serão atualizados.")
-    @ApiResponses(value = {
+    @ApiOperation(
+            value = "Salva um usuário na plataforma",
+            notes = "Caso não exista nenhum usuário com o id fornecido, um novo usuário será criado. " +
+                    "Do contrário, caso já exista um usuário com o id fornecido, " +
+                    "os dados do usuário existente serão atualizados."
+    )
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário criado e/ou atualizado com sucesso"),
             @ApiResponse(code = 500, message = "Erro ao criar e/ou atualizar o usuário")
     })
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody UsuarioDTO usuarioDTO) {
-        try {
-            usuarioDTO = (UsuarioDTO) usuarioService.salvar(usuarioDTO);
-        } catch (Exception e) {
-            ResponseEntity.status(500).body(e);
-        }
-
-        return ResponseEntity.ok(usuarioDTO);
+    public UsuarioDTO salvar(@RequestBody UsuarioDTO usuarioDTO) {
+            return usuarioService.salvar(usuarioDTO);
     }
 
-    @ApiOperation(value = "Inativa um usuário com base no id")
-    @ApiResponses(value = {
+    @ApiOperation("Inativa um usuário com base no id")
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário inativado com sucesso"),
-            @ApiResponse(code = 500, message = "Usuário não encontrado. Erro ao inativar o usuário")
+            @ApiResponse(code = 404, message = "Usuário não encontrado. Erro ao inativar o usuário")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletar(@PathVariable("id") UUID id) {
-        try {
-            usuarioService.deletar(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
-        }
-
-        return ResponseEntity.ok(true);
+    @DeleteMapping("{id}")
+    public void deletar(@PathVariable("id") UUID id) {
+        usuarioService.deletar(id);
     }
 
-    @ApiOperation(value = "Busca a foto do usuário com base no id")
-    @ApiResponses(value = {
+    @ApiOperation("Busca a foto do usuário com base no id")
+    @ApiResponses({
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
-            @ApiResponse(code = 500, message = "Usuário não encontrado. "
-                    + "Foto não encontrada. "
-                    + "Erro ao buscar a foto do usuário")
+            @ApiResponse(code = 404, message = "Usuário não encontrado; Foto não encontrada")
     })
     @GetMapping("{id}/foto")
     public ResponseEntity<Object> getFoto(@PathVariable("id") UUID id) {
-        byte[] bytes;
-
-        try {
-            bytes = usuarioService.getFoto(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e);
-        }
+        byte[] bytes = usuarioService.getFoto(id);
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
     }
