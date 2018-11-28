@@ -10,7 +10,7 @@ CREATE TABLE pet (
   status          CHARACTER VARYING NOT NULL,
   idade           CHARACTER VARYING NOT NULL,
   ativo           BOOLEAN DEFAULT TRUE,
-  localizacao_id  UUID NOT NULL REFERENCES localizacao(id),
+  localizacao_id  UUID REFERENCES localizacao(id),
   usuario_id      UUID NOT NULL REFERENCES usuario(id),
   CONSTRAINT pet_pk PRIMARY KEY (id)
 );

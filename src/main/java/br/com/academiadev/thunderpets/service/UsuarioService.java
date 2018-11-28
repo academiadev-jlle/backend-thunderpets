@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 
 public interface UsuarioService {
 
-    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
+    PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
 
-    public Object buscar(UUID id) throws Exception;
+    UsuarioDTO buscar(UUID id);
 
-    public Object salvar(UsuarioDTO usuarioDTO) throws Exception;
+    UsuarioDTO salvar(UsuarioDTO usuarioDTO);
 
-    public Object deletar(UUID id) throws Exception;
+    void deletar(UUID id);
 
-    public byte[] getFoto(UUID id) throws Exception;
+    byte[] getFoto(UUID id);
 }
