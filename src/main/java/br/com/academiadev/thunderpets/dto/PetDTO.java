@@ -20,30 +20,17 @@ import java.util.UUID;
 public class PetDTO {
 
     private UUID id;
-
     private String nome;
-
     private String descricao;
-
     private LocalDate dataAchado;
-
     private LocalDate dataRegistro;
-
     private Especie especie;
-
     private Porte porte;
-
     private Sexo sexo;
-
     private Status status;
-
     private Idade idade;
-
     private UUID usuarioId;
-
     private Localizacao localizacao;
-
     private boolean ativo;
-
     private List<byte[]> fotos;
 }

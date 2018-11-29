@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetDistanciaDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
@@ -18,12 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,23 +52,6 @@ public class PetController {
         this.fotoRepository = fotoRepository;
         this.petMapper = petMapper;
         this.usuarioRepository = usuarioRepository;
-    }
-
-    @ApiOperation(
-            value = "Busca um pet com base no id.",
-            notes = " O objeto é do tipo PetDTO.",
-            response = PetDTO.class
-    )
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
-            @ApiResponse(code = 404, message = "Pet não encontrado.")
-    })
-    @GetMapping("/{id}")
-    public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
-        Pet pet = petRepository.findById(id)
-                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id.toString())));
-
-        return petMapper.converterPetParaPetDTO(pet, false);
     }
 
     @ApiOperation(
@@ -112,6 +97,59 @@ public class PetController {
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
 
         return (PageImpl<PetDTO>) paginaPetsFiltrados.map(p -> petMapper.converterPetParaPetDTO(p, true));
+    }
+
+    @ApiOperation(
+            value = "Busca um pet com base no id.",
+            notes = " O objeto é do tipo PetDTO.",
+            response = PetDTO.class
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
+            @ApiResponse(code = 404, message = "Pet não encontrado.")
+    })
+    @GetMapping("/{id}")
+    public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id.toString())));
+
+        return petMapper.converterPetParaPetDTO(pet, false);
+    }
+
+    @ApiOperation(
+            value = "Busca pets com base no nome da cidade ou do estado."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pets listados com sucesso.")
+    })
+    @GetMapping("/busca/localidade")
+    public List<PetDTO> buscarPorLocalidade(@RequestParam(value = "buscarPor") TipoPesquisaLocalidade tipoPesquisa,
+                                            @RequestParam(value = "nome") String nome) {
+        List<Pet> pets = new ArrayList<>();
+        if (tipoPesquisa.equals(TipoPesquisaLocalidade.CIDADE)) {
+            pets = petRepository.findByLocalizacaoCidadeIgnoreCaseContaining(nome);
+        }
+        else if (tipoPesquisa.equals(TipoPesquisaLocalidade.ESTADO)) {
+            pets = petRepository.findByLocalizacaoEstadoIgnoreCaseContaining(nome);
+        }
+        return pets.stream().map(pet -> petMapper.converterPetParaPetDTO(pet, true)).collect(Collectors.toList());
+    }
+
+    @ApiOperation(
+            value = "Busca pets em um determinado raio de distância do usuário atual."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pet encontrado com sucesso.")
+    })
+    @GetMapping("/busca/raio-distancia")
+    public List<PetDistanciaDTO> buscarPorRaioDeDistancia(@RequestParam(value = "latitude") BigDecimal latitude,
+                                                          @RequestParam(value = "longitude") BigDecimal longitude,
+                                                          @RequestParam(value = "raioDistancia") Integer raioDistancia) {
+        List<Pet> pets = petRepository.findByRaioDeDistancia(latitude, longitude, raioDistancia);
+        return pets.stream()
+                .map(pet -> new PetDistanciaDTO(petMapper.converterPetParaPetDTO(pet, true),
+                        petRepository.findDistancia(latitude, longitude, pet.getId())))
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(

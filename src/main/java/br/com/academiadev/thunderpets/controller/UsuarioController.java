@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -86,5 +88,15 @@ public class UsuarioController {
         byte[] bytes = usuarioService.getFoto(id);
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+
+    @ApiOperation("Busca os pets de determinado usuário")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pets do usuário listados com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
+    @GetMapping("{id}/pets")
+    public List<PetDTO> getPets(@PathVariable("id") UUID id) {
+        return usuarioService.getPets(id);
     }
 }
