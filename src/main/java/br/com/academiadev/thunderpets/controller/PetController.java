@@ -55,13 +55,13 @@ public class PetController {
     }
 
     @ApiOperation(
-            value = "Busca os pet com os parâmetros passados.",
+            value = "Busca os pet com base nos parâmetros passados",
             notes = " O objeto é do tipo PetDTO.",
             response = PetDTO.class,
             responseContainer = "Lists"
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Pets listados com sucesso.")
+            @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping
     public PageImpl<PetDTO> buscar(
@@ -100,13 +100,13 @@ public class PetController {
     }
 
     @ApiOperation(
-            value = "Busca um pet com base no id.",
+            value = "Busca um pet com base no id",
             notes = " O objeto é do tipo PetDTO.",
             response = PetDTO.class
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
-            @ApiResponse(code = 404, message = "Pet não encontrado.")
+            @ApiResponse(code = 200, message = "Pet encontrado com sucesso"),
+            @ApiResponse(code = 404, message = "Pet não encontrado")
     })
     @GetMapping("/{id}")
     public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
@@ -117,10 +117,10 @@ public class PetController {
     }
 
     @ApiOperation(
-            value = "Busca pets com base no nome da cidade ou do estado."
+            value = "Busca pets com base no nome da cidade ou do estado"
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Pets listados com sucesso.")
+            @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping("/busca/localidade")
     public List<PetDTO> buscarPorLocalidade(@RequestParam(value = "buscarPor") TipoPesquisaLocalidade tipoPesquisa,
@@ -136,10 +136,10 @@ public class PetController {
     }
 
     @ApiOperation(
-            value = "Busca pets em um determinado raio de distância do usuário atual."
+            value = "Busca pets com base em um determinado raio de distância do usuário atual"
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Pet encontrado com sucesso.")
+            @ApiResponse(code = 200, message = "Pet encontrado com sucesso")
     })
     @GetMapping("/busca/raio-distancia")
     public List<PetDistanciaDTO> buscarPorRaioDeDistancia(@RequestParam(value = "latitude") BigDecimal latitude,
@@ -153,7 +153,7 @@ public class PetController {
     }
 
     @ApiOperation(
-            value = "Salva um pet na plataforma.",
+            value = "Salva um pet na plataforma",
             notes = "Caso não exista nenhum pet com o id fornecido, um novo pet será criado. " +
                     "Caso contrário, os dados do pet existente serão atualizados."
     )
@@ -192,7 +192,7 @@ public class PetController {
     @ApiOperation("Inativa um pet com base no id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pet inativado com sucesso"),
-            @ApiResponse(code = 404, message = "Pet não encontrado.")
+            @ApiResponse(code = 404, message = "Pet não encontrado")
     })
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("{id}")

@@ -71,14 +71,14 @@ public class UsuarioController {
     @ApiOperation("Inativa um usuário com base no id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário inativado com sucesso"),
-            @ApiResponse(code = 404, message = "Usuário não encontrado. Erro ao inativar o usuário")
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @DeleteMapping("{id}")
     public void deletar(@PathVariable("id") UUID id) {
         usuarioService.deletar(id);
     }
 
-    @ApiOperation("Busca a foto do usuário com base no id")
+    @ApiOperation("Busca a foto de determinado usuário com base no id do usuário")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
             @ApiResponse(code = 404, message = "Usuário não encontrado; Foto não encontrada")
@@ -90,7 +90,7 @@ public class UsuarioController {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
     }
 
-    @ApiOperation("Busca os pets de determinado usuário")
+    @ApiOperation("Busca os pets de determinado usuário com base no id do usuário")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pets do usuário listados com sucesso"),
             @ApiResponse(code = 404, message = "Usuário não encontrado")
