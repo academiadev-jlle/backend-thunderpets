@@ -19,12 +19,12 @@ security:
     client:
       client-id: ${OAUTH_CLIENT:client-id}
       client-secret: ${OAUTH_SECRET:secret-id}
-#flyway:
-#  url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/thunderpets}
-#  user: ${DATABASE_USERNAME:postgres}
-#  password: ${DATABASE_PASSWORD:postgres}
-#  baseline-on-migrate: true
-#  enabled: true
+flyway:
+  url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/thunderpets}
+  user: ${DATABASE_USERNAME:postgres}
+  password: ${DATABASE_PASSWORD:postgres}
+  baseline-on-migrate: true
+  enabled: true
 hibernate:
   jdbc:
     use_streams_for_binary: false
