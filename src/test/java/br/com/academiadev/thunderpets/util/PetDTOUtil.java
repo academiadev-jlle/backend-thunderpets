@@ -25,7 +25,7 @@ public class PetDTOUtil {
 
     public PetDTO criaPetDTOBrabo() {
 
-        List<Foto> fotos = fotoUtil.criaTresFotos();
+        List<byte[]> fotos = fotoUtil.criaTresFotos();
 
         PetDTO petDTO = PetDTO.builder()
                 .nome("Brabo")
@@ -37,7 +37,7 @@ public class PetDTOUtil {
                 .sexo(Sexo.MACHO)
                 .status(Status.PARA_ADOTAR)
                 .idade(Idade.ADULTO)
-                .usuario(util.criarUsuarioKamuela())
+                .usuarioId(util.criarUsuarioKamuela().getId())
                 .localizacao(localizacaoUtil.criaLocalizacaoGaruva())
                 .fotos(fotos)
                 .ativo(true)

@@ -53,7 +53,7 @@ public class PetMapperTest {
         Pet pet = petUtil.criaPetBrabo();
 
         //Quando
-        PetDTO petDTO = petMapper.toDTO(pet);
+        PetDTO petDTO = petMapper.converterPetParaPetDTO(pet,false);
 
         //Então
         Assert.assertEquals(petDTO.getNome(), "Brabo");
@@ -65,7 +65,7 @@ public class PetMapperTest {
         Assert.assertEquals(petDTO.getSexo(), Sexo.MACHO);
         Assert.assertEquals(petDTO.getStatus(), Status.PARA_ADOTAR);
         Assert.assertEquals(petDTO.getIdade(), Idade.ADULTO);
-        Assert.assertEquals(petDTO.getUsuario(), usuario);
+        Assert.assertEquals(petDTO.getUsuarioId(), usuario.getId());
         Assert.assertEquals(petDTO.getLocalizacao(), localizacao);
         Assert.assertTrue(petDTO.isAtivo());
     }
@@ -79,7 +79,7 @@ public class PetMapperTest {
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
 
         //Quando
-        Pet pet = petMapper.toEntity(petDTO, localizacao);
+        Pet pet = petMapper.convertPetDTOparaPet(petDTO, localizacao, usuario);
 
         //Então
         Assert.assertEquals(pet.getNome(), "Brabo");
