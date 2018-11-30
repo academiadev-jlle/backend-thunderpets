@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageImpl;
@@ -19,9 +20,11 @@ import java.util.UUID;
 public class UsuarioController {
 
     private UsuarioService usuarioService;
+    private EmailService emailService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, EmailService emailService) {
         this.usuarioService = usuarioService;
+        this.emailService = emailService;
     }
 
     @ApiOperation(
@@ -98,5 +101,10 @@ public class UsuarioController {
     @GetMapping("{id}/pets")
     public List<PetDTO> getPets(@PathVariable("id") UUID id) {
         return usuarioService.getPets(id);
+    }
+
+    @GetMapping("{id}/recuperar-senha")
+    public String recuperarSenha(@PathVariable("id") UUID id) {
+        return emailService.sendSimpleMessage("helenadalmazo@gmail.com", "Teste", "Teste");
     }
 }
