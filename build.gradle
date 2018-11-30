@@ -53,9 +53,3 @@ dependencies {
 sourceSets {
     main.java.srcDirs += "build/generated/source/apt/main"
 }
-
-flyway {
-    url = 'jdbc:postgresql://localhost:5432/thunderpets'
-    user = 'postgres'
-    password = 'postgres'
-}
