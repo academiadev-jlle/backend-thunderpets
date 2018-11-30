@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -97,6 +96,15 @@ public class PetController {
                                     @RequestParam(defaultValue = "true") boolean ativo) {
 
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
+        Pet pet = Pet.builder()
+            .dataAchado(dataAchado)
+            .dataRegistro(dataRegistro)
+            .especie(especie)
+            .porte(porte)
+            .sexo(sexo)
+            .status(status)
+            .idade(idade)
+            .build();
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
 
         return (PageImpl<PetDTO>) paginaPetsFiltrados.map(p -> petMapper.converterPetParaPetDTO(p, true));
