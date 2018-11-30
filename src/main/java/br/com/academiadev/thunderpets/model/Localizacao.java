@@ -30,4 +30,6 @@ public class Localizacao {
 
     @NotNull
     private String estado;
+
+    private String descricao;
 }
