@@ -42,7 +42,7 @@ public class Usuario implements UserDetails {
     @Type(type = "org.hibernate.type.BinaryType")
     @Lob
     private byte[] foto;
-    
+
     private boolean ativo = true;
 
     @Override
