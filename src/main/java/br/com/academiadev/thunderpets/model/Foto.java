@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.model;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,7 +17,6 @@ public class Foto {
 
     @Lob
     @NotNull
-    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] image;
 
     @ManyToOne(optional = false)

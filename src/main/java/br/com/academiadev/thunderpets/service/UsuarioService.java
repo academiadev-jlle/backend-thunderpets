@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.service;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
@@ -24,11 +23,11 @@ import java.util.stream.Collectors;
 
 public interface UsuarioService {
 
-    PageImpl<UsuarioRespostaDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
+    PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
 
-    UsuarioRespostaDTO buscar(UUID id);
+    UsuarioDTO buscar(UUID id);
 
-    UsuarioRespostaDTO salvar(UsuarioDTO usuarioDTO);
+    UsuarioDTO salvar(UsuarioDTO usuarioDTO);
 
     void deletar(UUID id);
 

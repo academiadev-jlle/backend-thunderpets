@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
@@ -44,16 +43,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public PageImpl<UsuarioRespostaDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
+    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
 
-        return (PageImpl<UsuarioRespostaDTO>) paginaUsuarios
+        return (PageImpl<UsuarioDTO>) paginaUsuarios
                 .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario)));
     }
 
     @Override
-    public UsuarioRespostaDTO buscar(UUID id) {
+    public UsuarioDTO buscar(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
@@ -61,7 +60,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioRespostaDTO salvar(UsuarioDTO usuarioDTO) {
+    public UsuarioDTO salvar(UsuarioDTO usuarioDTO) {
         usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
         usuarioDTO.setAtivo(true);
 

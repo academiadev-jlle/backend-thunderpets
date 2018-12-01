@@ -3,7 +3,7 @@ CREATE TABLE usuario (
   nome    CHARACTER VARYING(99) NOT NULL,
   email   CHARACTER VARYING(99) NOT NULL,
   senha   CHARACTER VARYING(99) NOT NULL,
-  foto    BYTEA,
+  foto    OID,
   ativo   BOOLEAN DEFAULT TRUE,
   CONSTRAINT usuario_pk PRIMARY KEY (id)
 );

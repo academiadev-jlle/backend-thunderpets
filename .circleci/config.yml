@@ -55,7 +55,7 @@ jobs:
           key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
 
       # run migrations
-      - run: ./gradlew flywayMigrate -i -Pflyway.user=postgres -Pflyway.password=postgres -Pflyway.url=jdbc:postgresql://localhost:5432/thunderpets
+      - run: ./gradlew flywayMigrate -i
 
       # run tests!
       - run: ./gradlew test --stacktrace

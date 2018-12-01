@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageImpl;
@@ -31,13 +30,13 @@ public class UsuarioController {
             @ApiResponse(code = 200, message = "Usuários listados com sucesso")
     })
     @GetMapping
-    public PageImpl<UsuarioRespostaDTO> listar(@ApiParam(value = "Número da página atual")
+    public PageImpl<UsuarioDTO> listar(@ApiParam(value = "Número da página atual")
                                            @RequestParam(defaultValue = "0") int paginaAtual,
-                                               @ApiParam(value = "Número do tamanho da página")
+                                       @ApiParam(value = "Número do tamanho da página")
                                            @RequestParam(defaultValue = "10") int tamanho,
-                                               @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                       @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
                                            @RequestParam(defaultValue = "ASC") Sort.Direction direcao,
-                                               @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                       @ApiParam(value = "Nome da coluna que será usada para a ordenação")
                                            @RequestParam(defaultValue = "nome") String campoOrdenacao) {
         return usuarioService.listar(paginaAtual, tamanho, direcao, campoOrdenacao);
     }
@@ -48,7 +47,7 @@ public class UsuarioController {
             @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @GetMapping("{id}")
-    public UsuarioRespostaDTO buscar(@PathVariable("id") UUID id) {
+    public UsuarioDTO buscar(@PathVariable("id") UUID id) {
         return usuarioService.buscar(id);
     }
 
@@ -63,7 +62,7 @@ public class UsuarioController {
             @ApiResponse(code = 500, message = "Erro ao criar e/ou atualizar o usuário")
     })
     @PostMapping
-    public UsuarioRespostaDTO salvar(@RequestBody UsuarioDTO usuarioDTO) {
+    public UsuarioDTO salvar(@RequestBody UsuarioDTO usuarioDTO) {
             return usuarioService.salvar(usuarioDTO);
     }
 
