@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
@@ -69,7 +70,7 @@ public class UsuarioMapperTests {
         contatosEsperados.add(new ContatoDTO(contato2.getId(), contato2.getTipo(), contato2.getDescricao()));
 
         //Quando
-        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
+        UsuarioRespostaDTO usuarioDTO = usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
 
         //Entao
         Assert.assertEquals(usuarioDTO.getNome(), "Kamuela Pereira");
