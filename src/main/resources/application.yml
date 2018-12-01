@@ -14,6 +14,13 @@ spring:
     generate-ddl: false
     show-sql: true
     format-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
 security:
   oauth2:
     client:
