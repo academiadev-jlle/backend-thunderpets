@@ -59,5 +59,6 @@ public class Pet {
     @OneToOne
     private Localizacao localizacao;
 
+    @Builder.Default
     private boolean ativo = true;
 }

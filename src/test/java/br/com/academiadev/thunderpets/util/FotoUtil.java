@@ -1,7 +1,6 @@
 package br.com.academiadev.thunderpets.util;
 
 import br.com.academiadev.thunderpets.model.Foto;
-import br.com.academiadev.thunderpets.model.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,26 +15,14 @@ public class FotoUtil {
     @Autowired
     PetUtil petUtil;
 
-    public List<Foto> criaTresFotos(){
-        List<Foto> fotos = new ArrayList<>();
+    public List<byte[]> criaTresFotos(){
+        List<byte[]> fotos = new ArrayList<>();
 
-        Pet pet = petUtil.criaPetBrabo();
+        fotos.add(new byte[] {1, 2, 3});
 
-        Foto fotoA = new Foto();
-        fotoA.setImage(new byte[]{1,2,3});
-        fotoA.setPet(pet);
+        fotos.add(new byte[] {4, 5, 6});
 
-        Foto fotoB = new Foto();
-        fotoB.setImage(new byte[]{4,5,6});
-        fotoB.setPet(pet);
-
-        Foto fotoC = new Foto();
-        fotoC.setImage(new byte[]{7,8,9});
-        fotoC.setPet(pet);
-
-        fotos.add(fotoA);
-        fotos.add(fotoB);
-        fotos.add(fotoB);
+        fotos.add(new byte[] {7, 8, 9});
 
         return fotos;
     }
