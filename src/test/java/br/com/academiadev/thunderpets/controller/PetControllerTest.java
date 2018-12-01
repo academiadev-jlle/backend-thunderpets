@@ -27,6 +27,8 @@ import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 
+import java.util.UUID;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,6 +82,42 @@ public class PetControllerTest {
 
         //Então
         petSalvo.andExpect(status().isOk());
+    }
+
+    @Test
+    public void dadoIdPetInexistente_quandoBuscoPorId_entaoRetornaErro() throws Exception{
+        getAuthHeader();
+
+        UUID uuid = UUID.randomUUID();
+
+        mvc.perform(MockMvcRequestBuilders.get("/pet/" + uuid.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void dadoIdPetInexistente_quandoDeleto_entaoRetornaErro() throws Exception{
+        getAuthHeader();
+
+        UUID uuid = UUID.randomUUID();
+
+        mvc.perform(MockMvcRequestBuilders.delete("/pet/" + uuid.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void dadoPetDTO_quandoSalvoSemAutenticao_entaoRetornaErro() throws Exception{
+
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
+
+        //Dado
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
+
+        //Quando
+        ResultActions petSalvo = mvc.perform(post("/pet")).andExpect((status().isUnauthorized()));
+
     }
 
     @Test
