@@ -4,5 +4,7 @@ public interface FacebookService {
 
     String criarUrlAutorizacaoFacebook();
 
-    void criarTokenFacebook(String codigo);
+    String criarTokenFacebook(String codigo);
+
+    Object getUsuarioFacebook(String token);
 }

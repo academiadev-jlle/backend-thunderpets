@@ -15,9 +15,11 @@ import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("oauth")
@@ -68,6 +70,16 @@ public class AuthController {
 
     @GetMapping("facebook/create")
     public String createFacebookAuthorization() {
-        return facebookService.createFacebookAuthorizationURL();
+        return facebookService.criarUrlAutorizacaoFacebook();
+    }
+
+    @GetMapping("facebook")
+    public String createFacebookAccessToken(@RequestParam("code") String code) {
+        return facebookService.criarTokenFacebook(code);
+    }
+
+    @GetMapping("facebook/login")
+    public Object loginFacebook(@RequestParam("token") String token) {
+        return facebookService.getUsuarioFacebook(token);
     }
 }
