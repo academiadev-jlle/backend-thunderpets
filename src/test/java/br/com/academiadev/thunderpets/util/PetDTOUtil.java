@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.util;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.model.Foto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class PetDTOUtil {
         this.fotoUtil = fotoUtil;
     }
 
-    public PetDTO criaPetDTOBrabo() {
+    public PetDTO criaPetDTOBrabo(UsuarioDTO usuario) {
         List<Foto> fotos = fotoUtil.criaTresFotos();
 
         PetDTO petDTO = PetDTO.builder()
@@ -39,7 +40,7 @@ public class PetDTOUtil {
                 .sexo(Sexo.MACHO)
                 .status(Status.PARA_ADOTAR)
                 .idade(Idade.ADULTO)
-                .usuarioId(util.criarUsuarioKamuela().getId())
+                .usuarioId(usuario.getId())
                 .localizacao(localizacaoUtil.criaLocalizacaoGaruva())
                 .fotos(fotos.stream().map(Foto::getImage).collect(Collectors.toList()))
                 .ativo(true)

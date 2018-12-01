@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = {
-        Util.class, PetUtil.class, PetDTOUtil.class, LocalizacaoUtil.class, FotoUtil.class, PetMapperImpl.class })
+        Util.class, PetUtil.class, PetDTOUtil.class, LocalizacaoUtil.class, FotoUtil.class, PetMapperImpl.class, UsuarioMapperImpl.class })
 public class PetMapperTest {
 
     @Autowired
@@ -34,13 +34,13 @@ public class PetMapperTest {
     private LocalizacaoUtil localizacaoUtil;
 
     @Autowired
-    private FotoUtil fotoUtil;
-
-    @Autowired
     private PetDTOUtil petDTOUtil;
 
     @Autowired
     private PetMapper petMapper;
+
+    @Autowired
+    private UsuarioMapper usuarioMapper;
 
     @Test
     public void dadoPet_QuandoMapeioParaPetDTO_entaoRetornaPetDTO(){
@@ -73,7 +73,7 @@ public class PetMapperTest {
         //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
         Usuario usuario = util.criarUsuarioKamuela();
-        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuarioMapper.toDTO(usuario, null));
 
         //Quando
         Pet pet = petMapper.toEntity(petDTO, localizacao, usuario);

@@ -1,12 +1,19 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.repository.PetRepository;
-import br.com.academiadev.thunderpets.util.*;
+import br.com.academiadev.thunderpets.util.PetDTOUtil;
+import br.com.academiadev.thunderpets.util.Util;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -15,11 +22,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 
+import java.text.SimpleDateFormat;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -35,68 +46,143 @@ public class PetControllerTest {
     @Autowired
     private PetRepository petRepository;
 
-
     @Autowired
     private Util util;
 
     @Autowired
     private PetDTOUtil petDTOUtil;
 
+    @Value("${security.oauth2.client.client-id}")
+    private String client;
+
+    @Value("${security.oauth2.client.client-secret}")
+    private String secret;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private JacksonJsonParser parser = new JacksonJsonParser();
+    private String token = "";
+
     @Test
     public void dadoPetDTO_quandoSalvo_entaoRetornaSucesso() throws Exception {
+        getAuthHeader();
+
+        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
 
         //Dado
-         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
+         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
 
         //Quando
         ResultActions petSalvo = mvc.perform(post("/pet")
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .content(Util.convertObjectToJsonBytes(petDTO)));
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(petDTO)));
 
         //Então
         petSalvo.andExpect(status().isOk());
     }
 
     @Test
-    public void dadoPet_quandoDeleto_entaoRetornaSucesso() throws Exception {
+    public void dadoPetExistente_quandoBuscoPorId_entaoRetornaSucesso() throws Exception {
+        getAuthHeader();
+
+        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
 
         //Dado
-        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
 
         String conteudoRetorno = mvc.perform(post("/pet")
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .content(Util.convertObjectToJsonBytes(petDTO)))
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(petDTO)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        String idPet = (String) new JSONObject(conteudoRetorno).get("id");
+        JSONObject pet = new JSONObject(conteudoRetorno);
 
-        //Quando
-        ResultActions delete = mvc.perform(MockMvcRequestBuilders.delete("/pet" + idPet));
+        ResultActions response = mvc.perform(MockMvcRequestBuilders.get("/pet/" + pet.get("id")))
+                .andExpect(status().isOk());
 
-        //Então
+        JSONObject petResposta = new JSONObject(response.andReturn().getResponse().getContentAsString());
 
-        delete.andExpect(status().isOk()).andExpect(content().string("true"));
+        Assert.assertEquals(petResposta.get("id"), pet.get("id"));
+        Assert.assertEquals(petResposta.get("nome"), pet.get("nome"));
+        Assert.assertEquals(petResposta.get("descricao"), pet.get("descricao"));
     }
 
     @Test
-    public void dadoPet_quandoBuscoPorIdPet_entaoPet() throws Exception {
+    public void dadoPetExistente_quandoDeletaPet_entaoOk() throws Exception {
+        getAuthHeader();
 
-        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
+        UsuarioDTO usuarioDTO = util.criarUsuarioDTOJekaterina();
+        usuarioDTO.setFoto(null);
+
+        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(usuarioDTO)))
+                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+
+        //Dado
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
 
         String conteudoRetorno = mvc.perform(post("/pet")
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .content(Util.convertObjectToJsonBytes(petDTO)))
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(petDTO)))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         String idPet = (String) new JSONObject(conteudoRetorno).get("id");
 
         //Quando
-        ResultActions delete = mvc.perform(MockMvcRequestBuilders.delete("/pet" + idPet));
+        mvc.perform(MockMvcRequestBuilders.delete("/pet/" + idPet))
+                .andExpect(status().isOk());
     }
 
+    private void getAuthHeader() throws Exception {
+        if (token.isEmpty()) {
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "password");
+            params.add("username", "admin@mail.com");
+            params.add("password", "admin");
 
+            ResultActions login = mvc.perform(
+                    post("/oauth/token")
+                            .params(params)
+                            .accept("application/json;charset=UTF-8")
+                            .with(httpBasic(client, secret)))
+                    .andExpect(status().isOk());
+
+            String refreshToken = parser.parseMap(login
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString()).get("refresh_token").toString();
+
+            params.clear();
+            params.add("grant_type", "refresh_token");
+            params.add("refresh_token", refreshToken);
+
+            ResultActions refresh = mvc.perform(
+                    post("/oauth/token")
+                            .params(params)
+                            .accept("application/json;charset=UTF-8")
+                            .with(httpBasic(client, secret)))
+                    .andExpect(status().isOk());
+
+            String token = parser.parseMap(refresh
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString()).get("access_token").toString();
+
+            this.token = String.format("Bearer %s", token);
+        }
+    }
 }
