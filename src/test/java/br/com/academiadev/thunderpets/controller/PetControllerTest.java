@@ -28,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 import javax.transaction.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -63,6 +64,28 @@ public class PetControllerTest {
     private String token = "";
 
     @Test
+    public void dadoPetDTO_quandoSalvoSemAutenticacao_entaoRetornaFalha() throws Exception {
+
+        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+
+        //Dado
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
+
+        //Quando
+        ResultActions petSalvo = mvc.perform(post("/pet")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.convertObjectToJsonBytes(petDTO)));
+
+        //Então
+        petSalvo.andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
     public void dadoPetDTO_quandoSalvo_entaoRetornaSucesso() throws Exception {
         getAuthHeader();
 
@@ -72,7 +95,7 @@ public class PetControllerTest {
                 .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
 
         //Dado
-         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
+        PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
 
         //Quando
         ResultActions petSalvo = mvc.perform(post("/pet")
@@ -118,6 +141,26 @@ public class PetControllerTest {
     }
 
     @Test
+    public void dadoIdPetInexistente_quandoBusca_retornaFalha() throws Exception {
+        getAuthHeader();
+
+        UUID idQualquer = UUID.randomUUID();
+
+        mvc.perform(MockMvcRequestBuilders.get("/pet/" + idQualquer.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void dadoIdPetInexistente_quandoDeleta_retornaFalha() throws Exception {
+        getAuthHeader();
+
+        UUID idQualquer = UUID.randomUUID();
+
+        mvc.perform(MockMvcRequestBuilders.get("/pet/" + idQualquer.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void dadoPetExistente_quandoDeletaPet_entaoOk() throws Exception {
         getAuthHeader();
 
@@ -145,7 +188,9 @@ public class PetControllerTest {
         //Quando
         mvc.perform(MockMvcRequestBuilders.delete("/pet/" + idPet))
                 .andExpect(status().isOk());
+
     }
+
 
     private void getAuthHeader() throws Exception {
         if (token.isEmpty()) {
