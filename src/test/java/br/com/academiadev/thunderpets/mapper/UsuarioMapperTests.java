@@ -68,7 +68,9 @@ public class UsuarioMapperTests {
         contatosEsperados.add(new ContatoDTO(contato2.getId(), contato2.getTipo(), contato2.getDescricao()));
 
         //Quando
-        UsuarioRespostaDTO usuarioDTO = usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
+        UsuarioRespostaDTO usuarioDTO = usuarioMapper.toDTO(
+                usuario,
+                contatosEsperados.stream().map(c -> contatoMapper.toEntity(c, usuario)).collect(Collectors.toSet()));
 
         //Entao
         Assert.assertEquals(usuarioDTO.getNome(), "Kamuela Pereira");
@@ -78,3 +80,4 @@ public class UsuarioMapperTests {
         Assert.assertEquals(usuarioDTO.getContatos(), contatosEsperados);
     }
 }
+

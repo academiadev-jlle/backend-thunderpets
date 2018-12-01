@@ -2,10 +2,10 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.util.PetDTOUtil;
 import br.com.academiadev.thunderpets.util.Util;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -26,8 +26,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
-
-import java.text.SimpleDateFormat;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,10 +64,10 @@ public class PetControllerTest {
     public void dadoPetDTO_quandoSalvo_entaoRetornaSucesso() throws Exception {
         getAuthHeader();
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
          PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
@@ -88,10 +86,10 @@ public class PetControllerTest {
     public void dadoPetExistente_quandoBuscoPorId_entaoRetornaSucesso() throws Exception {
         getAuthHeader();
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
@@ -124,10 +122,10 @@ public class PetControllerTest {
         UsuarioDTO usuarioDTO = util.criarUsuarioDTOJekaterina();
         usuarioDTO.setFoto(null);
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(usuarioDTO)))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
