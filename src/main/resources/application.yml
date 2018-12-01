@@ -1,0 +1,26 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/thunderpets}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    generate-ddl: false
+    show-sql: true
+    format-sql: true
+security:
+  oauth2:
+    client:
+      client-id: ${OAUTH_CLIENT:client-id}
+      client-secret: ${OAUTH_SECRET:secret-id}
+flyway:
+  url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/thunderpets}
+  user: ${DATABASE_USERNAME:postgres}
+  password: ${DATABASE_PASSWORD:postgres}
+  baseline-on-migrate: true

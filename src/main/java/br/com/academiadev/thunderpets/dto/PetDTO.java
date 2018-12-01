@@ -39,11 +39,11 @@ public class PetDTO {
 
     private Idade idade;
 
-    private Usuario usuario;
+    private UUID usuarioId;
 
     private Localizacao localizacao;
 
     private boolean ativo;
 
-    private List<Foto> fotos;
+    private List<byte[]> fotos;
 }
