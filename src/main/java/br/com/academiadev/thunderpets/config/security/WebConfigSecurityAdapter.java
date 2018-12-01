@@ -2,8 +2,6 @@ package br.com.academiadev.thunderpets.config.security;
 
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import javax.transaction.Transactional;
 
 @Configuration
 @EnableWebSecurity
@@ -78,5 +78,4 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
 
         return bean;
     }
-
 }

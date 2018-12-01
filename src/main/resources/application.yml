@@ -14,13 +14,11 @@ spring:
     generate-ddl: false
     show-sql: true
     format-sql: true
-  security:
-    oauth2:
-      client:
-        registration:
-          facebook:
-            client-id: ${FACEBOOK_CLIENT_ID}
-            client-secret: ${FACEBOOK_CLIENT_SECRET}
+  social:
+    facebook:
+      appId: ${FACEBOOK_CLIENT_ID}
+      appSecret: ${FACEBOOK_CLIENT_SECRET}
+      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8080/oauth/facebook}
 security:
   oauth2:
     client:

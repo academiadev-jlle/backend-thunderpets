@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
+import br.com.academiadev.thunderpets.service.FacebookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.social.facebook.api.Facebook;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +27,17 @@ public class AuthController {
     private ConsumerTokenServices tokenServices;
     private ContatoRepository contatoRepository;
     private UsuarioMapper usuarioMapper;
+    private FacebookService facebookService;
 
     @Autowired
     public AuthController(ConsumerTokenServices tokenServices,
                           ContatoRepository contatoRepository,
-                          UsuarioMapper usuarioMapper) {
+                          UsuarioMapper usuarioMapper,
+                          FacebookService facebookService) {
         this.tokenServices = tokenServices;
         this.contatoRepository = contatoRepository;
         this.usuarioMapper = usuarioMapper;
+        this.facebookService = facebookService;
     }
 
     @GetMapping("whoAmI")
@@ -59,5 +64,10 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new UsuarioNaoEncontradoException("Nenhum usuário está logado no sistema"));
+    }
+
+    @GetMapping("facebook/create")
+    public String createFacebookAuthorization() {
+        return facebookService.createFacebookAuthorizationURL();
     }
 }
