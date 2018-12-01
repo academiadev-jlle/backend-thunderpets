@@ -33,6 +33,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.flywaydb:flyway-core:5.2.2')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
@@ -53,10 +54,4 @@ dependencies {
 
 sourceSets {
     main.java.srcDirs += "build/generated/source/apt/main"
-}
-
-flyway {
-    url = 'jdbc:postgresql://localhost:5432/thunderpets'
-    user = 'postgres'
-    password = 'postgres'
 }
