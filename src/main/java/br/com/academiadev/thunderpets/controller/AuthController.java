@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.social.facebook.api.Facebook;
@@ -68,18 +69,13 @@ public class AuthController {
                 .body(new UsuarioNaoEncontradoException("Nenhum usuário está logado no sistema"));
     }
 
-    @GetMapping("facebook/create")
+    @GetMapping("facebook/getUrl")
     public String createFacebookAuthorization() {
         return facebookService.criarUrlAutorizacaoFacebook();
     }
 
-    @GetMapping("facebook")
-    public String createFacebookAccessToken(@RequestParam("code") String code) {
-        return facebookService.criarTokenFacebook(code);
-    }
-
     @GetMapping("facebook/login")
-    public Object loginFacebook(@RequestParam("token") String token) {
-        return facebookService.getUsuarioFacebook(token);
+    public OAuth2AccessToken createFacebookAccessToken(@RequestParam("code") String code) {
+        return facebookService.login(code).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 }

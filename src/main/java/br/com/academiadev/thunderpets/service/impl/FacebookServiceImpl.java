@@ -63,15 +63,20 @@ public class FacebookServiceImpl implements FacebookService {
     }
 
     @Override
-    public String criarTokenFacebook(String codigo) {
+    public Optional<OAuth2AccessToken> login(String codigo) {
         FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(facebookAppId, facebookAppSecret);
         AccessGrant grant = connectionFactory.getOAuthOperations().exchangeForAccess(codigo, redirectUri, null);
 
-        return grant.getAccessToken();
+        String token = grant.getAccessToken();
+
+        if (token.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return getUsuarioFacebook(token);
     }
 
-    @Override
-    public Optional<OAuth2AccessToken> getUsuarioFacebook(String token) {
+    private Optional<OAuth2AccessToken> getUsuarioFacebook(String token) {
         Facebook facebook = new FacebookTemplate(token);
 
         String[] campos = {
