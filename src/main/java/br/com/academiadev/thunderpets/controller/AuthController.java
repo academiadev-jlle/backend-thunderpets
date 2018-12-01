@@ -1,9 +1,13 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
+import br.com.academiadev.thunderpets.model.Usuario;
+import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
@@ -11,16 +15,37 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
+
 @RestController
 @RequestMapping("oauth")
+@Transactional
 public class AuthController {
 
-    @Autowired
     private ConsumerTokenServices tokenServices;
+    private ContatoRepository contatoRepository;
+    private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    public AuthController(ConsumerTokenServices tokenServices,
+                          ContatoRepository contatoRepository,
+                          UsuarioMapper usuarioMapper) {
+        this.tokenServices = tokenServices;
+        this.contatoRepository = contatoRepository;
+        this.usuarioMapper = usuarioMapper;
+    }
 
     @GetMapping("whoAmI")
     public Object whoAmI() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getPrincipal() instanceof String) {
+            return authentication.getPrincipal();
+        }
+
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+
+        return usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario));
     }
 
     @GetMapping("logout")

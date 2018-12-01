@@ -62,7 +62,7 @@ public class AuthControllerTests {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        usuario.andExpect(jsonPath("$.username", is("admin@mail.com")));
+        usuario.andExpect(jsonPath("$.email", is("admin@mail.com")));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class AuthControllerTests {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        usuario.andExpect(jsonPath("$.username", is("admin@mail.com")));
+        usuario.andExpect(jsonPath("$.email", is("admin@mail.com")));
     }
 
     @Test

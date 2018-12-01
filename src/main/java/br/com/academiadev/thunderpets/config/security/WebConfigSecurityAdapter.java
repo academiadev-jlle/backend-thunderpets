@@ -2,6 +2,8 @@ package br.com.academiadev.thunderpets.config.security;
 
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
+
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +34,7 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
+    @Transactional
     public void authenticationManager(AuthenticationManagerBuilder builder, UsuarioRepository usuarioRepository)
             throws Exception {
         if (usuarioRepository.count() == 0) {
