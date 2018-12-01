@@ -2,71 +2,43 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
-import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
-import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
-import br.com.academiadev.thunderpets.mapper.PetMapper;
-import br.com.academiadev.thunderpets.model.Foto;
-import br.com.academiadev.thunderpets.model.Localizacao;
-import br.com.academiadev.thunderpets.model.Pet;
-import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.FotoRepository;
-import br.com.academiadev.thunderpets.repository.LocalizacaoRepository;
-import br.com.academiadev.thunderpets.repository.PetRepository;
-import br.com.academiadev.thunderpets.repository.UsuarioRepository;
+import br.com.academiadev.thunderpets.service.PetService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/pet")
-@Api(description = "Controller de Pets")
+@RequestMapping("pet")
+@Api("Controller de Pets")
 @Transactional
 public class PetController {
 
-    private PetRepository petRepository;
-    private LocalizacaoRepository localizacaoRepository;
-    private FotoRepository fotoRepository;
-    private PetMapper petMapper;
-    private UsuarioRepository usuarioRepository;
+    private PetService service;
 
     @Autowired
-    public PetController(PetRepository petRepository,
-                         LocalizacaoRepository localizacaoRepository,
-                         FotoRepository fotoRepository,
-                         PetMapper petMapper,
-                         UsuarioRepository usuarioRepository) {
-        this.petRepository = petRepository;
-        this.localizacaoRepository = localizacaoRepository;
-        this.fotoRepository = fotoRepository;
-        this.petMapper = petMapper;
-        this.usuarioRepository = usuarioRepository;
+    public PetController(PetService service) {
+        this.service = service;
     }
 
     @ApiOperation(
             value = "Busca um pet com base no id.",
-            notes = " O objeto é do tipo PetDTO.",
+            notes = "O objeto é do tipo PetDTO.",
             response = PetDTO.class
     )
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pet encontrado com sucesso."),
             @ApiResponse(code = 404, message = "Pet não encontrado.")
     })
-    @GetMapping("/{id}")
-    public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
-        Pet pet = petRepository.findById(id)
-                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id.toString())));
-
-        return petMapper.converterPetParaPetDTO(pet, false);
+    @GetMapping("{id}")
+    public PetDTO buscarPorId(@ApiParam(value = "ID do pet") @PathVariable("id") UUID id) {
+        return service.buscarPorId(id);
     }
 
     @ApiOperation(
@@ -79,7 +51,7 @@ public class PetController {
             @ApiResponse(code = 200, message = "Pets listados com sucesso.")
     })
     @GetMapping
-    public PageImpl<PetDTO> buscar(
+    public Page<PetDTO> buscar(
                                 @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
                                 @RequestParam(value = "especie", required = false) Especie especie,
@@ -97,21 +69,18 @@ public class PetController {
                                     @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
                                 @ApiParam(value = "Escolha para buscar os pets ativos")
                                     @RequestParam(defaultValue = "true") boolean ativo) {
-        Pet pet = Pet.builder()
-                .dataAchado(dataAchado)
-                .dataRegistro(dataRegistro)
-                .especie(especie)
-                .porte(porte)
-                .sexo(sexo)
-                .status(status)
-                .idade(idade)
-                .ativo(ativo)
-                .build();
-
-        PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
-
-        return (PageImpl<PetDTO>) paginaPetsFiltrados.map(p -> petMapper.converterPetParaPetDTO(p, true));
+        return service.buscar(dataAchado,
+                dataRegistro,
+                especie,
+                porte,
+                sexo,
+                status,
+                idade,
+                paginaAtual,
+                tamanho,
+                direcao,
+                campoOrdenacao,
+                ativo);
     }
 
     @ApiOperation(
@@ -129,26 +98,7 @@ public class PetController {
     })
     @PostMapping
     public PetDTO salvar(@RequestBody PetDTO petDTO) {
-        Usuario usuario = usuarioRepository.findById(petDTO.getUsuarioId())
-                .orElseThrow(UsuarioNaoEncontradoException::new);
-
-        Localizacao localizacao = null;
-        if (petDTO.getLocalizacao() != null) {
-             localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
-        }
-
-        final Pet pet = petRepository.saveAndFlush(
-                petMapper.convertPetDTOparaPet(petDTO, localizacao, usuario));
-
-        petDTO.getFotos().forEach(f -> {
-            Foto foto = new Foto();
-            foto.setImage(f);
-            foto.setPet(pet);
-
-            fotoRepository.save(foto);
-        });
-
-        return petMapper.converterPetParaPetDTO(pet, false);
+        return service.salvar(petDTO);
     }
 
     @ApiOperation("Inativa um pet com base no id")
@@ -159,10 +109,6 @@ public class PetController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("{id}")
     public void excluir(@PathVariable("id") UUID id) {
-        Pet pet = petRepository.findById(id)
-                .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id)));
-
-        pet.setAtivo(false);
-        petRepository.save(pet);
+        service.excluir(id);
     }
 }
