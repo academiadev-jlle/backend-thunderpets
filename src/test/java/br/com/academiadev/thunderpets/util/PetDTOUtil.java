@@ -9,22 +9,24 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @ActiveProfiles("test")
 public class PetDTOUtil {
 
-    @Autowired
-    public LocalizacaoUtil localizacaoUtil;
+    private LocalizacaoUtil localizacaoUtil;
+    private Util util;
+    private FotoUtil fotoUtil;
 
     @Autowired
-    public Util util;
-
-    @Autowired
-    public FotoUtil fotoUtil;
+    public PetDTOUtil(LocalizacaoUtil localizacaoUtil, Util util, FotoUtil fotoUtil) {
+        this.localizacaoUtil = localizacaoUtil;
+        this.util = util;
+        this.fotoUtil = fotoUtil;
+    }
 
     public PetDTO criaPetDTOBrabo() {
-
         List<Foto> fotos = fotoUtil.criaTresFotos();
 
         PetDTO petDTO = PetDTO.builder()
@@ -37,9 +39,9 @@ public class PetDTOUtil {
                 .sexo(Sexo.MACHO)
                 .status(Status.PARA_ADOTAR)
                 .idade(Idade.ADULTO)
-                .usuario(util.criarUsuarioKamuela())
+                .usuarioId(util.criarUsuarioKamuela().getId())
                 .localizacao(localizacaoUtil.criaLocalizacaoGaruva())
-                .fotos(fotos)
+                .fotos(fotos.stream().map(Foto::getImage).collect(Collectors.toList()))
                 .ativo(true)
                 .build();
 

@@ -3,57 +3,54 @@ package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
-import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.util.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@Transactional
+@ContextConfiguration(classes = {
+        Util.class, PetUtil.class, PetDTOUtil.class, LocalizacaoUtil.class, FotoUtil.class, PetMapperImpl.class })
 public class PetMapperTest {
 
     @Autowired
-    public Util util;
+    private Util util;
 
     @Autowired
-    public PetUtil petUtil;
+    private PetUtil petUtil;
 
     @Autowired
-    public LocalizacaoUtil localizacaoUtil;
+    private LocalizacaoUtil localizacaoUtil;
 
     @Autowired
-    public FotoUtil fotoUtil;
+    private FotoUtil fotoUtil;
 
     @Autowired
-    public PetDTOUtil petDTOUtil;
+    private PetDTOUtil petDTOUtil;
 
     @Autowired
-    public PetMapper petMapper;
+    private PetMapper petMapper;
 
     @Test
     public void dadoPet_QuandoMapeioParaPetDTO_entaoRetornaPetDTO(){
-
         //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
         Usuario usuario = util.criarUsuarioKamuela();
         Pet pet = petUtil.criaPetBrabo();
 
         //Quando
-        PetDTO petDTO = petMapper.toDTO(pet);
+        PetDTO petDTO = petMapper.toDTO(pet, null);
 
         //Então
         Assert.assertEquals(petDTO.getNome(), "Brabo");
@@ -65,7 +62,7 @@ public class PetMapperTest {
         Assert.assertEquals(petDTO.getSexo(), Sexo.MACHO);
         Assert.assertEquals(petDTO.getStatus(), Status.PARA_ADOTAR);
         Assert.assertEquals(petDTO.getIdade(), Idade.ADULTO);
-        Assert.assertEquals(petDTO.getUsuario(), usuario);
+        Assert.assertEquals(petDTO.getUsuarioId(), usuario.getId());
         Assert.assertEquals(petDTO.getLocalizacao(), localizacao);
         Assert.assertTrue(petDTO.isAtivo());
     }
@@ -79,7 +76,7 @@ public class PetMapperTest {
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo();
 
         //Quando
-        Pet pet = petMapper.toEntity(petDTO, localizacao);
+        Pet pet = petMapper.toEntity(petDTO, localizacao, usuario);
 
         //Então
         Assert.assertEquals(pet.getNome(), "Brabo");

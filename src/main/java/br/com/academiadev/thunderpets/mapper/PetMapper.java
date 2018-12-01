@@ -20,7 +20,10 @@ public interface PetMapper {
 
 
     @Mappings({
-        @Mapping(source = "petDTO.id", target = "id")
+            @Mapping(source = "petDTO.id", target = "id"),
+            @Mapping(source = "petDTO.nome", target = "nome"),
+            @Mapping(source = "petDTO.descricao", target = "descricao"),
+            @Mapping(source = "petDTO.ativo", target = "ativo")
     })
     Pet toEntity(PetDTO petDTO, Localizacao localizacao, Usuario usuario);
 }
