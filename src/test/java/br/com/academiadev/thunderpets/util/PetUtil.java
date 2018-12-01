@@ -13,12 +13,6 @@ import java.time.LocalDate;
 @Component
 public class PetUtil {
 
-//    @Autowired
-//    LocalizacaoUtil localizacaoUtil;
-//
-//    @Autowired
-//    Util util;
-
     public Pet criaPetBrabo(){
         LocalizacaoUtil localizacaoUtil = new LocalizacaoUtil();
         Util util = new Util();

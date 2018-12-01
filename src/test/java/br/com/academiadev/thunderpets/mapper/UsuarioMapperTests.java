@@ -35,7 +35,7 @@ public class UsuarioMapperTests {
     private UsuarioMapper usuarioMapper;
 
     @Autowired
-    private ContatoMapper contatoMapper;
+    private ContatoRepository contatoRepository;
 
     @Test
     public void dadoDTO_quandoMapeio_entaoEntity() {

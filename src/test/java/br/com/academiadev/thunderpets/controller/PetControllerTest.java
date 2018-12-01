@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.util.PetDTOUtil;
 import br.com.academiadev.thunderpets.util.Util;
@@ -66,10 +67,10 @@ public class PetControllerTest {
     @Test
     public void dadoPetDTO_quandoSalvoSemAutenticacao_entaoRetornaFalha() throws Exception {
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
@@ -89,10 +90,10 @@ public class PetControllerTest {
     public void dadoPetDTO_quandoSalvo_entaoRetornaSucesso() throws Exception {
         getAuthHeader();
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
@@ -111,10 +112,10 @@ public class PetControllerTest {
     public void dadoPetExistente_quandoBuscoPorId_entaoRetornaSucesso() throws Exception {
         getAuthHeader();
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
@@ -167,10 +168,10 @@ public class PetControllerTest {
         UsuarioDTO usuarioDTO = util.criarUsuarioDTOJekaterina();
         usuarioDTO.setFoto(null);
 
-        UsuarioDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
+        UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(Util.convertObjectToJsonBytes(usuarioDTO)))
-                .andReturn().getResponse().getContentAsString(), UsuarioDTO.class);
+                .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuario);
