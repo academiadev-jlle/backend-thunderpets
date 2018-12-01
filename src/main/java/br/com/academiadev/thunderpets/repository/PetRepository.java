@@ -20,27 +20,6 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
 
     List<Pet> findByUsuario(Usuario usuario);
 
-    List<Pet> findByLocalizacaoCidadeIgnoreCaseContaining(String cidade);
-
-    List<Pet> findByLocalizacaoEstadoIgnoreCaseContaining(String estado);
-
-    @Query(value = "WITH calculo AS " +
-            "(SELECT *, (6371 * " +
-            "  acos( " +
-            "    cos(radians(:latitude)) * " +
-            "    cos(radians(cast(loc.latitude as double precision))) * " +
-            "    cos(radians(:longitude) - radians(cast(loc.longitude as double precision))) + " +
-            "    sin(radians(:latitude)) * " +
-            "    sin(radians(cast(loc.latitude as double precision))) " +
-            "  ) " +
-            ") AS distancia " +
-            "FROM Pet pet " +
-            "INNER JOIN Localizacao loc ON (pet.localizacao_id = loc.id)) " +
-            "SELECT * FROM calculo WHERE distancia <= :raio", nativeQuery = true)
-    List<Pet> findByRaioDeDistancia(@Param("latitude") BigDecimal latitudeCentro,
-                                    @Param("longitude") BigDecimal longitudeCentro,
-                                    @Param("raio") Integer raioDistancia);
-
     @Query(value = "SELECT (6371 * " +
             "  acos( " +
             "    cos(radians(:latitude)) * " +
