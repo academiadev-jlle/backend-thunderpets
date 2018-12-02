@@ -15,23 +15,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = {
-        Util.class, PetUtil.class, PetDTOUtil.class, LocalizacaoUtil.class, FotoUtil.class, PetMapperImpl.class, UsuarioMapperImpl.class })
+        UsuarioUtil.class, UsuarioDTOUtil.class, UsuarioMapper.class, UsuarioMapperImpl.class,
+        PetUtil.class, PetDTOUtil.class, PetMapperImpl.class,
+        LocalizacaoUtil.class, ContatoUtil.class, FotoUtil.class})
 public class PetMapperTest {
 
     @Autowired
-    private Util util;
+    private UsuarioUtil usuarioUtil;
+
+    @Autowired
+    private UsuarioMapper usuarioMapper;
 
     @Autowired
     private PetUtil petUtil;
-
-    @Autowired
-    private LocalizacaoUtil localizacaoUtil;
 
     @Autowired
     private PetDTOUtil petDTOUtil;
@@ -40,13 +41,13 @@ public class PetMapperTest {
     private PetMapper petMapper;
 
     @Autowired
-    private UsuarioMapper usuarioMapper;
+    private LocalizacaoUtil localizacaoUtil;
 
     @Test
-    public void dadoPet_QuandoMapeioParaPetDTO_entaoRetornaPetDTO(){
+    public void dadoPet_quandoMapeioParaPetDTO_entaoRetornaPetDTO(){
         //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
-        Usuario usuario = util.criarUsuarioKamuela();
+        Usuario usuario = usuarioUtil.criarUsuarioKamuela();
         Pet pet = petUtil.criaPetBrabo();
 
         //Quando
@@ -68,11 +69,11 @@ public class PetMapperTest {
     }
 
     @Test
-    public void dadoPetDTO_QuandoMapeioParaPet_entaoRetornaPet(){
+    public void dadoPetDTO_quandoMapeioParaPet_entaoRetornaPet(){
 
         //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
-        Usuario usuario = util.criarUsuarioKamuela();
+        Usuario usuario = usuarioUtil.criarUsuarioKamuela();
         PetDTO petDTO = petDTOUtil.criaPetDTOBrabo(usuarioMapper.toDTO(usuario, null));
 
         //Quando

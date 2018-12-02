@@ -5,7 +5,7 @@ import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.util.PetDTOUtil;
-import br.com.academiadev.thunderpets.util.Util;
+import br.com.academiadev.thunderpets.util.UsuarioDTOUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -47,7 +47,7 @@ public class PetControllerTest {
     private PetRepository petRepository;
 
     @Autowired
-    private Util util;
+    private UsuarioDTOUtil usuarioDTOUtil;
 
     @Autowired
     private PetDTOUtil petDTOUtil;
@@ -68,7 +68,7 @@ public class PetControllerTest {
 
         UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
@@ -78,7 +78,7 @@ public class PetControllerTest {
         ResultActions petSalvo = mvc.perform(post("/pet")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(petDTO)));
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(petDTO)));
 
         //Então
         petSalvo.andExpect(status().isOk());
@@ -109,7 +109,7 @@ public class PetControllerTest {
 
         UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
@@ -126,7 +126,7 @@ public class PetControllerTest {
 
         UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
@@ -135,7 +135,7 @@ public class PetControllerTest {
         String conteudoRetorno = mvc.perform(post("/pet")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(petDTO)))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(petDTO)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -157,12 +157,12 @@ public class PetControllerTest {
     public void dadoPetExistente_quandoDeletaPet_entaoOk() throws Exception {
         getAuthHeader();
 
-        UsuarioDTO usuarioDTO = util.criarUsuarioDTOJekaterina();
+        UsuarioDTO usuarioDTO = usuarioDTOUtil.criarUsuarioDTOJekaterina();
         usuarioDTO.setFoto(null);
 
         UsuarioRespostaDTO usuario = objectMapper.readValue(mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(usuarioDTO)))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(usuarioDTO)))
                 .andReturn().getResponse().getContentAsString(), UsuarioRespostaDTO.class);
 
         //Dado
@@ -171,7 +171,7 @@ public class PetControllerTest {
         String conteudoRetorno = mvc.perform(post("/pet")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.convertObjectToJsonBytes(petDTO)))
+                .content(UsuarioDTOUtil.convertObjectToJsonBytes(petDTO)))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
