@@ -1,6 +1,5 @@
 package br.com.academiadev.thunderpets.service.impl;
 
-import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.FacebookService;
@@ -87,17 +86,18 @@ public class FacebookServiceImpl implements FacebookService {
                 "email"
         };
 
-        User user = Optional.ofNullable(facebook.fetchObject("me", User.class, campos)).orElse(null);
+        User usuarioFacebook = Optional.ofNullable(facebook.fetchObject("me", User.class, campos)).orElse(null);
 
-        if (user == null) {
+        if (usuarioFacebook == null) {
             return Optional.empty();
         }
 
-        if (usuarioRepository.findOneByEmail(user.getEmail()) == null) {
+        String access = usuarioFacebook.getEmail() == null ? usuarioFacebook.getId() : usuarioFacebook.getEmail();
+        if (usuarioRepository.findOneByEmail(access) == null) {
             usuarioRepository.saveAndFlush(Usuario.builder()
-                    .email(user.getEmail())
-                    .nome(user.getName())
-                    .senha(passwordEncoder.encode(user.getId()))
+                    .email(access)
+                    .nome(usuarioFacebook.getName())
+                    .senha(passwordEncoder.encode(usuarioFacebook.getId()))
                     .ativo(true).build());
         }
 
@@ -106,8 +106,8 @@ public class FacebookServiceImpl implements FacebookService {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "password");
-        params.put("username", user.getEmail());
-        params.put("password", user.getId());
+        params.put("username", access);
+        params.put("password", usuarioFacebook.getId());
 
         try {
             return Optional.ofNullable(tokenEndpoint.getAccessToken(principal, params).getBody());
