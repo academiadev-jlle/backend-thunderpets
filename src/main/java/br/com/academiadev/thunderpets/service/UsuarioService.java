@@ -35,5 +35,7 @@ public interface UsuarioService {
 
     byte[] getFoto(UUID id);
 
-    public List<PetDTO> getPets(UUID id);
+    List<PetDTO> getPets(UUID id);
+
+    String esqueciMinhaSenha(String email);
 }

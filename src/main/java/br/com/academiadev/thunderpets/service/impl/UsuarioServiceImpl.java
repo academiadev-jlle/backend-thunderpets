@@ -9,10 +9,13 @@ import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
+import br.com.academiadev.thunderpets.model.RecuperarSenha;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
+import br.com.academiadev.thunderpets.repository.RecuperarSenhaRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
+import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,23 +36,29 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
     private PetRepository petRepository;
     private ContatoRepository contatoRepository;
+    private RecuperarSenhaRepository recuperarSenhaRepository;
     private UsuarioMapper usuarioMapper;
     private PetMapper petMapper;
     private ContatoMapper contatoMapper;
+    private EmailService emailService;
 
     @Autowired
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
                               PetRepository petRepository,
                               ContatoRepository contatoRepository,
+                              RecuperarSenhaRepository recuperarSenhaRepository,
                               UsuarioMapper usuarioMapper,
                               PetMapper petMapper,
-                              ContatoMapper contatoMapper) {
+                              ContatoMapper contatoMapper,
+                              EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.petRepository = petRepository;
         this.contatoRepository = contatoRepository;
+        this.recuperarSenhaRepository = recuperarSenhaRepository;
         this.usuarioMapper = usuarioMapper;
         this.petMapper = petMapper;
         this.contatoMapper = contatoMapper;
+        this.emailService = emailService;
     }
 
     @Override
@@ -117,5 +126,27 @@ public class UsuarioServiceImpl implements UsuarioService {
         return petRepository.findByUsuario(usuario).stream()
                 .map(pet -> petMapper.converterPetParaPetDTO(pet, true))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String esqueciMinhaSenha(String email) {
+        Usuario usuario = usuarioRepository.findOneByEmail(email);
+        if (usuario == null) {
+            throw new UsuarioNaoEncontradoException(String.format("Não há usuário com o e-mail %s cadastrado na plataforma.", email));
+        }
+
+        RecuperarSenha recuperarSenha = RecuperarSenha.builder().usuario(usuario).build();
+        recuperarSenha = recuperarSenhaRepository.saveAndFlush(recuperarSenha);
+
+        String url = "http://localhost:8080/swagger-ui.html#/" +recuperarSenha.getId();
+
+        String conteudo = String.format("Olá, \n\nClique no link abaixo para redefinir sua senha: \nLink: %s \n\n O link de redefinição de senha é válido por 2 horas.", url);
+
+        return emailService.enviaMensagemSimples(email, "Redefinição de senha ThunderPets", conteudo);
+    }
+
+    //@Override
+    public void redefineSenha(String email) {
+
     }
 }

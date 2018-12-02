@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
@@ -11,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,8 +106,8 @@ public class UsuarioController {
         return usuarioService.getPets(id);
     }
 
-    @GetMapping("{id}/recuperar-senha")
-    public String recuperarSenha(@PathVariable("id") UUID id) {
-        return emailService.sendSimpleMessage("helenadalmazo@gmail.com", "Teste", "Teste");
+    @GetMapping("/esqueci-minha-senha")
+    public String esqueciMinhaSenha(@RequestParam(required = true) String email) {
+        return usuarioService.esqueciMinhaSenha(email);
     }
 }

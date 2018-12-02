@@ -2,5 +2,7 @@ package br.com.academiadev.thunderpets.service;
 
 public interface EmailService {
 
-    String sendSimpleMessage(String para, String assunto, String conteudo);
+    String enviaMensagemSimples(String para, String assunto, String conteudo);
+
+    public boolean verificaEmailValido(String email);
 }
