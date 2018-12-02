@@ -10,8 +10,10 @@ import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
+import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
+import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.UsuarioService;
@@ -34,6 +36,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
     private PetRepository petRepository;
     private ContatoRepository contatoRepository;
+    private FotoRepository fotoRepository;
     private UsuarioMapper usuarioMapper;
     private PetMapper petMapper;
     private ContatoMapper contatoMapper;
@@ -42,12 +45,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
                               PetRepository petRepository,
                               ContatoRepository contatoRepository,
+                              FotoRepository fotoRepository,
                               UsuarioMapper usuarioMapper,
                               PetMapper petMapper,
                               ContatoMapper contatoMapper) {
         this.usuarioRepository = usuarioRepository;
         this.petRepository = petRepository;
         this.contatoRepository = contatoRepository;
+        this.fotoRepository = fotoRepository;
         this.usuarioMapper = usuarioMapper;
         this.petMapper = petMapper;
         this.contatoMapper = contatoMapper;
@@ -116,7 +121,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
         return petRepository.findByUsuario(usuario).stream()
-                .map(pet -> petMapper.converterPetParaPetDTO(pet, true))
+                .map(pet -> petMapper.toDTO(pet, fotoRepository.findByPetId(pet.getId()).stream()
+                        .map(Foto::getImage).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 }
