@@ -1,7 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.util.Util;
+import br.com.academiadev.thunderpets.util.UsuarioDTOUtil;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,24 +36,24 @@ public class UsuarioControllerTests {
     private MockMvc mvc;
 
     @Autowired
-    private Util util;
+    private UsuarioDTOUtil usuarioDTOUtil;
 
     @Test
     public void dadoUsuarios_quandoListo10PorNomeASC_entaoListar10PorNomeASC() throws Exception {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         //Quando
@@ -71,17 +71,17 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOJekaterina())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         //Quando
@@ -102,7 +102,7 @@ public class UsuarioControllerTests {
         //Dado
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOKamuela())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOKamuela())))
                 .andReturn().getResponse().getContentAsString();
 
         String idJekaterina = (String) new JSONObject(conteudoRetorno).get("id");
@@ -123,7 +123,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -139,12 +139,12 @@ public class UsuarioControllerTests {
     @Test
     public void dadoUsuario_quandoSalvo_entaoSucesso() throws Exception {
         //Dado
-        UsuarioDTO usuarioDTO = util.criarUsuarioDTOEpaminondas();
+        UsuarioDTO usuarioDTO = usuarioDTOUtil.criarUsuarioDTOEpaminondas();
 
         //Quando
         ResultActions usuarioNaoEncontrado = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(usuarioDTO)));
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTO)));
 
         //Entao
         usuarioNaoEncontrado.andExpect(status().isOk());
@@ -155,7 +155,7 @@ public class UsuarioControllerTests {
         //Dado
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         String idEpaminondas = (String) new JSONObject(conteudoRetorno).get("id");
@@ -172,7 +172,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         UUID uuid = UUID.randomUUID();
@@ -190,7 +190,7 @@ public class UsuarioControllerTests {
         //Dado
         String conteudoRetorno = mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(util.convertObjectToJsonBytes(util.criarUsuarioDTOEpaminondas())))
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
                 .andReturn().getResponse().getContentAsString();
 
         String idEpaminondas = (String) new JSONObject(conteudoRetorno).get("id");

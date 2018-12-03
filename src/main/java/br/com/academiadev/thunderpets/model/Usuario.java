@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,6 +39,7 @@ public class Usuario implements UserDetails {
     @Size(min = 8)
     private String senha;
 
+    @Type(type = "org.hibernate.type.BinaryType")
     @Lob
     private byte[] foto;
 

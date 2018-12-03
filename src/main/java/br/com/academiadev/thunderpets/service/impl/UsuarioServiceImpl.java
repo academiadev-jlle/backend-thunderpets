@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
@@ -11,8 +12,10 @@ import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.RecuperarSenha;
+import br.com.academiadev.thunderpets.model.Foto;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
+import br.com.academiadev.thunderpets.repository.FotoRepository;
 import br.com.academiadev.thunderpets.repository.PetRepository;
 import br.com.academiadev.thunderpets.repository.RecuperarSenhaRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
@@ -40,6 +43,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private PetRepository petRepository;
     private ContatoRepository contatoRepository;
     private RecuperarSenhaRepository recuperarSenhaRepository;
+    private FotoRepository fotoRepository;
     private UsuarioMapper usuarioMapper;
     private PetMapper petMapper;
     private ContatoMapper contatoMapper;
@@ -50,6 +54,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                               PetRepository petRepository,
                               ContatoRepository contatoRepository,
                               RecuperarSenhaRepository recuperarSenhaRepository,
+                              FotoRepository fotoRepository,
                               UsuarioMapper usuarioMapper,
                               PetMapper petMapper,
                               ContatoMapper contatoMapper,
@@ -58,6 +63,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.petRepository = petRepository;
         this.contatoRepository = contatoRepository;
         this.recuperarSenhaRepository = recuperarSenhaRepository;
+        this.fotoRepository = fotoRepository;
         this.usuarioMapper = usuarioMapper;
         this.petMapper = petMapper;
         this.contatoMapper = contatoMapper;
@@ -65,16 +71,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
+    public PageImpl<UsuarioRespostaDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Usuario> paginaUsuarios = usuarioRepository.findAll(paginacao);
 
-        return (PageImpl<UsuarioDTO>) paginaUsuarios
+        return (PageImpl<UsuarioRespostaDTO>) paginaUsuarios
                 .map(usuario -> usuarioMapper.toDTO(usuario, contatoRepository.findByUsuario(usuario)));
     }
 
     @Override
-    public UsuarioDTO buscar(UUID id) {
+    public UsuarioRespostaDTO buscar(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
@@ -82,7 +88,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDTO salvar(UsuarioDTO usuarioDTO) {
+    public UsuarioRespostaDTO salvar(UsuarioDTO usuarioDTO) {
         usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
         usuarioDTO.setAtivo(true);
 
@@ -127,7 +133,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
         return petRepository.findByUsuario(usuario).stream()
-                .map(pet -> petMapper.converterPetParaPetDTO(pet, true))
+                .map(pet -> petMapper.toDTO(pet, fotoRepository.findByPetId(pet.getId()).stream()
+                        .map(Foto::getImage).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
@@ -153,7 +160,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws Exception {
+    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws NaoEncontradoException, ErroAoProcessarException {
         RecuperarSenha recuperarSenha = recuperarSenhaRepository.findById(idRecuperarSenha)
                 .orElseThrow(() -> new NaoEncontradoException(String.format("Token %s de recuperação de senha não encontrado.", idRecuperarSenha)));
 
