@@ -4,24 +4,28 @@ import br.com.academiadev.thunderpets.dto.ContatoDTO;
 import br.com.academiadev.thunderpets.enums.TipoContato;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.util.Util;
+import br.com.academiadev.thunderpets.util.ContatoUtil;
+import br.com.academiadev.thunderpets.util.UsuarioDTOUtil;
+import br.com.academiadev.thunderpets.util.UsuarioUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = { Util.class, ContatoMapperImpl.class })
 public class ContatoMapperTests {
-    
+
     @Autowired
-    private Util util;
+    private UsuarioDTOUtil usuarioDTOUtil;
+
+    @Autowired
+    private UsuarioUtil usuarioUtil;
+
+    @Autowired
+    private ContatoUtil contatoUtil;
 
     @Autowired
     private ContatoMapper contatoMapper;
@@ -29,8 +33,8 @@ public class ContatoMapperTests {
     @Test
     public void dadoDTO_quandoMapeio_entaoEntity() {
         //Dado
-        ContatoDTO contatoDTO = util.criarContatoDTOCelular();
-        Usuario usuario = util.criarUsuarioKamuela();
+        ContatoDTO contatoDTO = contatoUtil.criarContatoDTOCelular();
+        Usuario usuario = usuarioUtil.criarUsuarioKamuela();
 
         //Quando
         Contato contato = contatoMapper.toEntity(contatoDTO, usuario);
@@ -44,7 +48,7 @@ public class ContatoMapperTests {
     @Test
     public void dadoEntity_quandoMapeio_entaoDTO() {
         //Dado
-        Contato contato = util.criarContatoRedeSocial();
+        Contato contato = contatoUtil.criarContatoRedeSocial();
 
         //Quando
         ContatoDTO contatoDTO = contatoMapper.toDTO(contato);

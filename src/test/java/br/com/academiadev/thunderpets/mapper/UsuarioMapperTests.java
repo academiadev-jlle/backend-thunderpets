@@ -5,9 +5,9 @@ import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.model.Contato;
 import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.ContatoRepository;
-import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-import br.com.academiadev.thunderpets.util.Util;
+import br.com.academiadev.thunderpets.util.ContatoUtil;
+import br.com.academiadev.thunderpets.util.UsuarioDTOUtil;
+import br.com.academiadev.thunderpets.util.UsuarioUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,11 +23,17 @@ import java.util.stream.Collectors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = { UsuarioMapperImpl.class, Util.class, ContatoMapperImpl.class })
+@ContextConfiguration(classes = { UsuarioMapperImpl.class, UsuarioDTOUtil.class, UsuarioUtil.class, ContatoUtil.class, ContatoMapperImpl.class })
 public class UsuarioMapperTests {
 
     @Autowired
-    private Util util;
+    private UsuarioDTOUtil usuarioDTOUtil;
+
+    @Autowired
+    private UsuarioUtil usuarioUtil;
+
+    @Autowired
+    private ContatoUtil contatoUtil;
 
     @Autowired
     private UsuarioMapper usuarioMapper;
@@ -40,7 +44,7 @@ public class UsuarioMapperTests {
     @Test
     public void dadoDTO_quandoMapeio_entaoEntity() {
         //Dado
-        UsuarioDTO usuarioDTO = util.criarUsuarioDTOEpaminondas();
+        UsuarioDTO usuarioDTO = usuarioDTOUtil.criarUsuarioDTOEpaminondas();
 
         //Quando
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
@@ -55,12 +59,12 @@ public class UsuarioMapperTests {
     @Test
     public void dadoEntity_quandoMapeio_entaoDTO() {
         //Dado
-        Usuario usuario = util.criarUsuarioKamuela();
+        Usuario usuario = usuarioUtil.criarUsuarioKamuela();
 
-        Contato contato1 = util.criarContatoEmail();
+        Contato contato1 = contatoUtil.criarContatoEmail();
         contato1.setUsuario(usuario);
 
-        Contato contato2 = util.criarContatoRedeSocial();
+        Contato contato2 = contatoUtil.criarContatoRedeSocial();
         contato2.setUsuario(usuario);
 
         Set<ContatoDTO> contatosEsperados = new HashSet<>();
@@ -80,4 +84,3 @@ public class UsuarioMapperTests {
         Assert.assertEquals(usuarioDTO.getContatos(), contatosEsperados);
     }
 }
-

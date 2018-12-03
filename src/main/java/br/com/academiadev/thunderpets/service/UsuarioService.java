@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.service;
 
+import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,4 +35,6 @@ public interface UsuarioService {
     void deletar(UUID id);
 
     byte[] getFoto(UUID id);
+
+    public List<PetDTO> getPets(UUID id);
 }

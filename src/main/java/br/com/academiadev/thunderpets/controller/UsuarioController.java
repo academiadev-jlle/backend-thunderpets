@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -70,14 +72,14 @@ public class UsuarioController {
     @ApiOperation("Inativa um usuário com base no id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário inativado com sucesso"),
-            @ApiResponse(code = 404, message = "Usuário não encontrado. Erro ao inativar o usuário")
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @DeleteMapping("{id}")
     public void deletar(@PathVariable("id") UUID id) {
         usuarioService.deletar(id);
     }
 
-    @ApiOperation("Busca a foto do usuário com base no id")
+    @ApiOperation("Busca a foto de determinado usuário com base no id do usuário")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
             @ApiResponse(code = 404, message = "Usuário não encontrado; Foto não encontrada")
@@ -87,5 +89,15 @@ public class UsuarioController {
         byte[] bytes = usuarioService.getFoto(id);
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+
+    @ApiOperation("Busca os pets de determinado usuário com base no id do usuário")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pets do usuário listados com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
+    @GetMapping("{id}/pets")
+    public List<PetDTO> getPets(@PathVariable("id") UUID id) {
+        return usuarioService.getPets(id);
     }
 }
