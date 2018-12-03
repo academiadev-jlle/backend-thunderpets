@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
+import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -135,18 +138,52 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new UsuarioNaoEncontradoException(String.format("Não há usuário com o e-mail %s cadastrado na plataforma.", email));
         }
 
-        RecuperarSenha recuperarSenha = RecuperarSenha.builder().usuario(usuario).build();
+        RecuperarSenha recuperarSenha = RecuperarSenha.builder()
+                .usuario(usuario)
+                .ativo(true)
+                .build();
         recuperarSenha = recuperarSenhaRepository.saveAndFlush(recuperarSenha);
 
-        String url = "http://localhost:8080/swagger-ui.html#/" +recuperarSenha.getId();
-
-        String conteudo = String.format("Olá, \n\nClique no link abaixo para redefinir sua senha: \nLink: %s \n\n O link de redefinição de senha é válido por 2 horas.", url);
+        String conteudo = String.format("Olá, \n\n" +
+                "Clique no link abaixo para redefinir sua senha: \n" +
+                "Link: http://localhost:8080/swagger-ui.html#/%s \n\n" +
+                "O link de redefinição de senha é válido por 2 horas.", recuperarSenha.getId());
 
         return emailService.enviaMensagemSimples(email, "Redefinição de senha ThunderPets", conteudo);
     }
 
-    //@Override
-    public void redefineSenha(String email) {
+    @Override
+    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws Exception {
+        RecuperarSenha recuperarSenha = recuperarSenhaRepository.findById(idRecuperarSenha)
+                .orElseThrow(() -> new NaoEncontradoException(String.format("Token %s de recuperação de senha não encontrado.", idRecuperarSenha)));
 
+        if(!recuperarSenha.isAtivo()) {
+            throw new ErroAoProcessarException("O token não é válido, ele encontra-se inativo pois já foi utilizado.");
+        }
+
+        if((Duration.between(recuperarSenha.getCreatedAt(), LocalDateTime.now()).getSeconds()) > 60*60*2) {
+            throw new ErroAoProcessarException("O token não é válido, ele foi solicitado há mais de 2 horas.");
+        }
+
+        Usuario usuario = usuarioRepository.findOneByEmail(email);
+        if (usuario == null) {
+            throw new UsuarioNaoEncontradoException(String.format("Não há usuário com o e-mail %s cadastrado na plataforma.", email));
+        }
+
+        if(!usuario.equals(recuperarSenha.getUsuario())) {
+            throw new ErroAoProcessarException("O token de recuperação de senha não é referente ao usuário do e-mail.");
+        }
+
+        try {
+            usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
+            usuarioRepository.saveAndFlush(usuario);
+
+            recuperarSenha.setAtivo(false);
+            recuperarSenhaRepository.saveAndFlush(recuperarSenha);
+
+            return "Senha alterada com sucesso.";
+        } catch (Exception e) {
+            return "Erro ao alterar a senha do usuário. " + e.getMessage();
+        }
     }
 }

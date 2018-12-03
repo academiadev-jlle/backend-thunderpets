@@ -1,4 +1,4 @@
-CREATE TABLE recuperarsenha (
+CREATE TABLE recuperar_senha (
   id            UUID NOT NULL,
   usuario_id    UUID NOT NULL REFERENCES usuario(id),
   ativo         BOOLEAN DEFAULT TRUE,

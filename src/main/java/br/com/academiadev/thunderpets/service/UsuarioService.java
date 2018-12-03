@@ -38,4 +38,6 @@ public interface UsuarioService {
     List<PetDTO> getPets(UUID id);
 
     String esqueciMinhaSenha(String email);
+
+    String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws Exception;
 }

@@ -110,4 +110,11 @@ public class UsuarioController {
     public String esqueciMinhaSenha(@RequestParam(required = true) String email) {
         return usuarioService.esqueciMinhaSenha(email);
     }
+
+    @GetMapping("/redefinir-senha")
+    public String redefinirSenha(@RequestParam(required = true) String email,
+                                 @RequestParam(required = true) UUID token,
+                                 @RequestParam(required = true) String senha) throws Exception {
+        return usuarioService.redefinirSenha(email, token, senha);
+    }
 }

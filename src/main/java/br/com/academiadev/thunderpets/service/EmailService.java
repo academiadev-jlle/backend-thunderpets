@@ -4,5 +4,5 @@ public interface EmailService {
 
     String enviaMensagemSimples(String para, String assunto, String conteudo);
 
-    public boolean verificaEmailValido(String email);
+    boolean verificaEmailValido(String email);
 }

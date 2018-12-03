@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.validation.constraints.Email;
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
     @Autowired
     public JavaMailSender javaMailSender;
-
-    @Email
-    private String email;
 
     @Override
     public String enviaMensagemSimples(String para, String assunto, String conteudo) {

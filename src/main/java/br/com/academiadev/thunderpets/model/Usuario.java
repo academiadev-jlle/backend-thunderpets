@@ -40,6 +40,7 @@ public class Usuario implements UserDetails {
 
     @Lob
     private byte[] foto;
+
     private boolean ativo = true;
 
     @Override
