@@ -66,7 +66,7 @@ public class PetServiceImpl implements PetService {
                                Integer tamanho,
                                Sort.Direction direcao,
                                String campoOrdenacao,
-                                boolean ativo) {
+                               boolean ativo) {
 
         Localizacao localizacao = new Localizacao();
         if (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO)) {
