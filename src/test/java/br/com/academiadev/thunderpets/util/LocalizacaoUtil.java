@@ -9,35 +9,32 @@ import java.math.BigDecimal;
 public class LocalizacaoUtil {
 
     public Localizacao criaLocalizacaoGaruva() {
-        Localizacao localizacao = new Localizacao();
-        localizacao.setCidade("Garuva");
-        localizacao.setEstado("Garuva State");
-        localizacao.setLatitude(new BigDecimal(0));
-        localizacao.setLongitude(new BigDecimal(0));
-
-        return localizacao;
+        return Localizacao.builder()
+                .cidade("Garuva")
+                .estado("Garuva State")
+                .latitude(new BigDecimal("-26.294918"))
+                .longitude(new BigDecimal("-48.890790"))
+                .build();
     }
 
     public Localizacao criaLocalizacaoTerminalCentral() {
-        Localizacao localizacao = new Localizacao();
-        localizacao.setCidade("Joinville");
-        localizacao.setEstado("Santa Catarina");
-        localizacao.setDescricao("R. Dona Francisca - Centro, Joinville - SC, 89201-070");
-        localizacao.setLatitude(new BigDecimal(-26.301245));
-        localizacao.setLongitude(new BigDecimal(-48.844594));
-
-        return localizacao;
+        return Localizacao.builder()
+                .cidade("Joinville")
+                .estado("Santa Catarina")
+                .descricao("R. Dona Francisca - Centro, Joinville - SC, 89201-070")
+                .latitude(new BigDecimal("-26.301245"))
+                .longitude(new BigDecimal("-48.844594"))
+                .build();
     }
 
     public Localizacao criaLocalizacaoAmerica() {
-        Localizacao localizacao = new Localizacao();
-        localizacao.setCidade("Joinville");
-        localizacao.setEstado("Blumenal");
-        localizacao.setDescricao("R. Carlos Gruensch, 2-260 - América, Joinville - SC, 89201-745");
-        localizacao.setLatitude(new BigDecimal(-26.300709));
-        localizacao.setLongitude(new BigDecimal(-48.857203));
-
-        return localizacao;
+        return Localizacao.builder()
+                .cidade("Joinville")
+                .estado("Blumenal")
+                .descricao("R. Carlos Gruensch, 2-260 - América, Joinville - SC, 89201-745")
+                .latitude(new BigDecimal("-26.300709"))
+                .longitude(new BigDecimal("-48.857203"))
+                .build();
     }
 
 }

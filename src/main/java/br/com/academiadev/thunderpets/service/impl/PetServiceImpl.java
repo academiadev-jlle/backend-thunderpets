@@ -89,7 +89,7 @@ public class PetServiceImpl implements PetService {
                 .build();
 
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet), paginacao);
+        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
 
         PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados
                 .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(pet.getId()).stream()
@@ -106,8 +106,7 @@ public class PetServiceImpl implements PetService {
             });
 
             if(raioDistancia != null) {
-                return new PageImpl<PetDTO>(paginaPetsFiltradosDTO
-                        .stream()
+                return new PageImpl<PetDTO>(paginaPetsFiltradosDTO.stream()
                         .filter(petDTO -> petDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0)
                         .collect(Collectors.toList()));
             }

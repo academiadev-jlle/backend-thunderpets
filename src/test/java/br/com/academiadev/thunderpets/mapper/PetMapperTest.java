@@ -70,7 +70,6 @@ public class PetMapperTest {
 
     @Test
     public void dadoPetDTO_quandoMapeioParaPet_entaoRetornaPet(){
-
         //Dado
         Localizacao localizacao = localizacaoUtil.criaLocalizacaoGaruva();
         Usuario usuario = usuarioUtil.criarUsuarioKamuela();
