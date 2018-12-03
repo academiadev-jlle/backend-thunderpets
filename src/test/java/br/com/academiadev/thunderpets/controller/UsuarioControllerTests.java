@@ -214,8 +214,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/esqueci-minha-senha")
@@ -231,8 +230,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/esqueci-minha-senha")
@@ -248,8 +246,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
@@ -272,8 +269,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
@@ -296,8 +292,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
@@ -323,8 +318,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
@@ -349,8 +343,7 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
@@ -372,13 +365,11 @@ public class UsuarioControllerTests {
         //Dado
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
 
         mvc.perform(post("/usuario")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())))
-                .andReturn().getResponse().getContentAsString();
+                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())));
 
         mvc.perform(get("/usuario/esqueci-minha-senha")
                 .param("email", "epaminondas@mail.com"));
