@@ -160,7 +160,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws NaoEncontradoException, ErroAoProcessarException {
+    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha)
+            throws NaoEncontradoException, ErroAoProcessarException {
         RecuperarSenha recuperarSenha = recuperarSenhaRepository.findById(idRecuperarSenha)
                 .orElseThrow(() -> new NaoEncontradoException(String.format("Token %s de recuperação de senha não encontrado.", idRecuperarSenha)));
 
