@@ -1,10 +1,7 @@
 package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,12 +9,13 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper=false)
 @Data
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pet {
+public class Pet extends EntidadeAuditavel<String>{
 
     @Id
     @GeneratedValue
@@ -59,5 +57,6 @@ public class Pet {
     @OneToOne
     private Localizacao localizacao;
 
+    @Builder.Default
     private boolean ativo = true;
 }
