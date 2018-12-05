@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.service.PetService;
 import io.swagger.annotations.*;
@@ -30,7 +31,7 @@ public class PetController {
 
     @ApiOperation(
             value = "Busca os pet com os parâmetros passados",
-            notes = " O objeto é do tipo PetDTO.",
+            notes = " O objeto é do tipo PetRespostaDTO.",
             response = PetDTO.class,
             responseContainer = "Lists"
     )
@@ -38,7 +39,7 @@ public class PetController {
             @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping
-    public Page<PetDTO> buscar(
+    public Page<PetRespostaDTO> buscar(
                                 @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
                                 @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
                                 @RequestParam(value = "especie", required = false) Especie especie,
@@ -85,15 +86,15 @@ public class PetController {
 
     @ApiOperation(
             value = "Busca um pet com base no id",
-            notes = " O objeto é do tipo PetDTO.",
-            response = PetDTO.class
+            notes = " O objeto é do tipo PetRespostaDTO.",
+            response = PetRespostaDTO.class
     )
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pet encontrado com sucesso"),
             @ApiResponse(code = 404, message = "Pet não encontrado")
     })
     @GetMapping("/{id}")
-    public PetDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
+    public PetRespostaDTO buscarPorId(@ApiParam(value = "ID no pet") @PathVariable("id") UUID id) {
         return service.buscarPorId(id);
     }
 
@@ -111,7 +112,7 @@ public class PetController {
             )
     })
     @PostMapping
-    public PetDTO salvar(@RequestBody PetDTO petDTO) {
+    public PetRespostaDTO salvar(@RequestBody PetDTO petDTO) {
         return service.salvar(petDTO);
     }
 

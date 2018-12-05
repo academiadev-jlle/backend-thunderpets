@@ -1,9 +1,8 @@
 package br.com.academiadev.thunderpets.service.impl;
 
-import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
-import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
@@ -116,7 +115,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<PetDTO> getPets(UUID id) {
+    public List<PetRespostaDTO> getPets(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 

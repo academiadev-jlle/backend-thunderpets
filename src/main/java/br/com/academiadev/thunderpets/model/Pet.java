@@ -2,15 +2,15 @@ package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,6 +53,21 @@ public class Pet extends EntidadeAuditavel{
     @OneToOne
     private Localizacao localizacao;
 
-    @Builder.Default
     private boolean ativo = true;
+
+    @Builder
+    public Pet(LocalDate dataRegistro, String nome, @NotNull String descricao, LocalDate dataAchado, @NotNull Especie especie, @NotNull Porte porte, @NotNull Sexo sexo, @NotNull Status status, @NotNull Idade idade, Usuario usuario, Localizacao localizacao, boolean ativo) {
+        super(dataRegistro);
+        this.nome = nome;
+        this.descricao = descricao;
+        this.dataAchado = dataAchado;
+        this.especie = especie;
+        this.porte = porte;
+        this.sexo = sexo;
+        this.status = status;
+        this.idade = idade;
+        this.usuario = usuario;
+        this.localizacao = localizacao;
+        this.ativo = ativo;
+    }
 }
