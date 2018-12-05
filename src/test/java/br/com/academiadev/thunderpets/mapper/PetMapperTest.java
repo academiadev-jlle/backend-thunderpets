@@ -57,7 +57,6 @@ public class PetMapperTest {
         Assert.assertEquals(petDTO.getNome(), "Brabo");
         Assert.assertEquals(petDTO.getDescricao(), "Bixo e brabo");
         Assert.assertEquals(petDTO.getDataAchado(), LocalDate.now());
-        Assert.assertEquals(petDTO.getDataRegistro(), LocalDate.now());
         Assert.assertEquals(petDTO.getEspecie(), Especie.CACHORRO);
         Assert.assertEquals(petDTO.getPorte(), Porte.GRANDE);
         Assert.assertEquals(petDTO.getSexo(), Sexo.MACHO);
