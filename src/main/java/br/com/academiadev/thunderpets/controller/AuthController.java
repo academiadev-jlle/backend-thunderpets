@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,8 +73,7 @@ public class AuthController {
     }
 
     @GetMapping("google/login")
-    public String createGoogleAccessToken(@RequestParam("code") String code) {
-        googleService.login(code);
-        return "";
+    public OAuth2AccessToken createGoogleAccessToken(@RequestParam("code") String code) {
+        return googleService.login(code).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 }
