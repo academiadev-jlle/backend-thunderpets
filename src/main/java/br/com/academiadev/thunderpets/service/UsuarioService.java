@@ -27,5 +27,5 @@ public interface UsuarioService {
 
     String esqueciMinhaSenha(String email);
 
-    String redefinirSenha(String email, UUID idRecuperarSenha, String senha) throws NaoEncontradoException, ErroAoProcessarException;
+    String redefinirSenha(UUID idRecuperarSenha, String senha) throws ErroAoProcessarException;
 }

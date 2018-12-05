@@ -153,15 +153,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         String conteudo = String.format("Olá, \n\n" +
                 "Clique no link abaixo para redefinir sua senha: \n" +
-                "Link: http://localhost:8080/swagger-ui.html#/%s \n\n" +
+                "Link: https://thunderpets.netlify.com/forgotPassword/%s \n\n" +
                 "O link de redefinição de senha é válido por 2 horas.", recuperarSenha.getId());
 
         return emailService.enviaMensagemSimples(email, "Redefinição de senha ThunderPets", conteudo);
     }
 
     @Override
-    public String redefinirSenha(String email, UUID idRecuperarSenha, String senha)
-            throws NaoEncontradoException, ErroAoProcessarException {
+    public String redefinirSenha(UUID idRecuperarSenha, String senha) throws NaoEncontradoException, ErroAoProcessarException {
         RecuperarSenha recuperarSenha = recuperarSenhaRepository.findById(idRecuperarSenha)
                 .orElseThrow(() -> new NaoEncontradoException(String.format("Token %s de recuperação de senha não encontrado.", idRecuperarSenha)));
 
@@ -173,15 +172,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ErroAoProcessarException("O token não é válido, ele foi solicitado há mais de 2 horas.");
         }
 
-        Usuario usuario = usuarioRepository.findOneByEmail(email);
-        if (usuario == null) {
-            throw new UsuarioNaoEncontradoException(String.format("Não há usuário com o e-mail %s cadastrado na plataforma.", email));
-        }
-
-        if(!usuario.equals(recuperarSenha.getUsuario())) {
-            throw new ErroAoProcessarException("O token de recuperação de senha não é referente ao usuário do e-mail.");
-        }
-
+        Usuario usuario = recuperarSenha.getUsuario();
         try {
             usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
             usuarioRepository.saveAndFlush(usuario);

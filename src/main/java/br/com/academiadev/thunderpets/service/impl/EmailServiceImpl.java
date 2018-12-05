@@ -29,15 +29,4 @@ public class EmailServiceImpl implements EmailService {
 
         }
     }
-
-    @Override
-    public boolean verificaEmailValido(String email) {
-        try {
-            InternetAddress internetAddress = new InternetAddress(email);
-            internetAddress.validate();
-            return true;
-        } catch (AddressException ex) {
-            return false;
-        }
-    }
 }

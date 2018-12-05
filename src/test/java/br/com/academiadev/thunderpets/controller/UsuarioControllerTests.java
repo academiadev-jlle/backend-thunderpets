@@ -257,7 +257,6 @@ public class UsuarioControllerTests {
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "epaminondas@mail.com")
                 .param("token", String.valueOf(recuperarSenha.getId()))
                 .param("senha", "novasenha"));
 
@@ -280,7 +279,6 @@ public class UsuarioControllerTests {
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "epaminondas@mail.com")
                 .param("token", String.valueOf(token))
                 .param("senha", "novasenha"));
 
@@ -305,7 +303,6 @@ public class UsuarioControllerTests {
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "epaminondas@mail.com")
                 .param("token", String.valueOf(recuperarSenha.getId()))
                 .param("senha", "novasenha"));
 
@@ -331,60 +328,11 @@ public class UsuarioControllerTests {
 
         //Quando
         ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "epaminondas@mail.com")
                 .param("token", String.valueOf(recuperarSenha.getId()))
                 .param("senha", "novasenha"));
 
         //Entao
         enviaEmail.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", is("O token não é válido, ele foi solicitado há mais de 2 horas.")));
-    }
-
-    @Test
-    public void dadoEmailInvalido_quandoRedefinoSenha_entaoErro404UsuarioNaoEncontrado() throws Exception {
-        //Dado
-        mvc.perform(post("/usuario")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
-
-        mvc.perform(get("/usuario/esqueci-minha-senha")
-                .param("email", "epaminondas@mail.com"));
-
-        RecuperarSenha recuperarSenha = recuperarSenhaRepository.findAll().get(0);
-        //Quando
-        ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "emailinvalido@mail.com")
-                .param("token", String.valueOf(recuperarSenha.getId()))
-                .param("senha", "novasenha"));
-
-        //Entao
-        enviaEmail.andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is("Não há usuário com o e-mail emailinvalido@mail.com cadastrado na plataforma.")));
-    }
-
-    @Test
-    public void dadoEmailDeOutroUsuario_quandoRedefinoSenha_entaoErro400EmaileUsuarioTokenDiferentes() throws Exception {
-        //Dado
-        mvc.perform(post("/usuario")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOEpaminondas())));
-
-        mvc.perform(post("/usuario")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(usuarioDTOUtil.convertObjectToJsonBytes(usuarioDTOUtil.criarUsuarioDTOJekaterina())));
-
-        mvc.perform(get("/usuario/esqueci-minha-senha")
-                .param("email", "epaminondas@mail.com"));
-
-        RecuperarSenha recuperarSenha = recuperarSenhaRepository.findAll().get(0);
-        //Quando
-        ResultActions enviaEmail = mvc.perform(get("/usuario/redefinir-senha")
-                .param("email", "jekaterina@mail.com")
-                .param("token", String.valueOf(recuperarSenha.getId()))
-                .param("senha", "novasenha"));
-
-        //Entao
-        enviaEmail.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("O token de recuperação de senha não é referente ao usuário do e-mail.")));
     }
 }

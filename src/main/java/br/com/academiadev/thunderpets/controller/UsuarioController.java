@@ -106,16 +106,26 @@ public class UsuarioController {
         return usuarioService.getPets(id);
     }
 
+    @ApiOperation("Envia um e-mail para redefinição da senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "E-mail enviado com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
     @GetMapping("/esqueci-minha-senha")
     public String esqueciMinhaSenha(@RequestParam(required = true) String email) {
         return usuarioService.esqueciMinhaSenha(email);
     }
 
+    @ApiOperation("Redefini a senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Senha alterada com sucesso"),
+            @ApiResponse(code = 400, message = "Não foi possível processar a requisição"),
+            @ApiResponse(code = 404, message = "Token não encontrado")
+    })
     @GetMapping("/redefinir-senha")
-    public String redefinirSenha(@RequestParam(required = true) String email,
-                                 @RequestParam(required = true) UUID token,
+    public String redefinirSenha(@RequestParam(required = true) UUID token,
                                  @RequestParam(required = true) String senha)
             throws NaoEncontradoException, ErroAoProcessarException {
-        return usuarioService.redefinirSenha(email, token, senha);
+        return usuarioService.redefinirSenha(token, senha);
     }
 }
