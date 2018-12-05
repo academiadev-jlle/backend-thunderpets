@@ -78,7 +78,6 @@ public class PetServiceImpl implements PetService {
 
         Pet pet = Pet.builder()
                 .dataAchado(dataAchado)
-                .dataRegistro(dataRegistro)
                 .especie(especie)
                 .porte(porte)
                 .sexo(sexo)

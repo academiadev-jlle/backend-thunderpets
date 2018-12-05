@@ -5,17 +5,16 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pet extends EntidadeAuditavel<String>{
+public class Pet extends EntidadeAuditavel{
 
     @Id
     @GeneratedValue
@@ -27,9 +26,6 @@ public class Pet extends EntidadeAuditavel<String>{
     private String descricao;
 
     private LocalDate dataAchado;
-
-    @NotNull
-    private LocalDate dataRegistro;
 
     @NotNull
     @Enumerated(EnumType.STRING)

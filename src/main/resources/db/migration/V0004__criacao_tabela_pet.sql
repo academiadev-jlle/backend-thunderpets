@@ -10,10 +10,6 @@ CREATE TABLE pet (
   status          CHARACTER VARYING NOT NULL,
   idade           CHARACTER VARYING NOT NULL,
   ativo           BOOLEAN DEFAULT TRUE,
-  created_at      DATE NOT NULL,
-  updated_at      DATE NOT NULL,
-  created_by      CHARACTER VARYING NOT NULL,
-  updated_by      CHARACTER VARYING NOT NULL,
   localizacao_id  UUID REFERENCES localizacao(id),
   usuario_id      UUID NOT NULL REFERENCES usuario(id),
   CONSTRAINT pet_pk PRIMARY KEY (id)

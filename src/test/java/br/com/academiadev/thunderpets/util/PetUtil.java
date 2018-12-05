@@ -17,7 +17,6 @@ public class PetUtil {
                 .nome("Brabo")
                 .descricao("Bixo e brabo")
                 .dataAchado(LocalDate.now())
-                .dataRegistro(LocalDate.now())
                 .especie(Especie.CACHORRO)
                 .porte(Porte.GRANDE)
                 .sexo(Sexo.MACHO)

@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
@@ -153,6 +154,7 @@ public class PetControllerTest {
 
         JSONObject petResposta = new JSONObject(response.andReturn().getResponse().getContentAsString());
 
+        Assert.assertNotEquals(petResposta.get("dataRegistro"), LocalDate.now().plusDays(2).toString());
         Assert.assertEquals(petResposta.get("id"), pet.get("id"));
         Assert.assertEquals(petResposta.get("nome"), pet.get("nome"));
         Assert.assertEquals(petResposta.get("descricao"), pet.get("descricao"));
