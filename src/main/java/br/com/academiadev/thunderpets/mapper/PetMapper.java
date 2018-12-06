@@ -14,7 +14,8 @@ import java.util.List;
 public interface PetMapper {
 
     @Mappings({
-            @Mapping(source = "pet.usuario.id", target = "usuarioId")
+            @Mapping(source = "pet.usuario.id", target = "usuarioId"),
+            @Mapping(source = "fotos", target = "fotos")
     })
     PetDTO toDTO(Pet pet, List<byte[]> fotos);
 
