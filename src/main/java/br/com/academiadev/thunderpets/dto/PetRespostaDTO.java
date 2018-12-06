@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class PetRespostaDTO {
     private String nome;
     private String descricao;
     private LocalDate dataAchado;
-    private LocalDate dataRegistro;
+    private LocalDateTime dataRegistro;
     private Especie especie;
     private Porte porte;
     private Sexo sexo;

@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +22,6 @@ public class EntidadeAuditavel{
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDate dataRegistro;
+    private LocalDateTime dataRegistro;
 
 }

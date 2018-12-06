@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -41,7 +42,7 @@ public class PetController {
     @GetMapping
     public Page<PetRespostaDTO> buscar(
                                 @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
-                                @RequestParam(value = "dataRegistro", required = false) LocalDate dataRegistro,
+                                @RequestParam(value = "dataRegistro", required = false) LocalDateTime dataRegistro,
                                 @RequestParam(value = "especie", required = false) Especie especie,
                                 @RequestParam(value = "porte", required = false) Porte porte,
                                 @RequestParam(value = "sexo", required = false) Sexo sexo,

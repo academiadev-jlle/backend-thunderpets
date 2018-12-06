@@ -9,12 +9,13 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface PetService {
 
     Page<PetRespostaDTO> buscar(LocalDate dataAchado,
-                                LocalDate dataRegistro,
+                                LocalDateTime dataRegistro,
                                 Especie especie,
                                 Porte porte,
                                 Sexo sexo,

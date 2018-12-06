@@ -2,11 +2,10 @@ package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -56,7 +55,7 @@ public class Pet extends EntidadeAuditavel{
     private boolean ativo = true;
 
     @Builder
-    public Pet(LocalDate dataRegistro, String nome, @NotNull String descricao, LocalDate dataAchado, @NotNull Especie especie, @NotNull Porte porte, @NotNull Sexo sexo, @NotNull Status status, @NotNull Idade idade, Usuario usuario, Localizacao localizacao, boolean ativo) {
+    public Pet(LocalDateTime dataRegistro, String nome, @NotNull String descricao, LocalDate dataAchado, @NotNull Especie especie, @NotNull Porte porte, @NotNull Sexo sexo, @NotNull Status status, @NotNull Idade idade, Usuario usuario, Localizacao localizacao, boolean ativo) {
         super(dataRegistro);
         this.nome = nome;
         this.descricao = descricao;

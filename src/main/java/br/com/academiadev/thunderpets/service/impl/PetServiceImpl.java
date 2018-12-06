@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public Page<PetRespostaDTO> buscar(LocalDate dataAchado,
-                                       LocalDate dataRegistro,
+                                       LocalDateTime dataRegistro,
                                        Especie especie,
                                        Porte porte,
                                        Sexo sexo,
@@ -97,7 +98,7 @@ public class PetServiceImpl implements PetService {
 
         if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
             if(latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a lagitude e longitude do usuário atual.");
+                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a latitude e longitude do usuário atual.");
             }
 
             paginaPetsFiltradosDTO.map((petRespostaDTO) -> {
