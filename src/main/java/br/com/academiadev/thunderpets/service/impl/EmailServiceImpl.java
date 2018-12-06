@@ -2,6 +2,7 @@ package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
             simpleMailMessage.setText(conteudo);
             javaMailSender.send(simpleMailMessage);
             return "E-mail enviado com sucesso.";
-        } catch (Exception e) {
+        } catch (MailException e) {
             return "Erro ao enviar e-mail: " + e.getMessage();
 
         }
