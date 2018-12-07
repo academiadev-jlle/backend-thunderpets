@@ -92,7 +92,7 @@ public class PetServiceImpl implements PetService {
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
 
         PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados
-                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(pet.getId()).stream()
+                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(p.getId()).stream()
                         .map(Foto::getImage).collect(Collectors.toList())));
 
         if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {

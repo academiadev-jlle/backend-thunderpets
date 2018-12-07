@@ -53,9 +53,9 @@ public class PetController {
                                 @RequestParam(value = "longitudeUsuario", required = false) BigDecimal longitude,
                                 @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
                                 @ApiParam(value = "Número da página atual")
-                                    @RequestParam(defaultValue = "0") int paginaAtual,
+                                    @RequestParam(defaultValue = "0") Integer paginaAtual,
                                 @ApiParam(value = "Número do tamanho da página")
-                                    @RequestParam(defaultValue = "10") int tamanho,
+                                    @RequestParam(defaultValue = "10") Integer tamanho,
                                 @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
                                     @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
                                 @ApiParam(value = "Nome da coluna que será usada para a ordenação")
