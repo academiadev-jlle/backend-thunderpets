@@ -23,6 +23,7 @@ public class Pet {
     @GeneratedValue
     private UUID id;
 
+    @NotNull
     private String nome;
 
     @NotNull
