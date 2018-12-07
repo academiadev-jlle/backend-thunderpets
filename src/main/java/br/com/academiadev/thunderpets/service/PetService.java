@@ -12,7 +12,8 @@ import java.util.UUID;
 
 public interface PetService {
 
-    Page<PetDTO> buscar(LocalDate dataAchado,
+    Page<PetDTO> buscar(String nome,
+                        LocalDate dataAchado,
                         LocalDate dataRegistro,
                         Especie especie,
                         Porte porte,

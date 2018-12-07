@@ -2,7 +2,6 @@ package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.enums.*;
-import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
@@ -49,7 +48,8 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Page<PetDTO> buscar(LocalDate dataAchado,
+    public Page<PetDTO> buscar(String nome,
+                               LocalDate dataAchado,
                                LocalDate dataRegistro,
                                Especie especie,
                                Porte porte,
@@ -91,24 +91,18 @@ public class PetServiceImpl implements PetService {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
 
-        PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados
-                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(p.getId()).stream()
-                        .map(Foto::getImage).collect(Collectors.toList())));
+        Page<PetDTO> paginaPetsFiltradosDTO = paginaPetsFiltrados.map(p -> petMapper.toDTO(p,
+                fotoRepository.findByPetId(p.getId()).stream().map(Foto::getImage).collect(Collectors.toList())));
 
-        if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
-            if(latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a lagitude e longitude do usuário atual.");
-            }
-
+        if (latitude != null && longitude != null) {
             paginaPetsFiltradosDTO.map((petDTO) -> {
                 petDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petDTO.getId()));
+                
                 return petDTO;
             });
 
-            if(raioDistancia != null) {
-                return new PageImpl<PetDTO>(paginaPetsFiltradosDTO.stream()
-                        .filter(petDTO -> petDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0)
-                        .collect(Collectors.toList()));
+            if (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA) && raioDistancia != null) {
+                return (Page<PetDTO>) paginaPetsFiltradosDTO.filter(dto -> dto.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0);
             }
         }
 
