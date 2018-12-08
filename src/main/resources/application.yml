@@ -18,7 +18,7 @@ spring:
     facebook:
       appId: ${FACEBOOK_CLIENT_ID}
       appSecret: ${FACEBOOK_CLIENT_SECRET}
-      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8080}/oauth/facebook/login
+      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8081/oauth/facebook/login}
 security:
   oauth2:
     client:

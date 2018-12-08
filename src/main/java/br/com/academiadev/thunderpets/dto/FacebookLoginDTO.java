@@ -12,4 +12,5 @@ import lombok.Setter;
 public class FacebookLoginDTO {
 
     private String code;
+    private String redirectUri;
 }

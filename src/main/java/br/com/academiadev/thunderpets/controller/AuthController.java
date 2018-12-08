@@ -74,6 +74,6 @@ public class AuthController {
 
     @PostMapping("facebook/login")
     public OAuth2AccessToken createFacebookAccessToken(@RequestBody FacebookLoginDTO dto) {
-        return facebookService.login(dto.getCode()).orElseThrow(UsuarioNaoEncontradoException::new);
+        return facebookService.login(dto).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 }

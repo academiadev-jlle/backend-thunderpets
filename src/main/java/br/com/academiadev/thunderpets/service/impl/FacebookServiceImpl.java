@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.service.impl;
 
+import br.com.academiadev.thunderpets.dto.FacebookLoginDTO;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.FacebookService;
@@ -62,9 +63,9 @@ public class FacebookServiceImpl implements FacebookService {
     }
 
     @Override
-    public Optional<OAuth2AccessToken> login(String codigo) {
+    public Optional<OAuth2AccessToken> login(FacebookLoginDTO dto) {
         FacebookConnectionFactory connectionFactory = new FacebookConnectionFactory(facebookAppId, facebookAppSecret);
-        AccessGrant grant = connectionFactory.getOAuthOperations().exchangeForAccess(codigo, redirectUri, null);
+        AccessGrant grant = connectionFactory.getOAuthOperations().exchangeForAccess(dto.getCode(), dto.getRedirectUri(), null);
 
         String token = grant.getAccessToken();
 
