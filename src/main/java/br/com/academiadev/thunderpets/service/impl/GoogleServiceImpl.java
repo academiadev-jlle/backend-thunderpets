@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.service.impl;
 
+import br.com.academiadev.thunderpets.dto.LoginSocialDTO;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.GoogleService;
@@ -63,9 +64,10 @@ public class GoogleServiceImpl implements GoogleService {
         return operacoes.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, params);
     }
 
-    public Optional<OAuth2AccessToken> login(String code) {
+    @Override
+    public Optional<OAuth2AccessToken> login(LoginSocialDTO dto) {
         GoogleConnectionFactory connectionFactory = new GoogleConnectionFactory(googleAppId, googleAppSecret);
-        AccessGrant grant = connectionFactory.getOAuthOperations().exchangeForAccess(code, redirectUri, null);
+        AccessGrant grant = connectionFactory.getOAuthOperations().exchangeForAccess(dto.getCode(), dto.getRedirectUri(), null);
 
         String token = grant.getAccessToken();
 

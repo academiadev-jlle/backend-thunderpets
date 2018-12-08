@@ -16,9 +16,9 @@ spring:
     format-sql: true
   social:
     google:
-      appId: 701153196730-3m3mcg1lh3rajqakb5gno6q6vksgbno9.apps.googleusercontent.com
-      appSecret: o_XqNaE6JlMFkM9Wa5cAnQrI
-      redirectUri: http://localhost:8080/oauth/google/login
+      appId: ${GOOGLE_CLIENT_ID}
+      appSecret: ${GOOGLE_CLIENT_SECRET}
+      redirectUri: ${GOOGLE_REDIRECT_URI:http://localhost:8081/oauth/google/login}
 security:
   oauth2:
     client:

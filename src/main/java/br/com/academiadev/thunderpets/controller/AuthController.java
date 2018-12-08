@@ -1,5 +1,6 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.LoginSocialDTO;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Usuario;
@@ -13,10 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -72,8 +70,8 @@ public class AuthController {
         return googleService.criarUrlAutorizacaoGoogle();
     }
 
-    @GetMapping("google/login")
-    public OAuth2AccessToken createGoogleAccessToken(@RequestParam("code") String code) {
-        return googleService.login(code).orElseThrow(UsuarioNaoEncontradoException::new);
+    @PostMapping("google/login")
+    public OAuth2AccessToken createGoogleAccessToken(@RequestBody LoginSocialDTO dto) {
+        return googleService.login(dto).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 }
