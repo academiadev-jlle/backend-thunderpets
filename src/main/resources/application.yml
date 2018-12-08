@@ -19,6 +19,16 @@ spring:
       appId: ${FACEBOOK_CLIENT_ID}
       appSecret: ${FACEBOOK_CLIENT_SECRET}
       redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8081/oauth/facebook/login}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
 security:
   oauth2:
     client:

@@ -1,6 +1,10 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
+import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
@@ -10,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,9 +23,11 @@ import java.util.UUID;
 public class UsuarioController {
 
     private UsuarioService usuarioService;
+    private EmailService emailService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, EmailService emailService) {
         this.usuarioService = usuarioService;
+        this.emailService = emailService;
     }
 
     @ApiOperation(
@@ -70,14 +77,14 @@ public class UsuarioController {
     @ApiOperation("Inativa um usuário com base no id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Usuário inativado com sucesso"),
-            @ApiResponse(code = 404, message = "Usuário não encontrado. Erro ao inativar o usuário")
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @DeleteMapping("{id}")
     public void deletar(@PathVariable("id") UUID id) {
         usuarioService.deletar(id);
     }
 
-    @ApiOperation("Busca a foto do usuário com base no id")
+    @ApiOperation("Busca a foto de determinado usuário com base no id do usuário")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Foto do usuário encontrada com sucesso"),
             @ApiResponse(code = 404, message = "Usuário não encontrado; Foto não encontrada")
@@ -87,5 +94,38 @@ public class UsuarioController {
         byte[] bytes = usuarioService.getFoto(id);
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+
+    @ApiOperation("Busca os pets de determinado usuário com base no id do usuário")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Pets do usuário listados com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
+    @GetMapping("{id}/pets")
+    public List<PetDTO> getPets(@PathVariable("id") UUID id) {
+        return usuarioService.getPets(id);
+    }
+
+    @ApiOperation("Envia um e-mail para redefinição da senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "E-mail enviado com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
+    @GetMapping("/esqueci-minha-senha")
+    public String esqueciMinhaSenha(@RequestParam(required = true) String email) {
+        return usuarioService.esqueciMinhaSenha(email);
+    }
+
+    @ApiOperation("Redefini a senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Senha alterada com sucesso"),
+            @ApiResponse(code = 400, message = "Não foi possível processar a requisição"),
+            @ApiResponse(code = 404, message = "Token não encontrado")
+    })
+    @GetMapping("/redefinir-senha")
+    public String redefinirSenha(@RequestParam(required = true) UUID token,
+                                 @RequestParam(required = true) String senha)
+            throws NaoEncontradoException, ErroAoProcessarException {
+        return usuarioService.redefinirSenha(token, senha);
     }
 }
