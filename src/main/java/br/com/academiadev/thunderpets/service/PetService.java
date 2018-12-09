@@ -30,8 +30,7 @@ public interface PetService {
                                 Integer paginaAtual,
                                 Integer tamanho,
                                 Sort.Direction direcao,
-                                String campoOrdenacao,
-                                boolean ativo);
+                                String campoOrdenacao);
 
     PetRespostaDTO buscarPorId(UUID id) throws PetNaoEncontradoException;
 

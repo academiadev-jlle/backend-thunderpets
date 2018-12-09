@@ -70,8 +70,7 @@ public class PetServiceImpl implements PetService {
                                        Integer paginaAtual,
                                        Integer tamanho,
                                        Sort.Direction direcao,
-                                       String campoOrdenacao,
-                                       boolean ativo) {
+                                       String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
 
         Page<Pet> paginaPetsFiltrados = petRepository.buscar(nome,
@@ -85,7 +84,6 @@ public class PetServiceImpl implements PetService {
                         ? (cidade != null ? cidade.toLowerCase() : null) : null,
                 (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO))
                         ? (estado != null ? estado.toLowerCase() : null) : null,
-                ativo,
                 latitude != null ? latitude : "null",
                 longitude != null ? longitude : "null",
                 raioDistancia,

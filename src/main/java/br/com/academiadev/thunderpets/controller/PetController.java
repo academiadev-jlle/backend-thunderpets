@@ -39,28 +39,26 @@ public class PetController {
     })
     @GetMapping
     public Page<PetRespostaDTO> buscar(@RequestParam(value = "nome", required = false) String nome,
-                               @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
-                               @RequestParam(value = "especie", required = false) Especie especie,
-                               @RequestParam(value = "porte", required = false) Porte porte,
-                               @RequestParam(value = "sexo", required = false) Sexo sexo,
-                               @RequestParam(value = "status", required = false) Status status,
-                               @RequestParam(value = "idade", required = false) Idade idade,
-                               @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
-                               @RequestParam(value = "cidade", required = false) String cidade,
-                               @RequestParam(value = "estado", required = false) String estado,
-                               @RequestParam(value = "latitudeUsuario", required = false) String latitude,
-                               @RequestParam(value = "longitudeUsuario", required = false) String longitude,
-                               @RequestParam(value = "raioDistancia", required = false) Double raioDistancia,
-                               @ApiParam(value = "Número da página atual")
-                                   @RequestParam(defaultValue = "0") int paginaAtual,
-                               @ApiParam(value = "Número do tamanho da página")
-                                   @RequestParam(defaultValue = "10") int tamanho,
-                               @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
-                                   @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
-                               @ApiParam(value = "Nome da coluna que será usada para a ordenação")
-                                   @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                               @ApiParam(value = "Escolha para buscar os pets ativos ou inativos")
-                                   @RequestParam(defaultValue = "true") boolean ativo) {
+                                       @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
+                                       @RequestParam(value = "especie", required = false) Especie especie,
+                                       @RequestParam(value = "porte", required = false) Porte porte,
+                                       @RequestParam(value = "sexo", required = false) Sexo sexo,
+                                       @RequestParam(value = "status", required = false) Status status,
+                                       @RequestParam(value = "idade", required = false) Idade idade,
+                                       @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
+                                       @RequestParam(value = "cidade", required = false) String cidade,
+                                       @RequestParam(value = "estado", required = false) String estado,
+                                       @RequestParam(value = "latitudeUsuario", required = false) String latitude,
+                                       @RequestParam(value = "longitudeUsuario", required = false) String longitude,
+                                       @RequestParam(value = "raioDistancia", required = false) Double raioDistancia,
+                                       @ApiParam(value = "Número da página atual")
+                                           @RequestParam(defaultValue = "0") int paginaAtual,
+                                       @ApiParam(value = "Número do tamanho da página")
+                                           @RequestParam(defaultValue = "10") int tamanho,
+                                       @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                           @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
+                                       @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                           @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao) {
 
         return service.buscar(nome,
                 dataAchado,
@@ -78,8 +76,7 @@ public class PetController {
                 paginaAtual,
                 tamanho,
                 direcao,
-                campoOrdenacao,
-                ativo);
+                campoOrdenacao);
     }
 
     @ApiOperation(

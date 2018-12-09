@@ -30,7 +30,6 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
             "and (:idade is null or :idade = p.idade) " +
             "and (:cidade is null or lower(p.localizacao.cidade) like %:cidade%) " +
             "and (:estado is null or lower(p.localizacao.estado) like %:estado%) " +
-            "and (:ativo is null or :ativo = p.ativo) " +
             "and (:raioDistancia is null or  " +
             "    (6371 * " +
             "      acos( " +
@@ -41,7 +40,8 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
             "        sin(radians(cast(p.localizacao.latitude as double))) " +
             "      ) " +
             "    ) <= :raioDistancia " +
-            "  )")
+            "  ) " +
+            "and (:ativo is true)")
     Page<Pet> buscar(@Param("nome") String nome,
                      @Param("dataAchado") LocalDate dataAchado,
                      @Param("especie") Especie especie,
@@ -51,7 +51,6 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
                      @Param("idade") Idade idade,
                      @Param("cidade") String cidade,
                      @Param("estado") String estado,
-                     @Param("ativo") boolean ativo,
                      @Param("latitude") String latitude,
                      @Param("longitude") String longitude,
                      @Param("raioDistancia") Double raioDistancia,
