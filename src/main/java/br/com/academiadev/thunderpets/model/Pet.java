@@ -19,6 +19,7 @@ public class Pet extends EntidadeAuditavel{
     @GeneratedValue
     private UUID id;
 
+    @NotNull
     private String nome;
 
     @NotNull

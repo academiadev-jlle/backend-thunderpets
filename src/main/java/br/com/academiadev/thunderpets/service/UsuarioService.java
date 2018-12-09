@@ -3,6 +3,8 @@ package br.com.academiadev.thunderpets.service;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 
@@ -22,4 +24,8 @@ public interface UsuarioService {
     byte[] getFoto(UUID id);
 
     List<PetRespostaDTO> getPets(UUID id);
+
+    String esqueciMinhaSenha(String email);
+
+    String redefinirSenha(UUID idRecuperarSenha, String senha) throws ErroAoProcessarException;
 }
