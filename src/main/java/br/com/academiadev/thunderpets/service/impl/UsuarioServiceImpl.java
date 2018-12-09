@@ -94,7 +94,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                     && ((Usuario) usuarioLogado).getId().equals(usuarioDTO.getId())) {
                 usuarioDTO.setSenha(((Usuario) usuarioLogado).getSenha());
             } else {
-                throw new NaoPermitidoException("Você está tentando atualizar um usuário que não é você");
+                throw new NaoPermitidoException("Você não tem permissão para atualizar dados de outro usuário");
             }
         }
 
