@@ -6,6 +6,7 @@ import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
 import br.com.academiadev.thunderpets.service.FacebookService;
+import br.com.academiadev.thunderpets.service.GoogleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +28,19 @@ public class AuthController {
     private ContatoRepository contatoRepository;
     private UsuarioMapper usuarioMapper;
     private FacebookService facebookService;
+    private GoogleService googleService;
 
     @Autowired
     public AuthController(ConsumerTokenServices tokenServices,
                           ContatoRepository contatoRepository,
                           UsuarioMapper usuarioMapper,
-                          FacebookService facebookService) {
+                          FacebookService facebookService,
+                          GoogleService googleService) {
         this.tokenServices = tokenServices;
         this.contatoRepository = contatoRepository;
         this.usuarioMapper = usuarioMapper;
         this.facebookService = facebookService;
+        this.googleService = googleService;
     }
 
     @GetMapping("whoAmI")
@@ -73,5 +77,15 @@ public class AuthController {
     @PostMapping("facebook/login")
     public OAuth2AccessToken createFacebookAccessToken(@RequestBody LoginSocialDTO dto) {
         return facebookService.login(dto).orElseThrow(UsuarioNaoEncontradoException::new);
+    }
+
+    @GetMapping("google/getUrl")
+    public String createGoogleAuthorization() {
+        return googleService.criarUrlAutorizacaoGoogle();
+    }
+
+    @PostMapping("google/login")
+    public OAuth2AccessToken createGoogleAccessToken(@RequestBody LoginSocialDTO dto) {
+        return googleService.login(dto).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 }

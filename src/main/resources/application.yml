@@ -18,7 +18,11 @@ spring:
     facebook:
       appId: ${FACEBOOK_CLIENT_ID}
       appSecret: ${FACEBOOK_CLIENT_SECRET}
-      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8081/oauth/facebook/login}
+      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8080/oauth/facebook/login}
+    google:
+      appId: ${GOOGLE_CLIENT_ID}
+      appSecret: ${GOOGLE_CLIENT_SECRET}
+      redirectUri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/oauth/google/login}
   mail:
     host: smtp.gmail.com
     port: 587
