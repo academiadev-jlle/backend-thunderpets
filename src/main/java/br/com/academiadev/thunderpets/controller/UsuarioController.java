@@ -1,11 +1,11 @@
 package br.com.academiadev.thunderpets.controller;
 
+import br.com.academiadev.thunderpets.dto.FotoDTO;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
-import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageImpl;
@@ -23,11 +23,9 @@ import java.util.UUID;
 public class UsuarioController {
 
     private UsuarioService usuarioService;
-    private EmailService emailService;
 
-    public UsuarioController(UsuarioService usuarioService, EmailService emailService) {
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.emailService = emailService;
     }
 
     @ApiOperation(
@@ -127,5 +125,18 @@ public class UsuarioController {
                                  @RequestParam(required = true) String senha)
             throws NaoEncontradoException, ErroAoProcessarException {
         return usuarioService.redefinirSenha(token, senha);
+    }
+
+    @ApiOperation("Salvar apenas a foto do usuário")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Foto salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar foto"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+
+    })
+    @PostMapping("{usuarioId}/foto")
+    public UsuarioRespostaDTO salvarFoto(@PathVariable("usuarioId") UUID usuarioId, @RequestBody FotoDTO foto) {
+        return usuarioService.salvarFoto(usuarioId, foto.getImage())
+                .orElseThrow(() -> new ErroAoProcessarException("Erro ao salvar foto"));
     }
 }

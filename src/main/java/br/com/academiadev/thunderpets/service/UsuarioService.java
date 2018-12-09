@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UsuarioService {
@@ -22,6 +23,8 @@ public interface UsuarioService {
     void deletar(UUID id);
 
     byte[] getFoto(UUID id);
+
+    Optional<UsuarioRespostaDTO> salvarFoto(UUID usuarioId, byte[] foto);
 
     List<PetRespostaDTO> getPets(UUID id);
 
