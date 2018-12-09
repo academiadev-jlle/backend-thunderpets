@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FacebookLoginDTO {
+public class LoginSocialDTO {
 
     private String code;
     private String redirectUri;
