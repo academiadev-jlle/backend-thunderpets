@@ -51,7 +51,7 @@ public class UsuarioMapperTests {
 
         //Entao
         Assert.assertEquals(usuario.getNome(), "Epaminondas Silva");
-        Assert.assertEquals(usuario.getEmail(), "epaminondas@gmail.com");
+        Assert.assertEquals(usuario.getEmail(), "epaminondas@mail.com");
         Assert.assertEquals(Arrays.toString(usuario.getFoto()), Arrays.toString(new byte[]{1, 2, 3}));
         Assert.assertTrue(usuario.isAtivo());
     }
@@ -78,7 +78,7 @@ public class UsuarioMapperTests {
 
         //Entao
         Assert.assertEquals(usuarioDTO.getNome(), "Kamuela Pereira");
-        Assert.assertEquals(usuarioDTO.getEmail(), "kamuela@gmail.com");
+        Assert.assertEquals(usuarioDTO.getEmail(), "kamuela@mail.com");
         Assert.assertEquals(Arrays.toString(usuarioDTO.getFoto()), Arrays.toString(new byte[]{7, 8, 9}));
         Assert.assertTrue(usuarioDTO.isAtivo());
         Assert.assertEquals(usuarioDTO.getContatos(), contatosEsperados);

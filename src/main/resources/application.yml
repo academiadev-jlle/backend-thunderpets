@@ -19,6 +19,16 @@ spring:
       appId: ${GOOGLE_CLIENT_ID}
       appSecret: ${GOOGLE_CLIENT_SECRET}
       redirectUri: ${GOOGLE_REDIRECT_URI:http://localhost:8081/oauth/google/login}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
 security:
   oauth2:
     client:
