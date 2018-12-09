@@ -1,12 +1,11 @@
 package br.com.academiadev.thunderpets.controller;
 
-import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
 import br.com.academiadev.thunderpets.service.EmailService;
-import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageImpl;

@@ -132,9 +132,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
-        return petRepository.findByUsuario(usuario).stream()
-                .map(pet -> petMapper.toDTO(pet, fotoRepository.findByPetId(pet.getId()).stream()
-                        .map(Foto::getImage).collect(Collectors.toList())))
+        return petRepository.findByUsuarioAndAtivoIsTrue(usuario).stream()
+                .map(pet -> petMapper.toDTO(
+                        pet,
+                        fotoRepository.findFirstByPetId(pet.getId())
+                                .stream().map(Foto::getImage).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 

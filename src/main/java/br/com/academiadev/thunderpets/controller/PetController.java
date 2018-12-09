@@ -33,40 +33,39 @@ public class PetController {
     @ApiOperation(
             value = "Busca os pet com os parâmetros passados",
             notes = " O objeto é do tipo PetRespostaDTO.",
-            response = PetDTO.class,
+            response = PetRespostaDTO.class,
             responseContainer = "Lists"
     )
     @ApiResponses({
             @ApiResponse(code = 200, message = "Pets listados com sucesso")
     })
     @GetMapping
-    public Page<PetRespostaDTO> buscar(
-                                @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
-                                @RequestParam(value = "dataRegistro", required = false) LocalDateTime dataRegistro,
-                                @RequestParam(value = "especie", required = false) Especie especie,
-                                @RequestParam(value = "porte", required = false) Porte porte,
-                                @RequestParam(value = "sexo", required = false) Sexo sexo,
-                                @RequestParam(value = "status", required = false) Status status,
-                                @RequestParam(value = "idade", required = false) Idade idade,
-                                @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
-                                @RequestParam(value = "cidade", required = false) String cidade,
-                                @RequestParam(value = "estado", required = false) String estado,
-                                @RequestParam(value = "latitudeUsuario", required = false) BigDecimal latitude,
-                                @RequestParam(value = "longitudeUsuario", required = false) BigDecimal longitude,
-                                @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
-                                @ApiParam(value = "Número da página atual")
-                                    @RequestParam(defaultValue = "0") int paginaAtual,
-                                @ApiParam(value = "Número do tamanho da página")
-                                    @RequestParam(defaultValue = "10") int tamanho,
-                                @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
-                                    @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
-                                @ApiParam(value = "Nome da coluna que será usada para a ordenação")
-                                    @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                @ApiParam(value = "Escolha para buscar os pets ativos ou inativos")
-                                    @RequestParam(defaultValue = "true") boolean ativo) {
+    public Page<PetRespostaDTO> buscar(@RequestParam(value = "nome", required = false) String nome,
+                                       @RequestParam(value = "dataAchado", required = false) LocalDate dataAchado,
+                                       @RequestParam(value = "especie", required = false) Especie especie,
+                                       @RequestParam(value = "porte", required = false) Porte porte,
+                                       @RequestParam(value = "sexo", required = false) Sexo sexo,
+                                       @RequestParam(value = "status", required = false) Status status,
+                                       @RequestParam(value = "idade", required = false) Idade idade,
+                                       @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
+                                       @RequestParam(value = "cidade", required = false) String cidade,
+                                       @RequestParam(value = "estado", required = false) String estado,
+                                       @RequestParam(value = "latitudeUsuario", required = false) BigDecimal latitude,
+                                       @RequestParam(value = "longitudeUsuario", required = false) BigDecimal longitude,
+                                       @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
+                                       @ApiParam(value = "Número da página atual")
+                                           @RequestParam(defaultValue = "0") Integer paginaAtual,
+                                       @ApiParam(value = "Número do tamanho da página")
+                                           @RequestParam(defaultValue = "10") Integer tamanho,
+                                       @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
+                                           @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
+                                       @ApiParam(value = "Nome da coluna que será usada para a ordenação")
+                                           @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
+                                       @ApiParam(value = "Escolha para buscar os pets ativos ou inativos")
+                                           @RequestParam(defaultValue = "true") boolean ativo) {
 
-        return service.buscar(dataAchado,
-                dataRegistro,
+        return service.buscar(nome,
+                dataAchado,
                 especie,
                 porte,
                 sexo,

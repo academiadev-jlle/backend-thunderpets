@@ -259,12 +259,12 @@ public class PetControllerTest {
 
         //Entao
         listaDePets.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome", is("Carijó")))
-                .andExpect(jsonPath("$.content[0].localizacao.cidade", is("Joinville")))
-                .andExpect(jsonPath("$.content[0].localizacao.estado", is("Santa Catarina")))
-                .andExpect(jsonPath("$.content[1].nome", is("Pocotó")))
+                .andExpect(jsonPath("$.content[1].nome", is("Carijó")))
                 .andExpect(jsonPath("$.content[1].localizacao.cidade", is("Joinville")))
-                .andExpect(jsonPath("$.content[1].localizacao.estado", is("Blumenal")));
+                .andExpect(jsonPath("$.content[1].localizacao.estado", is("Santa Catarina")))
+                .andExpect(jsonPath("$.content[0].nome", is("Pocotó")))
+                .andExpect(jsonPath("$.content[0].localizacao.cidade", is("Joinville")))
+                .andExpect(jsonPath("$.content[0].localizacao.estado", is("Blumenal")));
     }
 
     @Test

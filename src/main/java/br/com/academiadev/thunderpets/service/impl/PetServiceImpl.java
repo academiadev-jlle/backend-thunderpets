@@ -4,6 +4,7 @@ import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoPermitidoException;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
@@ -18,11 +19,15 @@ import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,8 +54,8 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Page<PetRespostaDTO> buscar(LocalDate dataAchado,
-                                       LocalDateTime dataRegistro,
+    public Page<PetRespostaDTO> buscar(String nome,
+                                       LocalDate dataAchado,
                                        Especie especie,
                                        Porte porte,
                                        Sexo sexo,
@@ -79,7 +84,6 @@ public class PetServiceImpl implements PetService {
 
         Pet pet = Pet.builder()
                 .dataAchado(dataAchado)
-                .dataRegistro(dataRegistro)
                 .especie(especie)
                 .porte(porte)
                 .sexo(sexo)
@@ -92,22 +96,20 @@ public class PetServiceImpl implements PetService {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
 
-        PageImpl<PetRespostaDTO> paginaPetsFiltradosDTO = (PageImpl<PetRespostaDTO>) paginaPetsFiltrados
-                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(pet.getId()).stream()
-                        .map(Foto::getImage).collect(Collectors.toList())));
+        Page<PetRespostaDTO> paginaPetsFiltradosDTO = (PageImpl<PetRespostaDTO>) paginaPetsFiltrados
+                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(p.getId()).stream().map(Foto::getImage).collect(Collectors.toList())));
 
-        if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
-            if(latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a latitude e longitude do usuário atual.");
-            }
+        if (latitude != null && longitude != null) {
+            paginaPetsFiltradosDTO.map((petDTO) -> {
+                petDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petDTO.getId()));
 
-            paginaPetsFiltradosDTO.map((petRespostaDTO) -> {
-                petRespostaDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petRespostaDTO.getId()));
-                return petRespostaDTO;
+                return petDTO;
             });
 
-            if(raioDistancia != null) {
-                return new PageImpl<>(paginaPetsFiltradosDTO.stream().filter(petRespostaDTO -> petRespostaDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0).collect(Collectors.toList()));
+            if (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA) && raioDistancia != null) {
+                return new PageImpl<PetRespostaDTO>(paginaPetsFiltradosDTO.stream()
+                        .filter(dto -> dto.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0)
+                        .collect(Collectors.toList()));
             }
         }
 
@@ -133,18 +135,30 @@ public class PetServiceImpl implements PetService {
             localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
         }
 
+        if (petDTO.getId() != null) {
+            Pet pet = petRepository.findById(petDTO.getId()).orElse(new Pet());
+
+            if (!currentUser().getId().equals(pet.getUsuario().getId())) {
+                throw new NaoPermitidoException("Esse pet não pertence a esse usuário");
+            }
+        }
+
         final Pet pet = petRepository.saveAndFlush(petMapper.toEntity(petDTO, localizacao, usuario));
 
-        petDTO.getFotos().forEach(f -> {
+        fotoRepository.findByPetId(pet.getId()).forEach(foto -> {
+            fotoRepository.delete(foto);
+        });
+
+        List<byte[]> fotos = new ArrayList<>();
+        for (byte[] f : petDTO.getFotos()) {
             Foto foto = new Foto();
             foto.setImage(f);
             foto.setPet(pet);
 
-            fotoRepository.saveAndFlush(foto);
-        });
+            fotos.add(fotoRepository.saveAndFlush(foto).getImage());
+        }
 
-        return petMapper.toDTO(
-                pet, fotoRepository.findByPetId(pet.getId()).stream().map(Foto::getImage).collect(Collectors.toList()));
+        return petMapper.toDTO(pet, fotos);
     }
 
     @Override
@@ -154,5 +168,11 @@ public class PetServiceImpl implements PetService {
 
         pet.setAtivo(false);
         petRepository.save(pet);
+    }
+
+    private Usuario currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return (Usuario) authentication.getPrincipal();
     }
 }
