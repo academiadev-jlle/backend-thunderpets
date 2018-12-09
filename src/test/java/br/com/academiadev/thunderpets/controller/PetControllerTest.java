@@ -259,12 +259,12 @@ public class PetControllerTest {
 
         //Entao
         listaDePets.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome", is("Carijó")))
-                .andExpect(jsonPath("$.content[0].localizacao.cidade", is("Joinville")))
-                .andExpect(jsonPath("$.content[0].localizacao.estado", is("Santa Catarina")))
-                .andExpect(jsonPath("$.content[1].nome", is("Pocotó")))
+                .andExpect(jsonPath("$.content[1].nome", is("Carijó")))
                 .andExpect(jsonPath("$.content[1].localizacao.cidade", is("Joinville")))
-                .andExpect(jsonPath("$.content[1].localizacao.estado", is("Blumenal")));
+                .andExpect(jsonPath("$.content[1].localizacao.estado", is("Santa Catarina")))
+                .andExpect(jsonPath("$.content[0].nome", is("Pocotó")))
+                .andExpect(jsonPath("$.content[0].localizacao.cidade", is("Joinville")))
+                .andExpect(jsonPath("$.content[0].localizacao.estado", is("Blumenal")));
     }
 
     @Test
@@ -303,10 +303,10 @@ public class PetControllerTest {
 
         //Entao
         listaDePets.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome", is("Carijó")))
-                .andExpect(jsonPath("$.content[0].localizacao.descricao", is("R. Dona Francisca - Centro, Joinville - SC, 89201-070")))
-                .andExpect(jsonPath("$.content[1].nome", is("Pocotó")))
-                .andExpect(jsonPath("$.content[1].localizacao.descricao", is("R. Carlos Gruensch, 2-260 - América, Joinville - SC, 89201-745")));
+                .andExpect(jsonPath("$.content[1].nome", is("Carijó")))
+                .andExpect(jsonPath("$.content[1].localizacao.descricao", is("R. Dona Francisca - Centro, Joinville - SC, 89201-070")))
+                .andExpect(jsonPath("$.content[0].nome", is("Pocotó")))
+                .andExpect(jsonPath("$.content[0].localizacao.descricao", is("R. Carlos Gruensch, 2-260 - América, Joinville - SC, 89201-745")));
 
         JSONObject jsonListaDePets = new JSONObject(listaDePets.andReturn().getResponse().getContentAsString());
         JSONObject jsonPetCarijo = (JSONObject) ((JSONArray) jsonListaDePets.get("content")).get(0);
