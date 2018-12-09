@@ -33,6 +33,13 @@ public class ExceptionAdvice {
         return new ApiResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(NaoPermitidoException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ResponseBody
+    protected ApiResponse handleNaoPermitido(NaoPermitidoException exception) {
+        return new ApiResponse(HttpStatus.METHOD_NOT_ALLOWED, exception.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ResponseBody

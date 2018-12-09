@@ -9,7 +9,7 @@ public class UsuarioUtil {
     public Usuario criarUsuarioKamuela() {
         return Usuario.builder()
                 .nome("Kamuela Pereira")
-                .email("kamuela@gmail.com")
+                .email("kamuela@mail.com")
                 .senha("kamuela123")
                 .foto(new byte[]{7, 8, 9})
                 .ativo(true)

@@ -1,8 +1,11 @@
 package br.com.academiadev.thunderpets.controller;
 
-import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
+import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageImpl;
@@ -20,9 +23,11 @@ import java.util.UUID;
 public class UsuarioController {
 
     private UsuarioService usuarioService;
+    private EmailService emailService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, EmailService emailService) {
         this.usuarioService = usuarioService;
+        this.emailService = emailService;
     }
 
     @ApiOperation(
@@ -97,7 +102,30 @@ public class UsuarioController {
             @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @GetMapping("{id}/pets")
-    public List<PetDTO> getPets(@PathVariable("id") UUID id) {
+    public List<PetRespostaDTO> getPets(@PathVariable("id") UUID id) {
         return usuarioService.getPets(id);
+    }
+
+    @ApiOperation("Envia um e-mail para redefinição da senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "E-mail enviado com sucesso"),
+            @ApiResponse(code = 404, message = "Usuário não encontrado")
+    })
+    @GetMapping("/esqueci-minha-senha")
+    public String esqueciMinhaSenha(@RequestParam(required = true) String email) {
+        return usuarioService.esqueciMinhaSenha(email);
+    }
+
+    @ApiOperation("Redefini a senha")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Senha alterada com sucesso"),
+            @ApiResponse(code = 400, message = "Não foi possível processar a requisição"),
+            @ApiResponse(code = 404, message = "Token não encontrado")
+    })
+    @GetMapping("/redefinir-senha")
+    public String redefinirSenha(@RequestParam(required = true) UUID token,
+                                 @RequestParam(required = true) String senha)
+            throws NaoEncontradoException, ErroAoProcessarException {
+        return usuarioService.redefinirSenha(token, senha);
     }
 }

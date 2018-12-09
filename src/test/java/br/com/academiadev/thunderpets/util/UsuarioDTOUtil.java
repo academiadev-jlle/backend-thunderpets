@@ -28,7 +28,7 @@ public class UsuarioDTOUtil {
 
         return UsuarioDTO.builder()
                 .nome("Epaminondas Silva")
-                .email("epaminondas@gmail.com")
+                .email("epaminondas@mail.com")
                 .senha("epaminondas123")
                 .foto(new byte[]{1, 2, 3})
                 .ativo(true)
@@ -43,7 +43,7 @@ public class UsuarioDTOUtil {
 
         return UsuarioDTO.builder()
                 .nome("Jekaterina Souza")
-                .email("jekaterina@gmail.com")
+                .email("jekaterina@mail.com")
                 .senha("jekaterina123")
                 .foto(new byte[]{4, 5, 6})
                 .ativo(true)
@@ -57,7 +57,7 @@ public class UsuarioDTOUtil {
 
         return UsuarioDTO.builder()
                 .nome("Kamuela Pereira")
-                .email("kamuela@gmail.com")
+                .email("kamuela@mail.com")
                 .senha("kamuela123")
                 .foto(new byte[]{7, 8, 9})
                 .ativo(true)

@@ -18,12 +18,11 @@ import java.util.UUID;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, UUID> {
 
-    List<Pet> findByUsuario(Usuario usuario);
+    List<Pet> findByUsuarioAndAtivoIsTrue(Usuario usuario);
 
     @Query("select p from Pet p " +
             "where (:nome is null or lower(p.nome) like %:nome%) " +
             "and (:dataAchado is null or :dataAchado = p.dataAchado)  " +
-            "and (:dataRegistro is null or :dataRegistro = p.dataRegistro) " +
             "and (:especie is null or :especie = p.especie) " +
             "and (:porte is null or :porte = p.porte) " +
             "and (:sexo is null or :sexo = p.sexo) " +
@@ -45,7 +44,6 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
             "  )")
     Page<Pet> buscar(@Param("nome") String nome,
                      @Param("dataAchado") LocalDate dataAchado,
-                     @Param("dataRegistro") LocalDate dataRegistro,
                      @Param("especie") Especie especie,
                      @Param("porte") Porte porte,
                      @Param("sexo") Sexo sexo,
