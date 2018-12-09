@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
@@ -31,7 +30,6 @@ public class Usuario implements UserDetails {
     private String nome;
 
     @NotNull
-    @Email
     @Column(unique = true)
     private String email;
 

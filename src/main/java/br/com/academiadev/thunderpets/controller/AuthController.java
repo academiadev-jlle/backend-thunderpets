@@ -5,6 +5,7 @@ import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.ContatoRepository;
+import br.com.academiadev.thunderpets.service.FacebookService;
 import br.com.academiadev.thunderpets.service.GoogleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +27,19 @@ public class AuthController {
     private ConsumerTokenServices tokenServices;
     private ContatoRepository contatoRepository;
     private UsuarioMapper usuarioMapper;
+    private FacebookService facebookService;
     private GoogleService googleService;
 
     @Autowired
     public AuthController(ConsumerTokenServices tokenServices,
                           ContatoRepository contatoRepository,
                           UsuarioMapper usuarioMapper,
+                          FacebookService facebookService,
                           GoogleService googleService) {
         this.tokenServices = tokenServices;
         this.contatoRepository = contatoRepository;
         this.usuarioMapper = usuarioMapper;
+        this.facebookService = facebookService;
         this.googleService = googleService;
     }
 
@@ -63,6 +67,16 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new UsuarioNaoEncontradoException("Nenhum usuário está logado no sistema"));
+    }
+
+    @GetMapping("facebook/getUrl")
+    public String createFacebookAuthorization() {
+        return facebookService.criarUrlAutorizacaoFacebook();
+    }
+
+    @PostMapping("facebook/login")
+    public OAuth2AccessToken createFacebookAccessToken(@RequestBody LoginSocialDTO dto) {
+        return facebookService.login(dto).orElseThrow(UsuarioNaoEncontradoException::new);
     }
 
     @GetMapping("google/getUrl")
