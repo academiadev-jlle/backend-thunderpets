@@ -1,35 +1,34 @@
 package br.com.academiadev.thunderpets.service;
 
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
-import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
-import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
-import br.com.academiadev.thunderpets.mapper.ContatoMapper;
-import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
-import br.com.academiadev.thunderpets.model.Contato;
-import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.ContatoRepository;
-import br.com.academiadev.thunderpets.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public interface UsuarioService {
 
-    public PageImpl<UsuarioDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
+    PageImpl<UsuarioRespostaDTO> listar(int paginaAtual, int tamanho, Sort.Direction direcao, String campoOrdenacao);
 
-    public Object buscar(UUID id) throws Exception;
+    UsuarioRespostaDTO buscar(UUID id);
 
-    public Object salvar(UsuarioDTO usuarioDTO) throws Exception;
+    UsuarioRespostaDTO salvar(UsuarioDTO usuarioDTO);
 
-    public Object deletar(UUID id) throws Exception;
+    void deletar(UUID id);
 
-    public byte[] getFoto(UUID id) throws Exception;
+    byte[] getFoto(UUID id);
+
+    Optional<UsuarioRespostaDTO> salvarFoto(UUID usuarioId, byte[] foto);
+
+    List<PetRespostaDTO> getPets(UUID id);
+
+    String esqueciMinhaSenha(String email);
+
+    String redefinirSenha(UUID idRecuperarSenha, String senha) throws ErroAoProcessarException;
 }

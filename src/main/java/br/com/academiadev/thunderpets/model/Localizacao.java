@@ -1,5 +1,7 @@
 package br.com.academiadev.thunderpets.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +13,10 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
+@Builder
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Localizacao {
 
     @Id
@@ -30,4 +34,6 @@ public class Localizacao {
 
     @NotNull
     private String estado;
+
+    private String descricao;
 }

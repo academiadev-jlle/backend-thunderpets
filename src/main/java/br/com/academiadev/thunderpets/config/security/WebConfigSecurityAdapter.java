@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.transaction.Transactional;
+
 @Configuration
 @EnableWebSecurity
 public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
@@ -32,6 +34,7 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
+    @Transactional
     public void authenticationManager(AuthenticationManagerBuilder builder, UsuarioRepository usuarioRepository)
             throws Exception {
         if (usuarioRepository.count() == 0) {
@@ -75,5 +78,4 @@ public class WebConfigSecurityAdapter extends WebSecurityConfigurerAdapter {
 
         return bean;
     }
-
 }

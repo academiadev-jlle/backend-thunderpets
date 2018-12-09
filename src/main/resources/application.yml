@@ -14,6 +14,25 @@ spring:
     generate-ddl: false
     show-sql: true
     format-sql: true
+  social:
+    facebook:
+      appId: ${FACEBOOK_CLIENT_ID}
+      appSecret: ${FACEBOOK_CLIENT_SECRET}
+      redirectUri: ${FACEBOOK_REDIRECT_URI:http://localhost:8080/oauth/facebook/login}
+    google:
+      appId: ${GOOGLE_CLIENT_ID}
+      appSecret: ${GOOGLE_CLIENT_SECRET}
+      redirectUri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/oauth/google/login}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
 security:
   oauth2:
     client:
@@ -24,3 +43,7 @@ flyway:
   user: ${DATABASE_USERNAME:postgres}
   password: ${DATABASE_PASSWORD:postgres}
   baseline-on-migrate: true
+  enabled: true
+hibernate:
+  jdbc:
+    use_streams_for_binary: false

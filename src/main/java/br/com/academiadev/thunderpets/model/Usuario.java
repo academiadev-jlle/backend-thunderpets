@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
@@ -26,11 +26,10 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     @NotNull
-    @Size(min = 3)
+    @Size(min = 3, max = 99)
     private String nome;
 
     @NotNull
-    @Email
     @Column(unique = true)
     private String email;
 
@@ -38,11 +37,12 @@ public class Usuario implements UserDetails {
     @Size(min = 8)
     private String senha;
 
+    @Type(type = "org.hibernate.type.BinaryType")
     @Lob
     private byte[] foto;
 
-    @Column(columnDefinition = "bool default true")
-    private boolean ativo;
+    @Builder.Default
+    private boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

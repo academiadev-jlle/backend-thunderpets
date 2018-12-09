@@ -1,40 +1,31 @@
 package br.com.academiadev.thunderpets.model;
 
 import br.com.academiadev.thunderpets.enums.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pet {
+public class Pet extends EntidadeAuditavel{
 
     @Id
     @GeneratedValue
     private UUID id;
 
     @NotNull
-    @Size(max = 20)
     private String nome;
 
     @NotNull
     private String descricao;
 
-    @NotNull
     private LocalDate dataAchado;
-
-    @NotNull
-    private LocalDate dataRegistro;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -59,9 +50,24 @@ public class Pet {
     @ManyToOne(optional = false)
     private Usuario usuario;
 
-    @OneToOne(optional = false)
+    @OneToOne
     private Localizacao localizacao;
 
-    @Column(columnDefinition = "bool default true")
-    private boolean ativo;
+    private boolean ativo = true;
+
+    @Builder
+    public Pet(LocalDateTime dataRegistro, String nome, @NotNull String descricao, LocalDate dataAchado, @NotNull Especie especie, @NotNull Porte porte, @NotNull Sexo sexo, @NotNull Status status, @NotNull Idade idade, Usuario usuario, Localizacao localizacao, boolean ativo) {
+        super(dataRegistro);
+        this.nome = nome;
+        this.descricao = descricao;
+        this.dataAchado = dataAchado;
+        this.especie = especie;
+        this.porte = porte;
+        this.sexo = sexo;
+        this.status = status;
+        this.idade = idade;
+        this.usuario = usuario;
+        this.localizacao = localizacao;
+        this.ativo = ativo;
+    }
 }

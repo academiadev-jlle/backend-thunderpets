@@ -20,8 +20,8 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
       DATABASE_URL: jdbc:postgresql://localhost:5432/thunderpets
-      DATABASE_USERNAME: postgres_ci
-      DATABASE_PASSWORD: postgres_ci
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
 
 
     steps:
@@ -33,22 +33,29 @@ jobs:
       - run:
           command: |
             psql -h localhost -U postgres -c "CREATE DATABASE thunderpets;"
-            psql -h localhost -U postgres -c "CREATE USER postgres_ci WITH PASSWORD 'postgres_ci';"
-            psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE thunderpets TO postgres_ci;"
+            psql -h localhost -U postgres -c "CREATE USER postgres_ci WITH PASSWORD 'postgres';"
+            psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE thunderpets TO postgres;"
 
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
-      - run: gradle dependencies
+      - restore_cache:
+          keys:
+          - v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
+          - v2-dependencies-{{ checksum "build.gradle" }}
+          - v2-dependencies-
+
+      - run: ./gradlew dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+      # run migrations
+      - run: ./gradlew flywayMigrate -i -Pflyway.user=postgres -Pflyway.password=postgres -Pflyway.url=jdbc:postgresql://localhost:5432/thunderpets
 
       # run tests!
-      - run: gradle test
+      - run: ./gradlew test --info

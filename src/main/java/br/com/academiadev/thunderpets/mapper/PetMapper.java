@@ -1,61 +1,31 @@
 package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
-import br.com.academiadev.thunderpets.model.Foto;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
-import br.com.academiadev.thunderpets.repository.FotoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import br.com.academiadev.thunderpets.model.Usuario;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Component
-public class PetMapper {
+@Mapper(componentModel = "spring")
+public interface PetMapper {
 
-    @Autowired
-    private FotoRepository fotoRepository;
+    @Mappings({
+            @Mapping(source = "pet.usuario.id", target = "usuarioId"),
+            @Mapping(source = "fotos", target = "fotos")
+    })
+    PetRespostaDTO toDTO(Pet pet, List<byte[]> fotos);
 
-    public PetDTO converterPetParaPetDTO(Pet pet) {
-        List<Foto> fotos = fotoRepository.findByPetId(pet.getId());
 
-        PetDTO petDTO = PetDTO.builder()
-                .id(pet.getId())
-                .nome(pet.getNome())
-                .descricao(pet.getDescricao())
-                .dataAchado(pet.getDataAchado())
-                .dataRegistro(pet.getDataRegistro())
-                .especie(pet.getEspecie())
-                .porte(pet.getPorte())
-                .sexo(pet.getSexo())
-                .status(pet.getStatus())
-                .idade(pet.getIdade())
-                .usuario(pet.getUsuario())
-                .localizacao(pet.getLocalizacao())
-                .fotos(fotos)
-                .ativo(pet.isAtivo())
-                .build();
-
-        return petDTO;
-    }
-
-    public Pet convertPetDTOparaPet(PetDTO petDTO, Localizacao localizacao) {
-        Pet pet = Pet.builder()
-                .id(petDTO.getId())
-                .nome(petDTO.getNome())
-                .descricao(petDTO.getDescricao())
-                .dataAchado(petDTO.getDataAchado())
-                .dataRegistro(petDTO.getDataRegistro())
-                .especie(petDTO.getEspecie())
-                .porte(petDTO.getPorte())
-                .sexo(petDTO.getSexo())
-                .status(petDTO.getStatus())
-                .idade(petDTO.getIdade())
-                .usuario(petDTO.getUsuario())
-                .localizacao(localizacao)
-                .ativo(petDTO.isAtivo())
-                .build();
-
-        return pet;
-    }
+    @Mappings({
+            @Mapping(source = "petDTO.id", target = "id"),
+            @Mapping(source = "petDTO.nome", target = "nome"),
+            @Mapping(source = "petDTO.descricao", target = "descricao"),
+            @Mapping(source = "petDTO.ativo", target = "ativo")
+    })
+    Pet toEntity(PetDTO petDTO, Localizacao localizacao, Usuario usuario);
 }
