@@ -1,5 +1,10 @@
-# ThunderPets™ -  Back-End
+
+# ThunderPets -  Back-End
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/academiadev-jlle/wiki-thunderpets.svg?columns=all)](https://waffle.io/academiadev-jlle/wiki-thunderpets)
+
+<p align="center">
+  <img src="https://github.com/academiadev-jlle/frontend-thunderpets/blob/master/src/assets/logo.png" alt="ThunderPets Logo"/>
+</p>
 
 Projeto da AcademiaDev - Petcodes - Thunderpets
 
@@ -11,8 +16,9 @@ Os tópicos a seguir irão ajudá-lo a fazer uma cópia do projeto em sua máqui
 
 ### Pré-Requisitos
 
-* Java 8
-* Gradle
+* [Java 8](https://www.oracle.com/technetwork/pt/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Gradle](https://gradle.org)
+* [PostgreSQL 10](https://www.postgresql.org/download/)
 
 ### Instalação
 ```bash
@@ -54,21 +60,13 @@ gradle checkstyleMain
 ```bash
 gradle build
 ```
-
-## Projetado com
-
-* [Java]
-* [Spring]
-* [Gradle]
-
-## Versionamento
-
+## Wiki
+Para visualizar a wiki (contendo a documentação geral do projeto), acesse:
+[Wiki/Docs](https://github.com/academiadev-jlle/wiki-thunderpets)
 ## Autores
 
 * [Adam Mews](https://github.com/liserline)
-* [Diogo Antelo](https://github.com/DiogoAntelo)
 * [Helena Dalmazo](https://github.com/nefasta)
-* [Luiz Gustavo Eburneo](https://github.com/Botuca)
 * [Ramon Artner](https://github.com/rartner)
 
 ## Licença
