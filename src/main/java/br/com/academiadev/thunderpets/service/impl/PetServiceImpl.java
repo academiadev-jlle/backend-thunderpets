@@ -61,7 +61,7 @@ public class PetServiceImpl implements PetService {
                                String estado,
                                String latitude,
                                String longitude,
-                               Integer raioDistancia,
+                               Double raioDistancia,
                                Integer paginaAtual,
                                Integer tamanho,
                                Sort.Direction direcao,
@@ -85,7 +85,7 @@ public class PetServiceImpl implements PetService {
                 ativo,
                 latitude != null ? latitude : "null",
                 longitude != null ? longitude : "null",
-                new Double(raioDistancia),
+                raioDistancia,
                 paginacao);
 
         PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados

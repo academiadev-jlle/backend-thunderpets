@@ -51,7 +51,7 @@ public class PetController {
                                 @RequestParam(value = "estado", required = false) String estado,
                                 @RequestParam(value = "latitudeUsuario", required = false) String latitude,
                                 @RequestParam(value = "longitudeUsuario", required = false) String longitude,
-                                @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
+                                @RequestParam(value = "raioDistancia", required = false) Double raioDistancia,
                                 @ApiParam(value = "Número da página atual")
                                     @RequestParam(defaultValue = "0") int paginaAtual,
                                 @ApiParam(value = "Número do tamanho da página")

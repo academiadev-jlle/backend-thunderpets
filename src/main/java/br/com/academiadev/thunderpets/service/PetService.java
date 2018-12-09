@@ -24,7 +24,7 @@ public interface PetService {
                         String estado,
                         String latitude,
                         String longitude,
-                        Integer raioDistancia,
+                        Double raioDistancia,
                         Integer paginaAtual,
                         Integer tamanho,
                         Sort.Direction direcao,
