@@ -3,6 +3,8 @@ package br.com.academiadev.thunderpets.service.impl;
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.enums.*;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
+import br.com.academiadev.thunderpets.exception.NaoPermitidoException;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
@@ -17,6 +19,8 @@ import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -129,6 +133,14 @@ public class PetServiceImpl implements PetService {
             localizacao = localizacaoRepository.saveAndFlush(petDTO.getLocalizacao());
         }
 
+        if (petDTO.getId() != null) {
+            Pet pet = petRepository.findById(petDTO.getId()).orElse(new Pet());
+
+            if (!currentUser().getId().equals(pet.getUsuario().getId())) {
+                throw new NaoPermitidoException("Esse pet não pertence a esse usuário");
+            }
+        }
+
         final Pet pet = petRepository.saveAndFlush(petMapper.toEntity(petDTO, localizacao, usuario));
 
         petDTO.getFotos().forEach(f -> {
@@ -150,5 +162,11 @@ public class PetServiceImpl implements PetService {
 
         pet.setAtivo(false);
         petRepository.save(pet);
+    }
+
+    private Usuario currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return (Usuario) authentication.getPrincipal();
     }
 }
