@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.enums.*;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.PetNaoEncontradoException;
@@ -18,11 +19,10 @@ import br.com.academiadev.thunderpets.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,24 +49,24 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Page<PetDTO> buscar(LocalDate dataAchado,
-                               LocalDate dataRegistro,
-                               Especie especie,
-                               Porte porte,
-                               Sexo sexo,
-                               Status status,
-                               Idade idade,
-                               TipoPesquisaLocalidade tipoPesquisaLocalidade,
-                               String cidade,
-                               String estado,
-                               BigDecimal latitude,
-                               BigDecimal longitude,
-                               Integer raioDistancia,
-                               Integer paginaAtual,
-                               Integer tamanho,
-                               Sort.Direction direcao,
-                               String campoOrdenacao,
-                               boolean ativo) {
+    public Page<PetRespostaDTO> buscar(LocalDate dataAchado,
+                                       LocalDateTime dataRegistro,
+                                       Especie especie,
+                                       Porte porte,
+                                       Sexo sexo,
+                                       Status status,
+                                       Idade idade,
+                                       TipoPesquisaLocalidade tipoPesquisaLocalidade,
+                                       String cidade,
+                                       String estado,
+                                       BigDecimal latitude,
+                                       BigDecimal longitude,
+                                       Integer raioDistancia,
+                                       Integer paginaAtual,
+                                       Integer tamanho,
+                                       Sort.Direction direcao,
+                                       String campoOrdenacao,
+                                       boolean ativo) {
 
         Localizacao localizacao = new Localizacao();
         if (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO)) {
@@ -75,6 +75,7 @@ public class PetServiceImpl implements PetService {
                     .estado(estado)
                     .build();
         }
+
 
         Pet pet = Pet.builder()
                 .dataAchado(dataAchado)
@@ -91,24 +92,22 @@ public class PetServiceImpl implements PetService {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
         Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
 
-        PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados
+        PageImpl<PetRespostaDTO> paginaPetsFiltradosDTO = (PageImpl<PetRespostaDTO>) paginaPetsFiltrados
                 .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(pet.getId()).stream()
                         .map(Foto::getImage).collect(Collectors.toList())));
 
         if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
             if(latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a lagitude e longitude do usuário atual.");
+                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a latitude e longitude do usuário atual.");
             }
 
-            paginaPetsFiltradosDTO.map((petDTO) -> {
-                petDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petDTO.getId()));
-                return petDTO;
+            paginaPetsFiltradosDTO.map((petRespostaDTO) -> {
+                petRespostaDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petRespostaDTO.getId()));
+                return petRespostaDTO;
             });
 
             if(raioDistancia != null) {
-                return new PageImpl<PetDTO>(paginaPetsFiltradosDTO.stream()
-                        .filter(petDTO -> petDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0)
-                        .collect(Collectors.toList()));
+                return new PageImpl<>(paginaPetsFiltradosDTO.stream().filter(petRespostaDTO -> petRespostaDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0).collect(Collectors.toList()));
             }
         }
 
@@ -116,7 +115,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetDTO buscarPorId(UUID id) throws PetNaoEncontradoException {
+    public PetRespostaDTO buscarPorId(UUID id) throws PetNaoEncontradoException {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id.toString())));
 
@@ -125,7 +124,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetDTO salvar(@RequestBody PetDTO petDTO) {
+    public PetRespostaDTO salvar(PetDTO petDTO) {
         Usuario usuario = usuarioRepository.findById(petDTO.getUsuarioId())
                 .orElseThrow(UsuarioNaoEncontradoException::new);
 
@@ -149,7 +148,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public void excluir(@PathVariable("id") UUID id) {
+    public void excluir(UUID id) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new PetNaoEncontradoException(String.format("Pet %s não encontrado", id)));
 

@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.controller;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
@@ -102,7 +103,7 @@ public class UsuarioController {
             @ApiResponse(code = 404, message = "Usuário não encontrado")
     })
     @GetMapping("{id}/pets")
-    public List<PetDTO> getPets(@PathVariable("id") UUID id) {
+    public List<PetRespostaDTO> getPets(@PathVariable("id") UUID id) {
         return usuarioService.getPets(id);
     }
 

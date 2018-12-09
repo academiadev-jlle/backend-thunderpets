@@ -43,6 +43,7 @@ public class Usuario implements UserDetails {
     @Lob
     private byte[] foto;
 
+    @Builder.Default
     private boolean ativo = true;
 
     @Override
