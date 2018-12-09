@@ -24,14 +24,13 @@ public interface PetService {
                                 TipoPesquisaLocalidade tipoPesquisaLocalidade,
                                 String cidade,
                                 String estado,
-                                BigDecimal latitude,
-                                BigDecimal longitude,
-                                Integer raioDistancia,
+                                String latitude,
+                                String longitude,
+                                Double raioDistancia,
                                 Integer paginaAtual,
                                 Integer tamanho,
                                 Sort.Direction direcao,
-                                String campoOrdenacao,
-                                boolean ativo);
+                                String campoOrdenacao);
 
     PetRespostaDTO buscarPorId(UUID id) throws PetNaoEncontradoException;
 
