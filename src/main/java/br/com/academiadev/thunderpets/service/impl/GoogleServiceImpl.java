@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.LoginSocialDTO;
+import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
 import br.com.academiadev.thunderpets.model.Usuario;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.GoogleService;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.impl.GoogleTemplate;
@@ -23,6 +25,11 @@ import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Service;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -92,6 +99,7 @@ public class GoogleServiceImpl implements GoogleService {
                     .email(access)
                     .nome(userInfo.getName())
                     .senha(passwordEncoder.encode(userInfo.getId()))
+                    .foto(getFoto(userInfo).orElse(null))
                     .ativo(true).build());
         }
 
@@ -107,6 +115,30 @@ public class GoogleServiceImpl implements GoogleService {
             return Optional.ofNullable(tokenEndpoint.getAccessToken(principal, params).getBody());
         } catch (HttpRequestMethodNotSupportedException e) {
             return Optional.empty();
+        } catch (InvalidGrantException e) {
+            throw new UsuarioNaoEncontradoException("Este endereço de e-mail já está cadastrado.");
         }
+    }
+
+    private Optional<byte[]> getFoto(GoogleUserInfo userInfo) {
+        try {
+            URL photoUrl = new URL(userInfo.getProfilePictureUrl());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream inputStream = photoUrl.openStream();
+            byte[] buffer = new byte[1024];
+            int n = 0;
+
+            while ((n = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, n);
+            }
+
+            return Optional.ofNullable(baos.toByteArray());
+        } catch (MalformedURLException e) {
+            System.out.println("Erro na URL");
+        } catch (IOException e) {
+            System.out.println("Erro na leitura do InputStream");
+        }
+
+        return Optional.empty();
     }
 }
