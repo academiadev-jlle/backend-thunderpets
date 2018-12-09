@@ -1,6 +1,6 @@
 package br.com.academiadev.thunderpets.service.impl;
 
-import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
@@ -128,13 +128,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<PetDTO> getPets(UUID id) {
+    public List<PetRespostaDTO> getPets(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(String.format("Usuário %s não encontrado.", id)));
 
-        return petRepository.findByUsuario(usuario).stream()
-                .map(pet -> petMapper.toDTO(pet, fotoRepository.findByPetId(pet.getId()).stream()
-                        .map(Foto::getImage).collect(Collectors.toList())))
+        return petRepository.findByUsuarioAndAtivoIsTrue(usuario).stream()
+                .map(pet -> petMapper.toDTO(
+                        pet,
+                        fotoRepository.findFirstByPetId(pet.getId())
+                                .stream().map(Foto::getImage).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
