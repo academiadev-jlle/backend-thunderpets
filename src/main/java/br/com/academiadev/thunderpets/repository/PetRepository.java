@@ -41,7 +41,7 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
             "      ) " +
             "    ) <= :raioDistancia " +
             "  ) " +
-            "and (:ativo is true)")
+            "and (ativo is true)")
     Page<Pet> buscar(@Param("nome") String nome,
                      @Param("dataAchado") LocalDate dataAchado,
                      @Param("especie") Especie especie,
