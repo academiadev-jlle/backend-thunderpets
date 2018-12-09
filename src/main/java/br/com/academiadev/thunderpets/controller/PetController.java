@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -50,19 +48,17 @@ public class PetController {
                                        @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
                                        @RequestParam(value = "cidade", required = false) String cidade,
                                        @RequestParam(value = "estado", required = false) String estado,
-                                       @RequestParam(value = "latitudeUsuario", required = false) BigDecimal latitude,
-                                       @RequestParam(value = "longitudeUsuario", required = false) BigDecimal longitude,
-                                       @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
+                                       @RequestParam(value = "latitudeUsuario", required = false) String latitude,
+                                       @RequestParam(value = "longitudeUsuario", required = false) String longitude,
+                                       @RequestParam(value = "raioDistancia", required = false) Double raioDistancia,
                                        @ApiParam(value = "Número da página atual")
-                                           @RequestParam(defaultValue = "0") Integer paginaAtual,
+                                           @RequestParam(defaultValue = "0") int paginaAtual,
                                        @ApiParam(value = "Número do tamanho da página")
-                                           @RequestParam(defaultValue = "10") Integer tamanho,
+                                           @RequestParam(defaultValue = "10") int tamanho,
                                        @ApiParam(value = "Direção da ordenação: ascendente ou descendente")
                                            @RequestParam(defaultValue = "DESC") Sort.Direction direcao,
                                        @ApiParam(value = "Nome da coluna que será usada para a ordenação")
-                                           @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao,
-                                       @ApiParam(value = "Escolha para buscar os pets ativos ou inativos")
-                                           @RequestParam(defaultValue = "true") boolean ativo) {
+                                           @RequestParam(defaultValue = "dataRegistro") String campoOrdenacao) {
 
         return service.buscar(nome,
                 dataAchado,
@@ -80,8 +76,7 @@ public class PetController {
                 paginaAtual,
                 tamanho,
                 direcao,
-                campoOrdenacao,
-                ativo);
+                campoOrdenacao);
     }
 
     @ApiOperation(
