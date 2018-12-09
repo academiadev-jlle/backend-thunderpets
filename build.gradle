@@ -21,6 +21,13 @@ apply plugin: 'net.ltgt.apt-idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+idea {
+    module {
+        outputDir file('build/classes/main')
+        testOutputDir file('build/classes/test')
+    }
+}
+
 group = 'br.com.academiadev'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
