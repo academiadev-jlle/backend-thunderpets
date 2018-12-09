@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -143,16 +145,20 @@ public class PetServiceImpl implements PetService {
 
         final Pet pet = petRepository.saveAndFlush(petMapper.toEntity(petDTO, localizacao, usuario));
 
-        petDTO.getFotos().forEach(f -> {
+        fotoRepository.findByPetId(pet.getId()).forEach(foto -> {
+            fotoRepository.delete(foto);
+        });
+
+        List<byte[]> fotos = new ArrayList<>();
+        for (byte[] f : petDTO.getFotos()) {
             Foto foto = new Foto();
             foto.setImage(f);
             foto.setPet(pet);
 
-            fotoRepository.saveAndFlush(foto);
-        });
+            fotos.add(fotoRepository.saveAndFlush(foto).getImage());
+        }
 
-        return petMapper.toDTO(
-                pet, fotoRepository.findByPetId(pet.getId()).stream().map(Foto::getImage).collect(Collectors.toList()));
+        return petMapper.toDTO(pet, fotos);
     }
 
     @Override
