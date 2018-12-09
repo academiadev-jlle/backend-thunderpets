@@ -1,6 +1,7 @@
 package br.com.academiadev.thunderpets.mapper;
 
 import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.model.Localizacao;
 import br.com.academiadev.thunderpets.model.Pet;
 import br.com.academiadev.thunderpets.model.Usuario;
@@ -17,7 +18,7 @@ public interface PetMapper {
             @Mapping(source = "pet.usuario.id", target = "usuarioId"),
             @Mapping(source = "fotos", target = "fotos")
     })
-    PetDTO toDTO(Pet pet, List<byte[]> fotos);
+    PetRespostaDTO toDTO(Pet pet, List<byte[]> fotos);
 
 
     @Mappings({

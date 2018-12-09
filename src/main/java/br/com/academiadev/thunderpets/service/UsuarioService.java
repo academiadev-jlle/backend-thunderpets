@@ -1,6 +1,6 @@
 package br.com.academiadev.thunderpets.service;
 
-import br.com.academiadev.thunderpets.dto.PetDTO;
+import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
 import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
@@ -23,7 +23,7 @@ public interface UsuarioService {
 
     byte[] getFoto(UUID id);
 
-    List<PetDTO> getPets(UUID id);
+    List<PetRespostaDTO> getPets(UUID id);
 
     String esqueciMinhaSenha(String email);
 
