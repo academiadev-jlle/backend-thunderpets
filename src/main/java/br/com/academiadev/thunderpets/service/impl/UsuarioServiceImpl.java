@@ -3,10 +3,7 @@ package br.com.academiadev.thunderpets.service.impl;
 import br.com.academiadev.thunderpets.dto.PetRespostaDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
-import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
-import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
-import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
-import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.exception.*;
 import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
@@ -26,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -89,8 +87,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioRespostaDTO salvar(UsuarioDTO usuarioDTO) {
-        usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
-        usuarioDTO.setAtivo(true);
+        if (usuarioDTO.getId() == null) {
+            usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
+            usuarioDTO.setAtivo(true);
+        } else {
+            Object usuarioLogado = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (usuarioLogado instanceof Usuario
+                    && ((Usuario) usuarioLogado).getId().equals(usuarioDTO.getId())) {
+                usuarioDTO.setSenha(((Usuario) usuarioLogado).getSenha());
+            } else {
+                throw new NaoPermitidoException("Você está tentando atualizar um usuário que não é você");
+            }
+        }
 
         final Usuario usuario = usuarioRepository
                 .saveAndFlush(usuarioMapper.toEntity(usuarioDTO));
