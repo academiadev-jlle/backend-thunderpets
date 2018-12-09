@@ -106,7 +106,7 @@ public class FacebookServiceImpl implements FacebookService {
                     .email(access)
                     .nome(usuarioFacebook.getName())
                     .senha(passwordEncoder.encode(usuarioFacebook.getId()))
-                    .foto(getFoto(usuarioFacebook).orElse(null))
+                    .foto(facebook.userOperations().getUserProfileImage())
                     .ativo(true).build());
         }
 
