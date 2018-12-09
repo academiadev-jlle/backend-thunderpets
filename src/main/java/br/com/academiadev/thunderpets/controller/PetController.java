@@ -49,8 +49,8 @@ public class PetController {
                                 @RequestParam(value = "buscarPorLocalidade", required = false) TipoPesquisaLocalidade tipoPesquisaLocalidade,
                                 @RequestParam(value = "cidade", required = false) String cidade,
                                 @RequestParam(value = "estado", required = false) String estado,
-                                @RequestParam(value = "latitudeUsuario", required = false) BigDecimal latitude,
-                                @RequestParam(value = "longitudeUsuario", required = false) BigDecimal longitude,
+                                @RequestParam(value = "latitudeUsuario", required = false) String latitude,
+                                @RequestParam(value = "longitudeUsuario", required = false) String longitude,
                                 @RequestParam(value = "raioDistancia", required = false) Integer raioDistancia,
                                 @ApiParam(value = "Número da página atual")
                                     @RequestParam(defaultValue = "0") int paginaAtual,

@@ -59,8 +59,8 @@ public class PetServiceImpl implements PetService {
                                TipoPesquisaLocalidade tipoPesquisaLocalidade,
                                String cidade,
                                String estado,
-                               BigDecimal latitude,
-                               BigDecimal longitude,
+                               String latitude,
+                               String longitude,
                                Integer raioDistancia,
                                Integer paginaAtual,
                                Integer tamanho,
@@ -68,47 +68,41 @@ public class PetServiceImpl implements PetService {
                                String campoOrdenacao,
                                boolean ativo) {
 
-        Localizacao localizacao = new Localizacao();
-        if (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO)) {
-            localizacao = Localizacao.builder()
-                    .cidade(cidade)
-                    .estado(estado)
-                    .build();
-        }
-
-        Pet pet = Pet.builder()
-                .dataAchado(dataAchado)
-                .dataRegistro(dataRegistro)
-                .especie(especie)
-                .porte(porte)
-                .sexo(sexo)
-                .status(status)
-                .idade(idade)
-                .ativo(ativo)
-                .localizacao(localizacao)
-                .build();
-
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
-        Page<Pet> paginaPetsFiltrados = petRepository.findAll(Example.of(pet, ExampleMatcher.matching().withIgnoreCase()), paginacao);
+
+        Page<Pet> paginaPetsFiltrados = petRepository.buscar(null,
+                dataAchado,
+                dataRegistro,
+                especie,
+                porte,
+                sexo,
+                status,
+                idade,
+                (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO))
+                        ? (cidade != null ? cidade.toLowerCase() : null) : null,
+                (tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.CIDADE_ESTADO))
+                        ? (estado != null ? estado.toLowerCase() : null) : null,
+                ativo,
+                latitude != null ? latitude : "null",
+                longitude != null ? longitude : "null",
+                new Double(raioDistancia),
+                paginacao);
 
         PageImpl<PetDTO> paginaPetsFiltradosDTO = (PageImpl<PetDTO>) paginaPetsFiltrados
-                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(pet.getId()).stream()
+                .map(p -> petMapper.toDTO(p, fotoRepository.findByPetId(p.getId()).stream()
                         .map(Foto::getImage).collect(Collectors.toList())));
 
+
         if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
-            if(latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a lagitude e longitude do usuário atual.");
+            if (latitude == null || longitude == null) {
+                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a latitude e longitude do usuário atual.");
             }
 
-            paginaPetsFiltradosDTO.map((petDTO) -> {
-                petDTO.setDistancia(petRepository.findDistancia(latitude, longitude, petDTO.getId()));
-                return petDTO;
-            });
-
             if(raioDistancia != null) {
-                return new PageImpl<PetDTO>(paginaPetsFiltradosDTO.stream()
-                        .filter(petDTO -> petDTO.getDistancia().compareTo(new BigDecimal(raioDistancia)) <= 0)
-                        .collect(Collectors.toList()));
+                paginaPetsFiltradosDTO.map((petDTO) -> {
+                    petDTO.setDistancia(petRepository.findDistancia(new BigDecimal(latitude), new BigDecimal(longitude), petDTO.getId()));
+                    return petDTO;
+                });
             }
         }
 
