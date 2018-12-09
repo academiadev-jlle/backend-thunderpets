@@ -18,7 +18,7 @@ public interface PetRepository extends JpaRepository<Pet, UUID> {
 
     Page<Pet> findByAtivo(boolean ativo, Pageable pageable);
 
-    List<Pet> findByUsuario(Usuario usuario);
+    List<Pet> findByUsuarioAndAtivoIsTrue(Usuario usuario);
 
     @Query(value = "SELECT (6371 * " +
             "  acos( " +
