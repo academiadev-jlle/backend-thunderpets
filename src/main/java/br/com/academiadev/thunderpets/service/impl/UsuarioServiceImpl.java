@@ -8,14 +8,10 @@ import br.com.academiadev.thunderpets.mapper.ContatoMapper;
 import br.com.academiadev.thunderpets.mapper.PetMapper;
 import br.com.academiadev.thunderpets.mapper.UsuarioMapper;
 import br.com.academiadev.thunderpets.model.Contato;
-import br.com.academiadev.thunderpets.model.RecuperarSenha;
 import br.com.academiadev.thunderpets.model.Foto;
+import br.com.academiadev.thunderpets.model.RecuperarSenha;
 import br.com.academiadev.thunderpets.model.Usuario;
-import br.com.academiadev.thunderpets.repository.ContatoRepository;
-import br.com.academiadev.thunderpets.repository.FotoRepository;
-import br.com.academiadev.thunderpets.repository.PetRepository;
-import br.com.academiadev.thunderpets.repository.RecuperarSenhaRepository;
-import br.com.academiadev.thunderpets.repository.UsuarioRepository;
+import br.com.academiadev.thunderpets.repository.*;
 import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -194,6 +191,22 @@ public class UsuarioServiceImpl implements UsuarioService {
             return "Senha alterada com sucesso.";
         } catch (Exception e) {
             return "Erro ao alterar a senha do usuário. " + e.getMessage();
+        }
+    }
+
+    @Override
+    public Optional<UsuarioRespostaDTO> salvarFoto(UUID usuarioId, byte[] foto) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(UsuarioNaoEncontradoException::new);
+
+        usuario.setFoto(foto);
+
+        Object usuarioLogado = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (usuarioLogado instanceof Usuario && ((Usuario) usuarioLogado).getId().equals(usuarioId)) {
+            return Optional.ofNullable(usuarioMapper.toDTO(usuarioRepository.saveAndFlush(usuario), contatoRepository.findByUsuario(usuario)));
+        } else {
+            throw new NaoPermitidoException("Você está tentando salvar a foto de outro usuário");
         }
     }
 }
