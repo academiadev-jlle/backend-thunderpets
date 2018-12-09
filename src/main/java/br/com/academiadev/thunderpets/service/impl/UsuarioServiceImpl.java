@@ -3,6 +3,7 @@ package br.com.academiadev.thunderpets.service.impl;
 import br.com.academiadev.thunderpets.dto.PetDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioDTO;
 import br.com.academiadev.thunderpets.dto.UsuarioRespostaDTO;
+import br.com.academiadev.thunderpets.exception.ErroAoProcessarException;
 import br.com.academiadev.thunderpets.exception.FotoNaoEncontradaException;
 import br.com.academiadev.thunderpets.exception.NaoEncontradoException;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
