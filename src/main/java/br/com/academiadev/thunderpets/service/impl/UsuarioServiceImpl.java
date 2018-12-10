@@ -15,6 +15,7 @@ import br.com.academiadev.thunderpets.repository.*;
 import br.com.academiadev.thunderpets.service.EmailService;
 import br.com.academiadev.thunderpets.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     private PetMapper petMapper;
     private ContatoMapper contatoMapper;
     private EmailService emailService;
+
+    @Value("${server.front-url}")
+    private String frontUrl;
 
     @Autowired
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
@@ -165,8 +169,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         String conteudo = String.format("Olá, \n\n" +
                 "Clique no link abaixo para redefinir sua senha: \n" +
-                "Link: https://thunderpets.netlify.com/forgotPassword/%s \n\n" +
-                "O link de redefinição de senha é válido por 2 horas.", recuperarSenha.getId());
+                "Link: %s/forgotPassword/%s \n\n" +
+                "O link de redefinição de senha é válido por 2 horas.", frontUrl, recuperarSenha.getId());
 
         return emailService.enviaMensagemSimples(email, "Redefinição de senha ThunderPets", conteudo);
     }

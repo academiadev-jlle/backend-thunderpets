@@ -1,5 +1,6 @@
 server:
   port: 8080
+  front-url: ${FRONTEND_URL:https://thunderpets.herokuapp.com}
 spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/thunderpets}
