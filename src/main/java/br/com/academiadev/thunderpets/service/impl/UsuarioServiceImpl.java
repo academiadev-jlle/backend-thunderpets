@@ -92,7 +92,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
             if (usuarioLogado instanceof Usuario
                     && ((Usuario) usuarioLogado).getId().equals(usuarioDTO.getId())) {
-                usuarioDTO.setSenha(((Usuario) usuarioLogado).getSenha());
+                if (usuarioDTO.getSenha() == null) {
+                    usuarioDTO.setSenha(((Usuario) usuarioLogado).getSenha());
+                } else {
+                    usuarioDTO.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
+                }
             } else {
                 throw new NaoPermitidoException("Você não tem permissão para atualizar dados de outro usuário");
             }
