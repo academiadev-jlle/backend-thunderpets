@@ -73,7 +73,7 @@ public class PetServiceImpl implements PetService {
                                        String campoOrdenacao) {
         PageRequest paginacao = PageRequest.of(paginaAtual, tamanho, direcao, campoOrdenacao);
 
-        Page<Pet> paginaPetsFiltrados = petRepository.buscar(nome,
+        Page<Pet> paginaPetsFiltrados = petRepository.buscar(nome == null ? null : nome.toLowerCase(),
                 dataAchado,
                 especie,
                 porte,
