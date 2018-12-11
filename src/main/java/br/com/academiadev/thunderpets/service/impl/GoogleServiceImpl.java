@@ -2,7 +2,9 @@ package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.LoginSocialDTO;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.model.LoginSocial;
 import br.com.academiadev.thunderpets.model.Usuario;
+import br.com.academiadev.thunderpets.repository.LoginSocialRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.GoogleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +50,19 @@ public class GoogleServiceImpl implements GoogleService {
     @Value("${security.oauth2.client.client-id}")
     private String clientId;
 
+    @Value("${spring.social.senha-provisoria}")
+    private String senhaProvisoria;
+
     private UsuarioRepository usuarioRepository;
+    private LoginSocialRepository loginSocialRepository;
     private final TokenEndpoint tokenEndpoint;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public GoogleServiceImpl(UsuarioRepository usuarioRepository, TokenEndpoint tokenEndpoint) {
+    public GoogleServiceImpl(UsuarioRepository usuarioRepository, LoginSocialRepository loginSocialRepository, TokenEndpoint tokenEndpoint) {
         this.usuarioRepository = usuarioRepository;
         this.tokenEndpoint = tokenEndpoint;
+        this.loginSocialRepository = loginSocialRepository;
     }
 
     @Override
@@ -93,14 +100,28 @@ public class GoogleServiceImpl implements GoogleService {
             return Optional.empty();
         }
 
-        String access = userInfo.getEmail();
-        if (usuarioRepository.findOneByEmail(access) == null) {
-            usuarioRepository.saveAndFlush(Usuario.builder()
-                    .email(access)
-                    .nome(userInfo.getName())
-                    .senha(passwordEncoder.encode(userInfo.getId()))
-                    .foto(getFoto(userInfo).orElse(null))
-                    .ativo(true).build());
+        Usuario usuario;
+        Optional<LoginSocial> usuarioSocial = loginSocialRepository.findByIdSocial(userInfo.getId());
+
+        if (usuarioSocial.isPresent()) {
+            usuario = usuarioRepository.findById(usuarioSocial.get().getId()).get();
+        } else {
+            usuario = usuarioRepository.findOneByEmail(userInfo.getEmail());
+
+            if (usuario == null) {
+                usuarioRepository.saveAndFlush(Usuario.builder()
+                        .email(userInfo.getEmail())
+                        .nome(userInfo.getName())
+                        .senha(passwordEncoder.encode(senhaProvisoria))
+                        .foto(getFoto(userInfo).orElse(null))
+                        .ativo(true).build());
+
+                LoginSocial loginSocial = new LoginSocial();
+                loginSocial.setIdSocial(userInfo.getId());
+                loginSocial.setUsuario(usuario);
+
+                loginSocialRepository.saveAndFlush(loginSocial);
+            }
         }
 
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(clientId, null, null);
@@ -108,8 +129,8 @@ public class GoogleServiceImpl implements GoogleService {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "password");
-        params.put("username", access);
-        params.put("password", userInfo.getId());
+        params.put("username", usuario.getEmail());
+        params.put("password", senhaProvisoria);
 
         try {
             return Optional.ofNullable(tokenEndpoint.getAccessToken(principal, params).getBody());

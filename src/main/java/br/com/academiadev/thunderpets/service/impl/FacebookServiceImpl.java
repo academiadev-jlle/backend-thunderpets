@@ -2,7 +2,9 @@ package br.com.academiadev.thunderpets.service.impl;
 
 import br.com.academiadev.thunderpets.dto.LoginSocialDTO;
 import br.com.academiadev.thunderpets.exception.UsuarioNaoEncontradoException;
+import br.com.academiadev.thunderpets.model.LoginSocial;
 import br.com.academiadev.thunderpets.model.Usuario;
+import br.com.academiadev.thunderpets.repository.LoginSocialRepository;
 import br.com.academiadev.thunderpets.repository.UsuarioRepository;
 import br.com.academiadev.thunderpets.service.FacebookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +48,18 @@ public class FacebookServiceImpl implements FacebookService {
     @Value("${security.oauth2.client.client-id}")
     private String clientId;
 
+    @Value("${spring.social.senha-provisoria}")
+    private String senhaProvisoria;
+
     private UsuarioRepository usuarioRepository;
+    private LoginSocialRepository loginSocialRepository;
     private final TokenEndpoint tokenEndpoint;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public FacebookServiceImpl(UsuarioRepository usuarioRepository, TokenEndpoint tokenEndpoint) {
+    public FacebookServiceImpl(UsuarioRepository usuarioRepository, LoginSocialRepository loginSocialRepository, TokenEndpoint tokenEndpoint) {
         this.usuarioRepository = usuarioRepository;
+        this.loginSocialRepository = loginSocialRepository;
         this.tokenEndpoint = tokenEndpoint;
     }
 
@@ -100,14 +107,30 @@ public class FacebookServiceImpl implements FacebookService {
             return Optional.empty();
         }
 
-        String access = usuarioFacebook.getEmail() == null ? usuarioFacebook.getId() : usuarioFacebook.getEmail();
-        if (usuarioRepository.findOneByEmail(access) == null) {
-            usuarioRepository.saveAndFlush(Usuario.builder()
-                    .email(access)
-                    .nome(usuarioFacebook.getName())
-                    .senha(passwordEncoder.encode(usuarioFacebook.getId()))
-                    .foto(facebook.userOperations().getUserProfileImage())
-                    .ativo(true).build());
+        Usuario usuario;
+        Optional<LoginSocial> usuarioSocial = loginSocialRepository.findByIdSocial(usuarioFacebook.getId());
+
+        if (usuarioSocial.isPresent()) {
+            usuario = usuarioRepository.findById(usuarioSocial.get().getId()).get();
+        } else {
+            String access = usuarioFacebook.getEmail() == null ? usuarioFacebook.getId() : usuarioFacebook.getEmail();
+
+            usuario = usuarioRepository.findOneByEmail(access);
+
+            if (usuario == null) {
+                usuario = usuarioRepository.saveAndFlush(Usuario.builder()
+                        .email(access)
+                        .nome(usuarioFacebook.getName())
+                        .senha(passwordEncoder.encode(senhaProvisoria))
+                        .foto(facebook.userOperations().getUserProfileImage())
+                        .ativo(true).build());
+
+                LoginSocial loginSocial = new LoginSocial();
+                loginSocial.setIdSocial(usuarioFacebook.getId());
+                loginSocial.setUsuario(usuario);
+
+                loginSocialRepository.saveAndFlush(loginSocial);
+            }
         }
 
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(clientId, null, null);
@@ -115,8 +138,8 @@ public class FacebookServiceImpl implements FacebookService {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "password");
-        params.put("username", access);
-        params.put("password", usuarioFacebook.getId());
+        params.put("username", usuario.getEmail());
+        params.put("password", senhaProvisoria);
 
         try {
             return Optional.ofNullable(tokenEndpoint.getAccessToken(principal, params).getBody());
