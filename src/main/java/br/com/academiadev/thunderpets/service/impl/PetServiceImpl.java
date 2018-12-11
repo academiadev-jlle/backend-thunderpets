@@ -94,17 +94,12 @@ public class PetServiceImpl implements PetService {
                         .map(Foto::getImage).collect(Collectors.toList())));
 
 
-        if(tipoPesquisaLocalidade != null && tipoPesquisaLocalidade.equals(TipoPesquisaLocalidade.RAIO_DISTANCIA)) {
-            if (latitude == null || longitude == null) {
-                throw new ErroAoProcessarException("Para buscas por raio de distância é necessário informar a latitude e longitude do usuário atual.");
-            }
+        if (latitude != null && longitude != null) {
+            paginaPetsFiltradosDTO.map((petDTO) -> {
+                petDTO.setDistancia(petRepository.findDistancia(new BigDecimal(latitude), new BigDecimal(longitude), petDTO.getId()));
 
-            if(raioDistancia != null) {
-                paginaPetsFiltradosDTO.map((petDTO) -> {
-                    petDTO.setDistancia(petRepository.findDistancia(new BigDecimal(latitude), new BigDecimal(longitude), petDTO.getId()));
-                    return petDTO;
-                });
-            }
+                return petDTO;
+            });
         }
 
         return paginaPetsFiltradosDTO;
